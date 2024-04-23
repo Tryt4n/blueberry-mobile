@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import GlobalContextProvider from "./context/GlobalContext";
+import GlobalContextProvider from "../context/GlobalContext";
 
 SplashScreen.preventAutoHideAsync();
 
