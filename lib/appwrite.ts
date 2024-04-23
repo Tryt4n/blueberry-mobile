@@ -3,14 +3,12 @@ import { parsedEnv } from "./zod/env";
 
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
-  // platform: parsedEnv.PROJECT_PLATFORM,
-  // projectId: parsedEnv.APPWRITE_PROJECT_ID,
-  // databaseId: parsedEnv.APPWRITE_DATABASE_ID,
-  // userCollectionId: parsedEnv.APPWRITE_USER_COLLECTION_ID,
-  platform: "com.blueberry.pl",
-  projectId: "6624d3c55cf0be359a61",
-  databaseId: "6624d7a91497998fa917",
-  userCollectionId: "6624d7d49d2ea67ec6db",
+  platform: parsedEnv.EXPO_PUBLIC_PROJECT_PLATFORM,
+  projectId: parsedEnv.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+  databaseId: parsedEnv.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
+  userCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_USER_COLLECTION_ID,
+  avatarsCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_AVATARS_COLLECTION_ID,
+  avatarsStorageId: parsedEnv.EXPO_PUBLIC_APPWRITE_AVATARS_STORAGE_ID,
 };
 
 // Init react-native SDK
