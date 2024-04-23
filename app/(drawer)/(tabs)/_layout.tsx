@@ -1,5 +1,5 @@
-import { View, Text, ScrollView } from "react-native";
-import { Tabs, Redirect } from "expo-router";
+import { View, Text } from "react-native";
+import { Tabs } from "expo-router";
 import React, { type ComponentProps } from "react";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
 

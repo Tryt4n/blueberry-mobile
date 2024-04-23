@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useState, type ComponentPropsWithoutRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 

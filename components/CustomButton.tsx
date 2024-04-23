@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import React, { type ComponentPropsWithoutRef } from "react";
 
 type CustomButtonProps = {
@@ -16,9 +16,10 @@ export default function CustomButton({
   return (
     <TouchableOpacity
       className={`bg-blue-500 rounded-xl justify-center items-center${
-        containerStyles ? ` ${containerStyles}` : ""
-      }`}
+        props.disabled ? " opacity-70 cursor-not-allowed" : ""
+      }${containerStyles ? ` ${containerStyles}` : ""}`}
       {...props}
+      activeOpacity={0.7}
     >
       <Text
         className={`text-white font-poppinsSemiBold text-base p-4${
