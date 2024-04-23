@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState } from "react";
 import { getCurrentUser } from "@/api/auth/users";
 import type { User } from "../types/user";
 
@@ -12,13 +12,12 @@ type GlobalContextValues = {
 
 export const GlobalContext = createContext<GlobalContextValues | null>(null);
 
-export default function GlobalContextProvider({ children }: { children: ReactNode }) {
+export default function GlobalContextProvider({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(false);
     getCurrentUser()
       .then((res) => {
         if (res) {
@@ -36,30 +35,6 @@ export default function GlobalContextProvider({ children }: { children: ReactNod
         setIsLoading(false);
       });
   }, []);
-
-  useEffect(() => {
-    console.log(`Loading: ${isLoading}`);
-    console.log(`Logged in: ${isLoggedIn}`);
-  }, [isLoading, isLoggedIn]);
-
-  // useEffect(() => {
-  //   getCurrentUser()
-  //     .then((res) => {
-  //       if (res) {
-  //         setIsLoggedIn(true);
-  //         setUser(res);
-  //       } else {
-  //         setIsLoggedIn(false);
-  //         setUser(null);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // }, []);
 
   const contextValues: GlobalContextValues = {
     isLoggedIn,
