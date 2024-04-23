@@ -51,7 +51,7 @@ export default function TabsLayout() {
             title: "Pogoda",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon="cloud"
+                icon="sunny"
                 color={color}
                 name="Pogoda"
                 focused={focused}
