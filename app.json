@@ -4,7 +4,7 @@
     "slug": "blueberry-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/favicon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -15,14 +15,14 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "package": "com.blueberry.pl"
+      "package": "com.plantation.blueberry"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.blueberry.pl"
+      "package": "com.plantation.blueberry"
     },
     "web": {
       "bundler": "metro",
