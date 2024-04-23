@@ -1,17 +1,34 @@
-import { View, Text } from "react-native";
-import React from "react";
-import CustomButton from "@/components/CustomButton";
-import { signOut } from "@/api/auth/users";
+import { View, Text, Alert } from "react-native";
+import React, { useState } from "react";
 import { router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { signOut } from "@/api/auth/users";
+import CustomButton from "@/components/CustomButton";
 
-export default function Profile() {
-  function logOut() {
-    //! Check first if user is logged in
-    signOut();
+export default function LogOutPage() {
+  const { isLoggedIn, setIsLoggedIn, setUser } = useGlobalContext();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    router.replace("/signIn");
+  async function logOut() {
+    if (!isLoggedIn) return;
+
+    setIsSubmitting(true);
+
+    try {
+      await signOut();
+
+      setUser(null);
+      setIsLoggedIn(false);
+
+      router.replace("/signIn");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Błąd", "Nie udało się wylogować. Spróbuj ponownie.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -24,16 +41,16 @@ export default function Profile() {
           <View className="flex flex-row justify-between gap-4">
             <CustomButton
               text="Tak"
-              activeOpacity={0.7}
               onPress={logOut}
+              disabled={isSubmitting}
               containerStyles="bg-transparent border-2 border-blue-500 px-8"
               textStyles="text-black"
             />
 
             <CustomButton
               text="Nie"
-              activeOpacity={0.7}
               containerStyles="px-8"
+              disabled={isSubmitting}
               onPress={() => router.back()}
             />
           </View>
