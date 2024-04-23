@@ -1,13 +1,13 @@
-import { ScrollView, TextInput, Alert, TouchableOpacity, Text, View } from "react-native";
-import React, { useState } from "react";
+import { ScrollView, Alert, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCurrentUser, signIn } from "@/api/auth/users";
-import { useGlobalContext } from "../hooks/useGlobalContext";
 import { Link, router } from "expo-router";
-import CustomButton from "@/components/CustomButton";
+import React, { useState } from "react";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { getCurrentUser, signIn } from "@/api/auth/users";
 import FormField from "@/components/FormField";
+import CustomButton from "@/components/CustomButton";
 
-export default function SignIn() {
+export default function SignInPage() {
   const { setUser, setIsLoggedIn } = useGlobalContext();
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -17,25 +17,29 @@ export default function SignIn() {
 
   async function handleLogin() {
     if (loginForm.email === "" || loginForm.password === "") {
-      return Alert.alert("Błąd", "Proszę uzupełnić wszystkie pola");
+      return Alert.alert("Puste pola", "Wszystkie pola muszą być wypełnione.");
     }
 
     setIsSubmitting(true);
 
     try {
       await signIn(loginForm.email, loginForm.password);
-      const result = await getCurrentUser();
 
-      console.log(result);
+      const result = await getCurrentUser();
 
       if (result) {
         setUser(result);
         setIsLoggedIn(true);
-        // router.replace("/fertilizers");
-        router.push("/fertilizers");
+
+        router.replace("/");
+      } else {
+        throw new Error("User not found");
       }
-    } catch (error: any) {
-      Alert.alert("Error", "Nieprawidłowy email lub hasło. Spróbuj ponownie.");
+    } catch (error) {
+      Alert.alert(
+        "Błąd logowania",
+        "Nie udało się zalogować. Sprawdź czy wszystkie dane są wprowadzone poprawnie i spróbuj ponownie."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -63,7 +67,6 @@ export default function SignIn() {
 
           <CustomButton
             text="Zaloguj się"
-            activeOpacity={0.7}
             disabled={isSubmitting}
             onPress={handleLogin}
             containerStyles="mt-5"

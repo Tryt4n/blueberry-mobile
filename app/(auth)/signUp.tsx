@@ -1,15 +1,15 @@
-import { ScrollView, TextInput, Alert, TouchableOpacity, Text, View } from "react-native";
-import React, { useState } from "react";
+import { ScrollView, Alert, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { createUser, getCurrentUser, signIn } from "@/api/auth/users";
-import { useGlobalContext } from "../hooks/useGlobalContext";
 import { Link, router } from "expo-router";
-import CustomButton from "@/components/CustomButton";
+import React, { useState } from "react";
+import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { createUser } from "@/api/auth/users";
 import FormField from "@/components/FormField";
+import CustomButton from "@/components/CustomButton";
 
-export default function SignIn() {
+export default function SignUpPage() {
   const { setUser, setIsLoggedIn } = useGlobalContext();
-  const [loginForm, setLoginForm] = useState({
+  const [signInForm, setSignInForm] = useState({
     username: "",
     email: "",
     password: "",
@@ -18,24 +18,33 @@ export default function SignIn() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function createAccount() {
-    const { username, email, password, passwordConfirmation } = loginForm;
-
-    if (username === "" || email === "" || password === "" || passwordConfirmation === "") {
-      return Alert.alert("Błąd tworzenia konta", "Wszystkie pola są wymagane");
+    if (
+      signInForm.username === "" ||
+      signInForm.email === "" ||
+      signInForm.password === "" ||
+      signInForm.passwordConfirmation === ""
+    ) {
+      return Alert.alert("Puste pola", "Wszystkie pola muszą być wypełnione.");
     }
-
-    if (password !== passwordConfirmation) {
-      return Alert.alert("Błąd tworzenia konta", "Hasła muszą być identyczne");
+    if (signInForm.password !== signInForm.passwordConfirmation) {
+      return Alert.alert("Niezgodność haseł", "Hasła muszą być identyczne.");
     }
 
     setIsSubmitting(true);
 
     try {
-      const result = await createUser(username, email, password);
+      const result = await createUser(signInForm.email, signInForm.password, signInForm.username);
 
-      router.replace("/fertilizers");
+      if (result) {
+        setUser(result);
+        setIsLoggedIn(true);
+
+        router.replace("/");
+      } else {
+        throw new Error("Error with creating account.");
+      }
     } catch (error) {
-      return Alert.alert("Błąd", "Nie udało się utworzyć konta. Spróbuj ponownie.");
+      Alert.alert("Błąd rejestracji", "Nie udało się utworzyć konta. Spróbuj ponownie.");
     } finally {
       setIsSubmitting(false);
     }
@@ -50,33 +59,32 @@ export default function SignIn() {
           <FormField
             title="Nazwa użytkownika:"
             placeholder="Wprowadź swoją nazwę"
-            handleChangeText={(e) => setLoginForm({ ...loginForm, username: e })}
+            handleChangeText={(e) => setSignInForm({ ...signInForm, username: e })}
           />
 
           <FormField
             title="Email:"
             placeholder="Uzupełnij email"
             keyboardType="email-address"
-            handleChangeText={(e) => setLoginForm({ ...loginForm, email: e })}
+            handleChangeText={(e) => setSignInForm({ ...signInForm, email: e })}
           />
 
           <FormField
             title="Hasło:"
             placeholder="Uzupełnij hasło"
             secureTextEntry={true}
-            handleChangeText={(e) => setLoginForm({ ...loginForm, password: e })}
+            handleChangeText={(e) => setSignInForm({ ...signInForm, password: e })}
           />
 
           <FormField
             title="Potwierdź hasło:"
             placeholder="Uzupełnij hasło ponownie"
             secureTextEntry={true}
-            handleChangeText={(e) => setLoginForm({ ...loginForm, passwordConfirmation: e })}
+            handleChangeText={(e) => setSignInForm({ ...signInForm, passwordConfirmation: e })}
           />
 
           <CustomButton
             text="Zarejestruj się"
-            activeOpacity={0.7}
             disabled={isSubmitting}
             onPress={createAccount}
             containerStyles="mt-5"
