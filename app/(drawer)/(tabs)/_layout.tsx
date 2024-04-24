@@ -1,7 +1,6 @@
-import { View, Text } from "react-native";
 import { Tabs } from "expo-router";
-import React, { type ComponentProps } from "react";
-import Ionicons from "@expo/vector-icons/build/Ionicons";
+import React from "react";
+import TabIcon from "@/components/TabIcon";
 
 export default function TabsLayout() {
   return (
@@ -16,14 +15,14 @@ export default function TabsLayout() {
         }}
       >
         <Tabs.Screen
-          name="fertilizers"
+          name="(fertigation)"
           options={{
-            title: "Nawozy",
+            title: "Fertygacja",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon="leaf"
                 color={color}
-                name="Nawozy"
+                name="Fertygacja"
                 focused={focused}
               />
             ),
@@ -76,33 +75,5 @@ export default function TabsLayout() {
         />
       </Tabs>
     </>
-  );
-}
-
-type TabIconProps = {
-  icon: ComponentProps<typeof Ionicons>["name"];
-  color: string;
-  name: string;
-  focused: boolean;
-};
-
-function TabIcon({ icon, color, name, focused }: TabIconProps) {
-  return (
-    <View className="items-center gap-2">
-      <Ionicons
-        name={icon}
-        size={24}
-        color={color}
-        disabled={!focused}
-      />
-
-      <Text
-        className={`${
-          focused ? "font-poppinsSemiBold" : "font-poppinsRegular"
-        } text-sm text-center`}
-      >
-        {name}
-      </Text>
-    </View>
   );
 }
