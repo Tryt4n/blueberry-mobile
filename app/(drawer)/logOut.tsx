@@ -45,6 +45,8 @@ export default function LogOutPage() {
               disabled={isSubmitting}
               containerStyles="bg-transparent border-2 border-blue-500 px-8"
               textStyles="text-black"
+              loading={isSubmitting}
+              loadingColor="rgb(59 130 246)"
             />
 
             <CustomButton
