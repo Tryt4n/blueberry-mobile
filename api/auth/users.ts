@@ -1,14 +1,32 @@
 import { account, appwriteConfig, avatars, databases } from "@/lib/appwrite";
 import { ID, Query } from "react-native-appwrite";
+import { SignInSchema, SignUpSchema } from "@/lib/zod/auth";
 import type { User } from "@/types/user";
-import { SignupSchema } from "@/lib/zod/auth";
 import type { ErrorKeys } from "@/types/Errors";
 
 export async function signIn(email: string, password: string) {
-  try {
-    const session = await account.createEmailSession(email, password);
+  let customErrors: Pick<Record<ErrorKeys, string[]>, "email" | "password"> = {
+    email: [],
+    password: [],
+  };
 
-    return session;
+  try {
+    const results = SignInSchema.safeParse({ email, password });
+
+    if (!results.success) {
+      results.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof typeof customErrors;
+        if (field in customErrors) {
+          customErrors[field].push(issue.message);
+        }
+      });
+
+      return { session: null, errors: customErrors };
+    } else {
+      const session = await account.createEmailSession(email, password);
+
+      return { session, errors: { email: null, password: null } };
+    }
   } catch (error: any) {
     throw new Error(error);
   }
@@ -23,31 +41,6 @@ export async function signOut() {
     throw new Error(error);
   }
 }
-
-//!
-// export async function createUser(email: string, password: string, username: string) {
-//   try {
-//     const newAccount = await account.create(ID.unique(), email, password, username);
-
-//     if (!newAccount) throw Error("Failed to create account");
-
-//     const avatarUrl = avatars.getInitials(username);
-
-//     await signIn(email, password);
-
-//     const newUser = await databases.createDocument(
-//       appwriteConfig.databaseId,
-//       appwriteConfig.userCollectionId,
-//       ID.unique(),
-//       { accountId: newAccount.$id, email, username, avatar: avatarUrl }
-//     );
-
-//     return newUser as User;
-//   } catch (error: any) {
-//     console.error(error);
-//     throw new Error(error);
-//   }
-// }
 
 export async function createUser(
   email: string,
@@ -64,11 +57,11 @@ export async function createUser(
   };
 
   try {
-    const results = SignupSchema.safeParse({ email, password, username, passwordConfirmation });
+    const results = SignUpSchema.safeParse({ email, password, username, passwordConfirmation });
 
     if (!results.success) {
       results.error.issues.forEach((issue) => {
-        const field = issue.path[0] as ErrorKeys;
+        const field = issue.path[0] as keyof typeof customErrors;
         if (field in customErrors) {
           customErrors[field].push(issue.message);
         }
@@ -76,13 +69,24 @@ export async function createUser(
 
       return { user: null, errors: customErrors };
     } else {
+      const isUsernameUnique = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.userCollectionId,
+        [Query.equal("username", username)]
+      ); // It should return an empty array if the username is unique
+
+      if (isUsernameUnique.documents.length > 0) {
+        return {
+          user: null,
+          errors: { ...customErrors, alert: ["Użytkownik z taką nazwą już istnieje."] },
+        };
+      }
+
       const newAccount = await account.create(ID.unique(), email, password, username);
 
       if (!newAccount) throw Error("Failed to create account");
 
       const avatarUrl = avatars.getInitials(username);
-
-      await signIn(email, password);
 
       const newUser = await databases.createDocument(
         appwriteConfig.databaseId,
@@ -91,9 +95,20 @@ export async function createUser(
         { accountId: newAccount.$id, email, username, avatar: avatarUrl }
       );
 
-      return { user: newUser as User, errors: customErrors };
+      await signIn(email, password);
+
+      return {
+        user: newUser as User,
+        errors: {
+          email: null,
+          username: null,
+          password: null,
+          passwordConfirmation: null,
+          alert: null,
+        },
+      };
     }
-  } catch (error: any) {
+  } catch (error) {
     return {
       user: null,
       errors: {
@@ -103,7 +118,6 @@ export async function createUser(
     };
   }
 }
-//!
 
 export async function getCurrentUser() {
   try {
