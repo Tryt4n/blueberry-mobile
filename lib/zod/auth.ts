@@ -1,3 +1,4 @@
+import type { User } from "@/types/user";
 import { z } from "zod";
 
 // Error Messages
@@ -21,7 +22,7 @@ const invalid_password_too_long_error = "Hasło może składać się z maksymaln
 const invalid_password_confirmation_error = "Hasła nie są identyczne.";
 
 // Schemas
-export const SignupSchema = z
+export const SignUpSchema = z
   .object({
     email: z.string().min(1, required_email_error).email(invalid_email_error),
     username: z
@@ -54,3 +55,8 @@ export const SignupSchema = z
     message: invalid_password_confirmation_error,
     path: ["passwordConfirmation"],
   });
+
+export const SignInSchema = z.object({
+  email: z.string().min(1, required_email_error).email(invalid_email_error),
+  password: z.string().min(1, required_password_error),
+});
