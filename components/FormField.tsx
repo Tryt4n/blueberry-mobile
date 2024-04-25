@@ -1,19 +1,19 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { useState, type ComponentPropsWithoutRef } from "react";
+import { forwardRef, useState, type ComponentProps, type ForwardedRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import ErrorsList from "./ErrorsList";
 
 type FormFieldProps = {
   title: string;
   handleChangeText: (e: string) => void;
   otherStyles?: string;
-} & ComponentPropsWithoutRef<typeof TextInput>;
+  errors?: string[] | null;
+} & ComponentProps<typeof TextInput>;
 
-export default function FormField({
-  title,
-  handleChangeText,
-  otherStyles,
-  ...props
-}: FormFieldProps) {
+function InnerFormField(
+  { title, handleChangeText, otherStyles, errors, ...props }: FormFieldProps,
+  ref: ForwardedRef<TextInput>
+) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -23,6 +23,7 @@ export default function FormField({
       <View className="border-2 border-black-200 w-full p-4 bg-black-100 rounded-2xl focus:border-blue-500 flex-row items-center">
         <TextInput
           {...props}
+          ref={ref}
           className="flex-1 font-poppinsSemiBold text-base"
           placeholderTextColor="#7B7B8B"
           onChangeText={handleChangeText}
@@ -44,6 +45,10 @@ export default function FormField({
           </TouchableOpacity>
         )}
       </View>
+
+      {errors && errors.length > 0 && <ErrorsList errors={errors} />}
     </View>
   );
 }
+
+export const FormField = forwardRef(InnerFormField);
