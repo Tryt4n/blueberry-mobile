@@ -1,10 +1,11 @@
-import { ScrollView, Alert, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import { Alert, type TextInput } from "react-native";
+import { router } from "expo-router";
+import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { createUser } from "@/api/auth/users";
-import FormField from "@/components/FormField";
+import { createOnSubmitEditing } from "@/helpers/authForms";
+import AuthLayout from "@/layout/AuthLayout";
+import { FormField } from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import type { ErrorKeys } from "@/types/Errors";
 
@@ -17,14 +18,19 @@ export default function SignUpPage() {
     passwordConfirmation: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [errors, setErrors] = useState<Record<ErrorKeys, string[] | null>>({
+  const initialErrorsState = {
     email: null,
     username: null,
     password: null,
     passwordConfirmation: null,
     alert: null,
-  });
+  };
+  const [errors, setErrors] = useState<Record<ErrorKeys, string[] | null>>(initialErrorsState);
+
+  const emailRef = useRef<TextInput>(null);
+  const usernameRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const passwordConfirmationRef = useRef<TextInput>(null);
 
   async function createAccount() {
     if (
@@ -42,6 +48,8 @@ export default function SignUpPage() {
     setIsSubmitting(true);
 
     try {
+      setErrors(initialErrorsState);
+
       const result = await createUser(
         signInForm.email,
         signInForm.password,
@@ -64,146 +72,75 @@ export default function SignUpPage() {
     }
   }
 
-  // async function createAccount() {
-  //   if (
-  //     signInForm.username === "" ||
-  //     signInForm.email === "" ||
-  //     signInForm.password === "" ||
-  //     signInForm.passwordConfirmation === ""
-  //   ) {
-  //     return Alert.alert("Puste pola", "Wszystkie pola muszą być wypełnione.");
-  //   }
-  //   if (signInForm.password !== signInForm.passwordConfirmation) {
-  //     return Alert.alert("Niezgodność haseł", "Hasła muszą być identyczne.");
-  //   }
-
-  //   setIsSubmitting(true);
-
-  //   try {
-  //     const result = await createUser(signInForm.email, signInForm.password, signInForm.username);
-
-  //     if (result) {
-  //       setUser(result);
-  //       setIsLoggedIn(true);
-
-  //       router.replace("/");
-  //     } else {
-  //       throw new Error("Error with creating account.");
-  //     }
-  //   } catch (error) {
-  //     Alert.alert("Błąd rejestracji", "Nie udało się utworzyć konta. Spróbuj ponownie.");
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // }
-
   if (errors.alert && errors.alert.length > 0) {
-    Alert.alert("Błąd rejestracji", errors.alert.join("\n"));
+    Alert.alert("Błąd rejestracji", errors.alert.join("\n")); // Every error message will be displayed in a new line
     setErrors({ ...errors, alert: [] });
   }
 
   return (
-    <SafeAreaView className="h-full">
-      <ScrollView>
-        <View className="px-4">
-          <Text className="my-10 font-poppinsSemiBold text-2xl text-center">Zarejestruj się</Text>
+    <AuthLayout type="signUp">
+      <FormField
+        ref={usernameRef}
+        title="Nazwa użytkownika:"
+        placeholder="Wprowadź swoją nazwę"
+        errors={errors.username}
+        handleChangeText={(e) => setSignInForm({ ...signInForm, username: e })}
+        onSubmitEditing={createOnSubmitEditing(isSubmitting, signInForm, emailRef, createAccount)}
+      />
 
-          <FormField
-            title="Nazwa użytkownika:"
-            placeholder="Wprowadź swoją nazwę"
-            handleChangeText={(e) => setSignInForm({ ...signInForm, username: e })}
-          />
-          {errors.username && errors.username.length > 0 && (
-            <View>
-              {errors.username.map((error, index) => (
-                <Text
-                  key={index}
-                  className="text-red-500 text-sm"
-                >
-                  {error}
-                </Text>
-              ))}
-            </View>
-          )}
+      <FormField
+        ref={emailRef}
+        title="Email:"
+        placeholder="Uzupełnij email"
+        keyboardType="email-address"
+        errors={errors.email}
+        handleChangeText={(e) => setSignInForm({ ...signInForm, email: e })}
+        onSubmitEditing={createOnSubmitEditing(
+          isSubmitting,
+          signInForm,
+          passwordRef,
+          createAccount
+        )}
+      />
 
-          <FormField
-            title="Email:"
-            placeholder="Uzupełnij email"
-            keyboardType="email-address"
-            handleChangeText={(e) => setSignInForm({ ...signInForm, email: e })}
-          />
-          {errors.email && errors.email.length > 0 && (
-            <View>
-              {errors.email.map((error, index) => (
-                <Text
-                  key={index}
-                  className="text-red-500 text-sm"
-                >
-                  {error}
-                </Text>
-              ))}
-            </View>
-          )}
+      <FormField
+        ref={passwordRef}
+        title="Hasło:"
+        placeholder="Uzupełnij hasło"
+        secureTextEntry={true}
+        errors={errors.password}
+        handleChangeText={(e) => setSignInForm({ ...signInForm, password: e })}
+        onSubmitEditing={createOnSubmitEditing(
+          isSubmitting,
+          signInForm,
+          passwordConfirmationRef,
+          createAccount
+        )}
+      />
 
-          <FormField
-            title="Hasło:"
-            placeholder="Uzupełnij hasło"
-            secureTextEntry={true}
-            handleChangeText={(e) => setSignInForm({ ...signInForm, password: e })}
-          />
-          {errors.password && errors.password.length > 0 && (
-            <View>
-              {errors.password.map((error, index) => (
-                <Text
-                  key={index}
-                  className="text-red-500 text-sm"
-                >
-                  {error}
-                </Text>
-              ))}
-            </View>
-          )}
+      <FormField
+        ref={passwordConfirmationRef}
+        title="Potwierdź hasło:"
+        placeholder="Uzupełnij hasło ponownie"
+        secureTextEntry={true}
+        errors={errors.passwordConfirmation}
+        handleChangeText={(e) => setSignInForm({ ...signInForm, passwordConfirmation: e })}
+        onSubmitEditing={createOnSubmitEditing(
+          isSubmitting,
+          signInForm,
+          usernameRef,
+          createAccount
+        )}
+      />
 
-          <FormField
-            title="Potwierdź hasło:"
-            placeholder="Uzupełnij hasło ponownie"
-            secureTextEntry={true}
-            handleChangeText={(e) => setSignInForm({ ...signInForm, passwordConfirmation: e })}
-          />
-          {errors.passwordConfirmation && errors.passwordConfirmation.length > 0 && (
-            <View>
-              {errors.passwordConfirmation.map((error, index) => (
-                <Text
-                  key={index}
-                  className="text-red-500 text-sm"
-                >
-                  {error}
-                </Text>
-              ))}
-            </View>
-          )}
-
-          <CustomButton
-            text="Zarejestruj się"
-            disabled={isSubmitting}
-            onPress={createAccount}
-            containerStyles="mt-5"
-            textStyles="text-xl"
-          />
-
-          <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="font-poppinsRegular text-lg">
-              Masz już konto?&nbsp;
-              <Link
-                href="/signIn"
-                className="font-poppinsSemiBold text-lg text-blue-500"
-              >
-                Zaloguj się
-              </Link>
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <CustomButton
+        text="Zarejestruj się"
+        disabled={isSubmitting}
+        onPress={createAccount}
+        containerStyles="mt-5"
+        textStyles="text-xl"
+        loading={isSubmitting}
+      />
+    </AuthLayout>
   );
 }
