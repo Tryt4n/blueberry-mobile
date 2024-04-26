@@ -2,11 +2,12 @@ import { Alert } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
-import { getCurrentUser, signIn } from "@/api/auth/users";
+import { getCurrentUser, signIn } from "@/api/auth/appwrite";
 import { createOnSubmitEditing } from "@/helpers/authForms";
 import AuthLayout from "@/layout/AuthLayout";
-import { FormField } from "@/components/FormField";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 import CustomButton from "@/components/CustomButton";
+import { FormField } from "@/components/FormField";
 import type { TextInput } from "react-native-gesture-handler";
 
 export default function SignInPage() {
@@ -63,6 +64,8 @@ export default function SignInPage() {
 
   return (
     <AuthLayout type="signIn">
+      <GoogleSignInButton setIsSubmitting={setIsSubmitting} />
+
       <FormField
         ref={loginRef}
         title="Email:"
