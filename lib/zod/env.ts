@@ -8,6 +8,7 @@ const envSchema = z.object({
   EXPO_PUBLIC_APPWRITE_USER_COLLECTION_ID: z.string().min(1),
   EXPO_PUBLIC_APPWRITE_AVATARS_COLLECTION_ID: z.string().min(1),
   EXPO_PUBLIC_APPWRITE_AVATARS_STORAGE_ID: z.string().min(1),
+  EXPO_PUBLIC_ANDROID_CLIENT_ID: z.string().min(1),
 });
 
 export const parsedEnv = envSchema.parse(process.env);
