@@ -4,11 +4,12 @@ import { router } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
-import { signOut } from "@/api/auth/users";
+import { signOut } from "@/api/auth/appwrite";
 import CustomButton from "@/components/CustomButton";
+import { signOutWithGoogle } from "@/api/auth/google";
 
 export default function LogOutPage() {
-  const { isLoggedIn, setIsLoggedIn, setUser } = useGlobalContext();
+  const { isLoggedIn, setIsLoggedIn, setUser, authProvider } = useGlobalContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function logOut() {
@@ -17,7 +18,7 @@ export default function LogOutPage() {
     setIsSubmitting(true);
 
     try {
-      await signOut();
+      authProvider === "google" ? signOutWithGoogle() : await signOut();
 
       setUser(null);
       setIsLoggedIn(false);
