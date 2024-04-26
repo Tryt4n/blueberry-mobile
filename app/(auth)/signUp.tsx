@@ -2,7 +2,7 @@ import { Alert, type TextInput } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
-import { createUser } from "@/api/auth/users";
+import { createUser } from "@/api/auth/appwrite";
 import { createOnSubmitEditing } from "@/helpers/authForms";
 import AuthLayout from "@/layout/AuthLayout";
 import { FormField } from "@/components/FormField";
