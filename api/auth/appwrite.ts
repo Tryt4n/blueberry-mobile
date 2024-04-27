@@ -84,7 +84,7 @@ export async function createUser(
       const isEmailUnique = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.userCollectionId,
-        [Query.equal("email", email)]
+        [Query.equal("email", email.toLowerCase())]
       );
       if (isEmailUnique.documents.length > 0) {
         return {
@@ -106,7 +106,12 @@ export async function createUser(
         appwriteConfig.databaseId,
         appwriteConfig.userCollectionId,
         ID.unique(),
-        { accountId: newAccount.$id, email, username, avatar: avatarUrl }
+        {
+          accountId: newAccount.$id,
+          email: email.toLowerCase(),
+          username,
+          avatar: avatarUrl,
+        }
       );
 
       await signIn(email, password);
@@ -127,7 +132,7 @@ export async function createUser(
       user: null,
       errors: {
         ...customErrors,
-        alert: ["Użytkownik z takim samym emailem już istnieje"],
+        alert: ["Wystąpił nieoczekiwany błąd. Nie udało się utworzyć konta. Spróbuj ponownie."],
       },
     };
   }
