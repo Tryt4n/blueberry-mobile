@@ -46,7 +46,12 @@ async function createGoogleUserInAppwrite(user: GoogleUser["user"]) {
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
-      { accountId: user.id, email: user.email, username: user.name, avatar: avatarUrl }
+      {
+        accountId: user.id,
+        email: user.email,
+        username: user.name,
+        avatar: avatarUrl,
+      }
     );
 
     return newUser;
