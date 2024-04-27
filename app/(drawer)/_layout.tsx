@@ -37,7 +37,8 @@ export default function DrawerLayout() {
         <SideMenu.Screen
           name="(tabs)"
           options={{
-            title: "Home",
+            title: "",
+            drawerLabel: "Główna",
             drawerIcon: ({ color, size }) => (
               <Ionicons
                 name="home-outline"
