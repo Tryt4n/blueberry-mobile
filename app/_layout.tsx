@@ -29,15 +29,20 @@ export default function RootLayout() {
 
   return (
     <GlobalContextProvider>
-      {/* <StatusBar
-        backgroundColor="#161622"
-        style="light"
-      /> */}
+      <StatusBar />
 
       <Stack>
         <Stack.Screen
           name="index"
           options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="createOrder"
+          options={{
+            headerTitle: "Stwórz zamówienie",
+            headerTitleAlign: "center",
+          }}
         />
 
         <Stack.Screen
