@@ -15,21 +15,6 @@ export default function TabsLayout() {
         }}
       >
         <Tabs.Screen
-          name="(fertigation)"
-          options={{
-            title: "Fertygacja",
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon="leaf"
-                color={color}
-                name="Fertygacja"
-                focused={focused}
-              />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
           name="orders"
           options={{
             title: "Zamówienia",
@@ -38,6 +23,21 @@ export default function TabsLayout() {
                 icon="cart"
                 color={color}
                 name="Zamówienia"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="(fertigation)"
+          options={{
+            title: "Fertygacja",
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon="leaf"
+                color={color}
+                name="Fertygacja"
                 focused={focused}
               />
             ),
