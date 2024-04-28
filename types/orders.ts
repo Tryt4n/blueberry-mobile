@@ -1,4 +1,5 @@
 import type { User } from "./user";
+import type { Buyer } from "./buyers";
 
 export type Order = {
   readonly $collectionId: string;
@@ -11,4 +12,5 @@ export type Order = {
   readonly additionalInfo: string | null;
   readonly completed: boolean;
   readonly user: User;
+  readonly buyer: Buyer;
 };
