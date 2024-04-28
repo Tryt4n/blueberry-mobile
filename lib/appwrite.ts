@@ -9,6 +9,8 @@ export const appwriteConfig = {
   userCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_USER_COLLECTION_ID,
   avatarsCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_AVATARS_COLLECTION_ID,
   ordersCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID,
+  buyersCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_BUYERS_COLLECTION_ID,
+  currentPriceCollectionId: parsedEnv.EXPO_PUBLIC_APPWRITE_CURRENT_PRICE_COLLECTION_ID,
   avatarsStorageId: parsedEnv.EXPO_PUBLIC_APPWRITE_AVATARS_STORAGE_ID,
 };
 
