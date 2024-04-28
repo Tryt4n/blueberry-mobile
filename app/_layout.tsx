@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import GlobalContextProvider from "../context/GlobalContext";
+import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,33 +30,29 @@ export default function RootLayout() {
   if (!fontsLoaded && !error) return null;
 
   return (
-    <GlobalContextProvider>
-      <StatusBar />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <GlobalContextProvider>
+        <BottomSheetTabsContextProvider>
+          <StatusBar />
 
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{ headerShown: false }}
-        />
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{ headerShown: false }}
+            />
 
-        <Stack.Screen
-          name="createOrder"
-          options={{
-            headerTitle: "Stwórz zamówienie",
-            headerTitleAlign: "center",
-          }}
-        />
+            <Stack.Screen
+              name="(auth)"
+              options={{ headerShown: false }}
+            />
 
-        <Stack.Screen
-          name="(auth)"
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name="(drawer)"
-          options={{ headerShown: false }}
-        />
-      </Stack>
-    </GlobalContextProvider>
+            <Stack.Screen
+              name="(drawer)"
+              options={{ headerShown: false }}
+            />
+          </Stack>
+        </BottomSheetTabsContextProvider>
+      </GlobalContextProvider>
+    </GestureHandlerRootView>
   );
 }
