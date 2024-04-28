@@ -14,13 +14,13 @@ export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
   const { bottomSheetModalRef, snapPoints, handleClosePress, renderBackdrop } =
     useBottomSheetContext();
-
-  const [newOrderData, setNewOrderData] = useState({
+  const newOrderDataInitialState = {
     quantity: 1,
     buyerName: "",
     additionalInfo: "",
     userId: user && user.$id,
-  });
+  };
+  const [newOrderData, setNewOrderData] = useState(newOrderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -33,28 +33,45 @@ export default function OrderBottomSheet() {
   });
 
   async function handleCreateOrder() {
-    if (
-      user &&
-      buyers &&
-      newOrderData.quantity &&
-      typeof newOrderData.quantity === "number" &&
-      newOrderData.quantity >= 0.25
-    ) {
+    if (!newOrderData.quantity) return Alert.alert("Błąd zamówienia", "Wprowadź ilość.");
+    if (newOrderData.buyerName === "")
+      return Alert.alert("Błąd zamówienia", "Wprowadź nazwę kupującego.");
+
+    if (user && buyers && newOrderData.quantity && typeof newOrderData.quantity === "number") {
       setIsSubmitting(true);
 
-      const isBuyerExist = buyers.find((buyer) => buyer.buyerName === newOrderData.buyerName);
+      const existingBuyer = buyers.find((buyer) => buyer.buyerName === newOrderData.buyerName);
 
       try {
         let buyerId: Buyer["$id"];
-        if (!isBuyerExist) {
-          const newBuyer = await createNewBuyer(newOrderData.buyerName);
-          buyerId = newBuyer.$id;
+        if (!existingBuyer) {
+          const { buyer: newBuyer, error } = await createNewBuyer(
+            newOrderData.buyerName.toLowerCase()
+          );
+
+          if (newBuyer) {
+            buyerId = newBuyer.$id;
+          } else {
+            return Alert.alert("Błąd zamówienia", error.join("\n"));
+          }
         } else {
-          buyerId = isBuyerExist.$id;
+          buyerId = existingBuyer.$id;
         }
 
-        await createOrder(user.$id, buyerId, newOrderData.quantity, newOrderData.additionalInfo);
-        refetchData();
+        const { errors } = await createOrder(
+          user.$id,
+          buyerId,
+          newOrderData.quantity,
+          newOrderData.additionalInfo
+        );
+
+        if (errors) {
+          return Alert.alert("Błąd zamówienia", errors.quantity.join("\n"));
+        } else {
+          handleClosePress();
+          setNewOrderData(newOrderDataInitialState);
+          refetchData();
+        }
       } catch (error) {
         Alert.alert("Błąd", "Nie udało się utworzyć zamówienia. Spróbuj ponownie.");
       } finally {
