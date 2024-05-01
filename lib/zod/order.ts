@@ -8,7 +8,7 @@ const invalid_additionalInfo_max_length = "Maksymalna długość dodatkowej info
 export const OrderSchema = z.object({
   userId: z.string().min(1),
   buyerId: z.string().min(1),
-  additionalInfo: z.string().max(250, invalid_additionalInfo_max_length).optional(),
+  additionalInfo: z.string().max(250, invalid_additionalInfo_max_length).optional().nullable(),
   quantity: z
     .number()
     .min(0.25, invalid_quantity_min_value)
