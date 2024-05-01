@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 export function useAppwrite<T>(
-  fn: () => Promise<T>,
+  fn: (...args: string[]) => Promise<T>,
+  args: string[],
   errorMessage?: { title: string; message: string }
 ) {
   const [data, setData] = useState<T>();
@@ -12,7 +13,7 @@ export function useAppwrite<T>(
     setIsLoading(true);
 
     try {
-      const response = await fn();
+      const response = await fn(...args);
       setData(response);
     } catch (error: any) {
       errorMessage
@@ -21,7 +22,7 @@ export function useAppwrite<T>(
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [args]);
 
   const refetchData = () => fetchData();
 
