@@ -9,8 +9,8 @@ import { createContext, useCallback, useMemo, useRef } from "react";
 type BottomSheetTabsContextType = {
   bottomSheetModalRef: React.RefObject<BottomSheetModalMethods>;
   snapPoints: string[];
-  handleOpenPress: () => void;
-  handleClosePress: () => void;
+  handleOpenBottomSheet: () => void;
+  handleCloseBottomSheet: () => void;
   renderBackdrop: (props: BottomSheetBackdropProps) => React.ReactNode;
 };
 
@@ -24,9 +24,9 @@ export default function BottomSheetTabsContextProvider({
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
 
-  const handleOpenPress = () => bottomSheetModalRef.current?.expand();
+  const handleOpenBottomSheet = () => bottomSheetModalRef.current?.expand();
 
-  const handleClosePress = () => bottomSheetModalRef.current?.close();
+  const handleCloseBottomSheet = () => bottomSheetModalRef.current?.close();
 
   // const snapToIndex = (index:number) => bottomSheetModalRef.current?.snapToIndex(index);
 
@@ -36,7 +36,7 @@ export default function BottomSheetTabsContextProvider({
         appearsOnIndex={0}
         disappearsOnIndex={-1}
         {...props}
-        onPress={handleClosePress}
+        onPress={handleCloseBottomSheet}
       />
     ),
     []
@@ -45,8 +45,8 @@ export default function BottomSheetTabsContextProvider({
   const contextValues: BottomSheetTabsContextType = {
     bottomSheetModalRef,
     snapPoints,
-    handleOpenPress,
-    handleClosePress,
+    handleOpenBottomSheet,
+    handleCloseBottomSheet,
     renderBackdrop,
   };
 
