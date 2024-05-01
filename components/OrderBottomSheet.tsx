@@ -12,7 +12,7 @@ import type { Buyer } from "@/types/buyers";
 
 export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
-  const { bottomSheetModalRef, snapPoints, handleClosePress, renderBackdrop } =
+  const { bottomSheetModalRef, snapPoints, handleCloseBottomSheet, renderBackdrop } =
     useBottomSheetContext();
   const newOrderDataInitialState = {
     quantity: 1,
@@ -27,7 +27,7 @@ export default function OrderBottomSheet() {
     data: buyers,
     isLoading,
     refetchData,
-  } = useAppwrite(getAllBuyers, {
+  } = useAppwrite(getAllBuyers, [], {
     title: "Błąd",
     message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
   });
@@ -40,7 +40,8 @@ export default function OrderBottomSheet() {
     if (user && buyers && newOrderData.quantity && typeof newOrderData.quantity === "number") {
       setIsSubmitting(true);
 
-      const existingBuyer = buyers.find((buyer) => buyer.buyerName === newOrderData.buyerName);
+      const trimmedBuyerName = newOrderData.buyerName.replace(/\s+/g, " ").trim().toLowerCase(); // trim and lowercase buyer name
+      const existingBuyer = buyers.find((buyer) => buyer.buyerName === trimmedBuyerName);
 
       try {
         let buyerId: Buyer["$id"];
@@ -68,7 +69,7 @@ export default function OrderBottomSheet() {
         if (errors) {
           return Alert.alert("Błąd zamówienia", errors.quantity.join("\n"));
         } else {
-          handleClosePress();
+          handleCloseBottomSheet();
           setNewOrderData(newOrderDataInitialState);
           refetchData();
         }
@@ -88,7 +89,7 @@ export default function OrderBottomSheet() {
       enablePanDownToClose={true}
       handleIndicatorStyle={{ backgroundColor: "rgb(59 130 246)" }}
       backdropComponent={renderBackdrop}
-      onClose={handleClosePress}
+      onClose={handleCloseBottomSheet}
       style={{ paddingHorizontal: 16 }}
     >
       <BottomSheetScrollView>
