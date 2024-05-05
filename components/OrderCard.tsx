@@ -1,4 +1,5 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, Image } from "react-native";
+import { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { editOrder as editOrderAppwrite } from "@/api/appwrite/orders";
@@ -11,13 +12,15 @@ import type { Order } from "@/types/orders";
 
 type OrderCardProps = {
   order: Order;
+  currentPrice: number;
   refetchOrders: () => Promise<void>;
 };
 
-export default function OrderCard({ order, refetchOrders }: OrderCardProps) {
+export default function OrderCard({ order: orderTest, currentPrice }: OrderCardProps) {
   const { user } = useGlobalContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
-  const currentPrice = 13;
+
+  const [order, setOrder] = useState(orderTest);
 
   async function changeCompletedStatus(order: Order) {
     try {
@@ -29,10 +32,9 @@ export default function OrderCard({ order, refetchOrders }: OrderCardProps) {
         additionalInfo: order.additionalInfo,
       };
 
-      await editOrderAppwrite(order.$id, updatedOrder);
+      setOrder((prevOrder) => ({ ...prevOrder, completed: !prevOrder.completed }));
 
-      //TODO: delete this line
-      await refetchOrders();
+      await editOrderAppwrite(order.$id, updatedOrder);
     } catch (error) {
       Alert.alert("Błąd", "Nie udało się zaktualizować zamówienia.");
     }
@@ -112,10 +114,17 @@ export default function OrderCard({ order, refetchOrders }: OrderCardProps) {
           )}
 
           <View>
-            <Text className="font-poppinsRegular text-right">
-              Dodano przez&nbsp;
-              <Text className="font-poppinsBlack">{order.user.username}</Text>
-            </Text>
+            {(user.role === "admin" || user.role === "moderator") && (
+              <View className="flex flex-row items-center justify-end gap-2">
+                <View className="flex items-center">
+                  <Image
+                    source={{ uri: user.avatar }}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <Text className="font-poppinsMedium">{order.user.username}</Text>
+                </View>
+              </View>
+            )}
 
             <Text className="font-poppinsLight text-xs text-right">
               {formatDistanceToNow(order.$createdAt, {
