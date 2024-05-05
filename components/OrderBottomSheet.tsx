@@ -2,6 +2,7 @@ import { View, Alert } from "react-native";
 import React, { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder } from "@/api/appwrite/orders";
@@ -9,6 +10,7 @@ import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FormField } from "./FormField";
 import CustomButton from "./CustomButton";
 import type { Buyer } from "@/types/buyers";
+import Toast from "react-native-toast-message";
 
 export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
@@ -20,6 +22,7 @@ export default function OrderBottomSheet() {
     additionalInfo: "",
     userId: user && user.$id,
   };
+  const { currentPriceId, ordersData } = useOrdersContext();
   const [newOrderData, setNewOrderData] = useState(newOrderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,10 +62,17 @@ export default function OrderBottomSheet() {
           buyerId = existingBuyer.$id;
         }
 
+        if (!currentPriceId)
+          return Alert.alert(
+            "Błąd zamówienia",
+            "Nie udało się pobrać aktualnej ceny. Spróbuj ponownie."
+          );
+
         const { errors } = await createOrder(
           user.$id,
           buyerId,
           newOrderData.quantity,
+          currentPriceId,
           newOrderData.additionalInfo
         );
 
@@ -71,7 +81,13 @@ export default function OrderBottomSheet() {
         } else {
           handleCloseBottomSheet();
           setNewOrderData(newOrderDataInitialState);
+          ordersData && ordersData.refetchData();
           refetchData();
+          Toast.show({
+            type: "success",
+            text1: "Zamówienie zostało utworzone.",
+            text1Style: { textAlign: "center", fontSize: 16 },
+          });
         }
       } catch (error) {
         Alert.alert("Błąd", "Nie udało się utworzyć zamówienia. Spróbuj ponownie.");
