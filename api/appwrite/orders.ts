@@ -4,16 +4,48 @@ import { OrderSchema } from "@/lib/zod/order";
 import type { User } from "@/types/user";
 import type { Order } from "@/types/orders";
 import type { Buyer } from "@/types/buyers";
+import type { CurrentPrice } from "@/types/currentPrice";
 
-export async function getOrders(usedId?: User["$id"]) {
+export async function getOrders(userId?: User["$id"]) {
   try {
-    const orders = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.ordersCollectionId,
-      usedId ? [Query.equal("user", usedId)] : undefined
-    );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toISOString();
 
-    return orders.documents as Order[];
+    let ordersFilters = [Query.greaterThanEqual("$updatedAt", todayString)];
+    let uncompletedOrdersFilters = [Query.equal("completed", false)];
+    if (userId) {
+      const userFilter = Query.equal("user", userId);
+      ordersFilters.push(userFilter);
+      uncompletedOrdersFilters.push(userFilter);
+    }
+
+    const [orders, uncompletedOrders] = await Promise.all([
+      databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.ordersCollectionId,
+        ordersFilters
+      ),
+      databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.ordersCollectionId,
+        uncompletedOrdersFilters
+      ),
+    ]);
+
+    const uncompletedOrdersIds = uncompletedOrders.documents.map((order) => order.$id);
+    const combinedOrders = [
+      ...uncompletedOrders.documents,
+      ...orders.documents.filter((order) => !uncompletedOrdersIds.includes(order.$id)),
+    ];
+
+    const combinedAndSortedOrders = combinedOrders.sort((a, b) => {
+      const dateA = new Date(a.$createdAt);
+      const dateB = new Date(b.$createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    return combinedAndSortedOrders as Order[];
   } catch (error: any) {
     throw new Error(error);
   }
@@ -23,6 +55,7 @@ export async function createOrder(
   userId: User["$id"],
   buyerId: Buyer["$id"],
   quantity: number,
+  currentPriceId: CurrentPrice["$id"],
   additionalInfo?: string
 ) {
   const customErrors: Record<string, string[]> = {
@@ -54,6 +87,7 @@ export async function createOrder(
           quantity: quantity,
           additionalInfo: additionalInfo ? additionalInfo : null,
           buyer: buyerId,
+          currentPrice: currentPriceId,
         }
       );
 
