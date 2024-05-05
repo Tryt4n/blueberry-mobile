@@ -5,6 +5,8 @@ import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import GlobalContextProvider from "../context/GlobalContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
+import OrderContextProvider from "@/context/OrdersContext";
+import Toast from "react-native-toast-message";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,26 +34,30 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GlobalContextProvider>
-        <BottomSheetTabsContextProvider>
-          <StatusBar />
+        <OrderContextProvider>
+          <BottomSheetTabsContextProvider>
+            <StatusBar />
 
-          <Stack>
-            <Stack.Screen
-              name="index"
-              options={{ headerShown: false }}
-            />
+            <Stack>
+              <Stack.Screen
+                name="index"
+                options={{ headerShown: false }}
+              />
 
-            <Stack.Screen
-              name="(auth)"
-              options={{ headerShown: false }}
-            />
+              <Stack.Screen
+                name="(auth)"
+                options={{ headerShown: false }}
+              />
 
-            <Stack.Screen
-              name="(drawer)"
-              options={{ headerShown: false }}
-            />
-          </Stack>
-        </BottomSheetTabsContextProvider>
+              <Stack.Screen
+                name="(drawer)"
+                options={{ headerShown: false }}
+              />
+            </Stack>
+
+            <Toast />
+          </BottomSheetTabsContextProvider>
+        </OrderContextProvider>
       </GlobalContextProvider>
     </GestureHandlerRootView>
   );
