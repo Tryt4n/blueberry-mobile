@@ -5,6 +5,7 @@ import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { createUser } from "@/api/auth/appwrite";
 import { createOnSubmitEditing } from "@/helpers/authForms";
 import AuthLayout from "@/layout/AuthLayout";
+import Toast from "react-native-toast-message";
 import { FormField } from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import type { ErrorKeys } from "@/types/Errors";
@@ -60,6 +61,12 @@ export default function SignUpPage() {
       if (result.user) {
         setUser(result.user);
         setIsLoggedIn(true);
+        Toast.show({
+          type: "success",
+          text1: "Pomyślnie utworzono konto.",
+          topOffset: 50,
+          text1Style: { textAlign: "center", fontSize: 16 },
+        });
 
         router.replace("/");
       } else {
