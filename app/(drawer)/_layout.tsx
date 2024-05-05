@@ -1,6 +1,6 @@
 import { GestureHandlerRootView, TouchableOpacity } from "react-native-gesture-handler";
 import { Drawer as SideMenu } from "expo-router/drawer";
-import { Image } from "react-native";
+import { Text, Image } from "react-native";
 import React, { type ComponentProps } from "react";
 import {
   DrawerContentScrollView,
@@ -94,7 +94,7 @@ function CustomDrawerContent(props: ComponentProps<typeof DrawerItemList>) {
         {user && (
           <TouchableOpacity
             activeOpacity={0.7}
-            className="mx-auto mb-8"
+            className="mx-auto mb-8 items-center"
             disabled={pathname === "/settings"}
             onPress={() => {
               router.push("/settings");
@@ -104,6 +104,7 @@ function CustomDrawerContent(props: ComponentProps<typeof DrawerItemList>) {
               source={{ uri: user.avatar }}
               className="w-24 h-24 rounded-full items-center flex justify-center align-middle"
             />
+            <Text className="pt-2 text-xl font-poppinsBold text-center">{user.username}</Text>
           </TouchableOpacity>
         )}
 
