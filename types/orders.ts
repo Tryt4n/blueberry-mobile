@@ -13,4 +13,5 @@ export type Order = {
   readonly completed: boolean;
   readonly user: User;
   readonly buyer: Buyer;
+  readonly currentPrice: number;
 };
