@@ -8,7 +8,13 @@ export default function App() {
 
   if (isLoading) return <LoadingSpinner color="rgb(59 130 246)" />;
 
-  if (!isLoading && isLoggedIn) return <Redirect href="/orders" />;
+  return (
+    <>
+      <LoadingSpinner color="rgb(59 130 246)" />
 
-  if (!isLoading && !isLoggedIn) return <Redirect href="/signIn" />;
+      {isLoggedIn ? <Redirect href="/orders" /> : <Redirect href="/signIn" />}
+
+      {!isLoggedIn && <Redirect href="/signIn" />}
+    </>
+  );
 }
