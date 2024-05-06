@@ -2,8 +2,8 @@ import { Alert } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { getCurrentUser, signIn } from "@/api/auth/appwrite";
-import { createOnSubmitEditing } from "@/helpers/authForms";
 import AuthLayout from "@/layout/AuthLayout";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import CustomButton from "@/components/CustomButton";
@@ -73,7 +73,7 @@ export default function SignInPage() {
         keyboardType="email-address"
         errors={errors.email}
         handleChangeText={(e) => setLoginForm({ ...loginForm, email: e })}
-        onSubmitEditing={createOnSubmitEditing(isSubmitting, loginForm, passwordRef, handleLogin)}
+        onSubmitEditing={useOnSubmitEditing(isSubmitting, loginForm, passwordRef, handleLogin)}
       />
 
       <FormField
@@ -83,7 +83,7 @@ export default function SignInPage() {
         secureTextEntry={true}
         errors={errors.password}
         handleChangeText={(e) => setLoginForm({ ...loginForm, password: e })}
-        onSubmitEditing={createOnSubmitEditing(isSubmitting, loginForm, loginRef, handleLogin)}
+        onSubmitEditing={useOnSubmitEditing(isSubmitting, loginForm, loginRef, handleLogin)}
       />
 
       <CustomButton

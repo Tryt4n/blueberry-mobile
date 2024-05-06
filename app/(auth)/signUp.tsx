@@ -2,8 +2,8 @@ import { Alert, type TextInput } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { createUser } from "@/api/auth/appwrite";
-import { createOnSubmitEditing } from "@/helpers/authForms";
 import AuthLayout from "@/layout/AuthLayout";
 import Toast from "react-native-toast-message";
 import { FormField } from "@/components/FormField";
@@ -92,7 +92,7 @@ export default function SignUpPage() {
         placeholder="Wprowadź swoją nazwę"
         errors={errors.username}
         handleChangeText={(e) => setSignInForm({ ...signInForm, username: e })}
-        onSubmitEditing={createOnSubmitEditing(isSubmitting, signInForm, emailRef, createAccount)}
+        onSubmitEditing={useOnSubmitEditing(isSubmitting, signInForm, emailRef, createAccount)}
       />
 
       <FormField
@@ -102,12 +102,7 @@ export default function SignUpPage() {
         keyboardType="email-address"
         errors={errors.email}
         handleChangeText={(e) => setSignInForm({ ...signInForm, email: e })}
-        onSubmitEditing={createOnSubmitEditing(
-          isSubmitting,
-          signInForm,
-          passwordRef,
-          createAccount
-        )}
+        onSubmitEditing={useOnSubmitEditing(isSubmitting, signInForm, passwordRef, createAccount)}
       />
 
       <FormField
@@ -117,7 +112,7 @@ export default function SignUpPage() {
         secureTextEntry={true}
         errors={errors.password}
         handleChangeText={(e) => setSignInForm({ ...signInForm, password: e })}
-        onSubmitEditing={createOnSubmitEditing(
+        onSubmitEditing={useOnSubmitEditing(
           isSubmitting,
           signInForm,
           passwordConfirmationRef,
@@ -132,12 +127,7 @@ export default function SignUpPage() {
         secureTextEntry={true}
         errors={errors.passwordConfirmation}
         handleChangeText={(e) => setSignInForm({ ...signInForm, passwordConfirmation: e })}
-        onSubmitEditing={createOnSubmitEditing(
-          isSubmitting,
-          signInForm,
-          usernameRef,
-          createAccount
-        )}
+        onSubmitEditing={useOnSubmitEditing(isSubmitting, signInForm, usernameRef, createAccount)}
       />
 
       <CustomButton
