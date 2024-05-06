@@ -1,23 +1,27 @@
-import { View, Alert } from "react-native";
-import React, { useState } from "react";
+import { View, Alert, type TextInput } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
+import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder } from "@/api/appwrite/orders";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import DropDownPicker from "react-native-dropdown-picker";
+import Toast from "react-native-toast-message";
 import { FormField } from "./FormField";
+import { QuantityInput } from "./QuantityInput";
 import CustomButton from "./CustomButton";
 import type { Buyer } from "@/types/buyers";
-import Toast from "react-native-toast-message";
 
 export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
   const { bottomSheetModalRef, snapPoints, handleCloseBottomSheet, renderBackdrop } =
     useBottomSheetContext();
+  const [quantity, setQuantity] = useState(1);
   const newOrderDataInitialState = {
-    quantity: 1,
+    quantity: quantity,
     buyerName: "",
     additionalInfo: "",
     userId: user && user.$id,
@@ -26,9 +30,12 @@ export default function OrderBottomSheet() {
   const [newOrderData, setNewOrderData] = useState(newOrderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const quantityRef = useRef<TextInput>(null);
+  const buyerNameRef = useRef<TextInput>(null);
+
   const {
     data: buyers,
-    isLoading,
+    isLoading: isLoadingBuyers,
     refetchData,
   } = useAppwrite(getAllBuyers, [], {
     title: "Błąd",
@@ -81,6 +88,7 @@ export default function OrderBottomSheet() {
         } else {
           handleCloseBottomSheet();
           setNewOrderData(newOrderDataInitialState);
+          setQuantity(1);
           ordersData && ordersData.refetchData();
           refetchData();
           Toast.show({
@@ -97,32 +105,90 @@ export default function OrderBottomSheet() {
     }
   }
 
+  useEffect(() => {
+    setNewOrderData({ ...newOrderData, quantity: quantity });
+  }, [quantity]);
+
+  //!
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<string | null>(null);
+  const [items, setItems] = useState<Record<"label" | "value", string>[]>([]);
+
+  useEffect(() => {
+    buyers && setItems(buyers?.map((buyer) => ({ label: buyer.buyerName, value: buyer.$id })));
+  }, [buyers]);
+  //!
+
   return (
     <BottomSheet
       ref={bottomSheetModalRef}
       index={-1}
       snapPoints={snapPoints}
+      enableContentPanningGesture={false}
+      keyboardBehavior="extend"
       enablePanDownToClose={true}
       handleIndicatorStyle={{ backgroundColor: "rgb(59 130 246)" }}
       backdropComponent={renderBackdrop}
-      onClose={handleCloseBottomSheet}
+      onClose={() => {
+        quantityRef.current?.blur();
+        buyerNameRef.current?.blur();
+        handleCloseBottomSheet();
+      }}
       style={{ paddingHorizontal: 16 }}
     >
       <BottomSheetScrollView>
         <View>
-          <FormField
-            title="Ilość:"
-            placeholder="Wprowadź ilość"
-            keyboardType="number-pad"
-            value={newOrderData.quantity.toString()}
-            handleChangeText={(e) => setNewOrderData({ ...newOrderData, quantity: Number(e) })}
+          <QuantityInput
+            ref={quantityRef}
+            label="Ilość:"
+            value={newOrderData.quantity}
+            setValue={setQuantity}
+            containerStyles="mt-4"
+            onSubmitEditing={useOnSubmitEditing(
+              isSubmitting,
+              newOrderData,
+              buyerNameRef,
+              handleCreateOrder,
+              ["additionalInfo"]
+            )}
+          />
+
+          <DropDownPicker
+            loading={isLoadingBuyers}
+            activityIndicatorColor="rgb(59 130 246)"
+            listMode="SCROLLVIEW"
+            open={open}
+            value={value}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+            searchable={true}
+            autoScroll={true}
+            addCustomItem={true}
+            closeOnBackPressed={true}
+            containerStyle={{ marginVertical: 16 }}
+            itemSeparator={true}
+            itemSeparatorStyle={{ backgroundColor: "rgb(59 130 246)" }}
+            placeholder="Wprowadź nazwę osoby zamawiającej"
+            searchPlaceholder="Szukaj..."
+            textStyle={{ fontFamily: "Poppins-SemiBold", textTransform: "capitalize" }}
+            labelStyle={{ fontSize: 16, fontFamily: "Poppins-Medium" }}
+            disabledStyle={{ opacity: 0.5 }}
+            onChangeValue={(value) => {
+              if (!value) return;
+              setNewOrderData({ ...newOrderData, buyerName: value });
+            }}
           />
 
           <FormField
-            title="Dla:"
-            placeholder="Wprowadź nazwę osoby zamawiającej"
-            value={newOrderData.buyerName}
-            handleChangeText={(e) => setNewOrderData({ ...newOrderData, buyerName: e })}
+            title="Dodatkowe informacje:"
+            placeholder="Jeśli chcesz to możesz dodać dodatkowe informacje do zamówienia"
+            maxLength={250}
+            value={newOrderData.additionalInfo}
+            multiline={true}
+            numberOfLines={4}
+            handleChangeText={(e) => setNewOrderData({ ...newOrderData, additionalInfo: e })}
           />
 
           <CustomButton
