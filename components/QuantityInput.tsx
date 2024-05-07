@@ -94,6 +94,7 @@ function InnerQuantityInput(
           className="w-20 h-full text-xl text-center justify-center font-poppinsSemiBold"
           {...props}
           ref={ref}
+          cursorColor="rgb(59 130 246)"
           value={value.toString()}
           keyboardType="numeric"
           onChangeText={handleTextChange}

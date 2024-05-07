@@ -24,6 +24,7 @@ function InnerFormField(
         <TextInput
           {...props}
           ref={ref}
+          cursorColor="rgb(59 130 246)"
           className="flex-1 font-poppinsSemiBold text-base"
           placeholderTextColor="#7B7B8B"
           onChangeText={handleChangeText}
