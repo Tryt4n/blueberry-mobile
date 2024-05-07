@@ -6,8 +6,8 @@ import { editOrder as editOrderAppwrite } from "@/api/appwrite/orders";
 import { Entypo } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale/pl";
-import CustomButton from "./CustomButton";
 import BouncyCheckbox from "react-native-bouncy-checkbox/build/dist/BouncyCheckbox";
+import OrderCardMenuOptions from "./OrderCardMenuOptions";
 import type { Order } from "@/types/orders";
 
 type OrderCardProps = {
@@ -56,7 +56,6 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
       (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
     ) {
       console.log("delete");
-      handleOpenBottomSheet();
     }
   }
 
@@ -113,43 +112,32 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
             </View>
           )}
 
-          <View>
-            {(user.role === "admin" || user.role === "moderator") && (
-              <View className="flex flex-row items-center justify-end gap-2">
-                <View className="flex items-center">
+          <View className="flex flex-row-reverse justify-between items-end">
+            <OrderCardMenuOptions
+              options={[
+                { text: "Edytuj", onSelect: () => editOrder(order.$id, order.user.$id) },
+                { text: "Usuń", onSelect: () => deleteOrder(order.$id, order.user.$id) },
+              ]}
+            />
+
+            <View className="mt-8">
+              {(user.role === "admin" || user.role === "moderator") && (
+                <View className="flex gap-y-1">
                   <Image
                     source={{ uri: user.avatar }}
                     className="w-12 h-12 rounded-full"
                   />
                   <Text className="font-poppinsMedium capitalize">{order.user.username}</Text>
                 </View>
-              </View>
-            )}
-
-            <Text className="font-poppinsLight text-xs text-right">
-              {formatDistanceToNow(order.$createdAt, {
-                addSuffix: true,
-                locale: pl,
-              })}
-            </Text>
-          </View>
-
-          {!order.completed && (
-            <View className="pt-4 flex-row gap-4">
-              <CustomButton
-                text="Edytuj"
-                containerStyles="flex-1 bg-white border-2 border-blue-500"
-                textStyles="text-black"
-                onPress={() => editOrder(order.$id, order.user.$id)}
-              />
-              <CustomButton
-                text="Usuń"
-                containerStyles="flex-1 bg-white border-2 border-red-500"
-                textStyles="text-black"
-                onPress={() => deleteOrder(order.$id, order.user.$id)}
-              />
+              )}
+              <Text className="font-poppinsLight text-xs">
+                {formatDistanceToNow(order.$createdAt, {
+                  addSuffix: true,
+                  locale: pl,
+                })}
+              </Text>
             </View>
-          )}
+          </View>
         </View>
       )}
     </>
