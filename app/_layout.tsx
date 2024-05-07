@@ -3,6 +3,7 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { MenuProvider } from "react-native-popup-menu";
 import GlobalContextProvider from "../context/GlobalContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 import OrderContextProvider from "@/context/OrdersContext";
@@ -36,26 +37,28 @@ export default function RootLayout() {
       <GlobalContextProvider>
         <OrderContextProvider>
           <BottomSheetTabsContextProvider>
-            <StatusBar />
+            <MenuProvider>
+              <StatusBar />
 
-            <Stack>
-              <Stack.Screen
-                name="index"
-                options={{ headerShown: false }}
-              />
+              <Stack>
+                <Stack.Screen
+                  name="index"
+                  options={{ headerShown: false }}
+                />
 
-              <Stack.Screen
-                name="(auth)"
-                options={{ headerShown: false }}
-              />
+                <Stack.Screen
+                  name="(auth)"
+                  options={{ headerShown: false }}
+                />
 
-              <Stack.Screen
-                name="(drawer)"
-                options={{ headerShown: false }}
-              />
-            </Stack>
+                <Stack.Screen
+                  name="(drawer)"
+                  options={{ headerShown: false }}
+                />
+              </Stack>
 
-            <Toast />
+              <Toast />
+            </MenuProvider>
           </BottomSheetTabsContextProvider>
         </OrderContextProvider>
       </GlobalContextProvider>
