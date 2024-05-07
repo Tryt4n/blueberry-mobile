@@ -98,7 +98,7 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
           </Text>
 
           <Text className="py-2 text-lg font-poppinsRegular">
-            Dla: <Text className="font-poppinsSemiBold">{order.buyer.buyerName}</Text>
+            Dla: <Text className="font-poppinsSemiBold capitalize">{order.buyer.buyerName}</Text>
           </Text>
 
           <Text className="pb-2 text-lg font-poppinsRegular">
@@ -121,7 +121,7 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
                     source={{ uri: user.avatar }}
                     className="w-12 h-12 rounded-full"
                   />
-                  <Text className="font-poppinsMedium">{order.user.username}</Text>
+                  <Text className="font-poppinsMedium capitalize">{order.user.username}</Text>
                 </View>
               </View>
             )}
