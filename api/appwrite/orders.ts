@@ -147,3 +147,15 @@ export async function editOrder(
     throw new Error(error);
   }
 }
+
+export async function deleteOrder(orderId: Order["$id"]) {
+  try {
+    await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.ordersCollectionId,
+      orderId
+    );
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
