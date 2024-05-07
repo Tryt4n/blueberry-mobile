@@ -4,16 +4,16 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder } from "@/api/appwrite/orders";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import DropDownPicker from "react-native-dropdown-picker";
+import BottomSheet from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { FormField } from "./FormField";
 import { QuantityInput } from "./QuantityInput";
+import { BuyersDropDownPicker } from "./BuyersDropDownPicker";
 import CustomButton from "./CustomButton";
 import type { Buyer } from "@/types/buyers";
+import type { ValueType } from "react-native-dropdown-picker";
 
 export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
@@ -109,16 +109,6 @@ export default function OrderBottomSheet() {
     setNewOrderData({ ...newOrderData, quantity: quantity });
   }, [quantity]);
 
-  //!
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<string | null>(null);
-  const [items, setItems] = useState<Record<"label" | "value", string>[]>([]);
-
-  useEffect(() => {
-    buyers && setItems(buyers?.map((buyer) => ({ label: buyer.buyerName, value: buyer.$id })));
-  }, [buyers]);
-  //!
-
   return (
     <BottomSheet
       ref={bottomSheetModalRef}
@@ -136,68 +126,43 @@ export default function OrderBottomSheet() {
       }}
       style={{ paddingHorizontal: 16 }}
     >
-      <BottomSheetScrollView>
-        <View>
-          <QuantityInput
-            ref={quantityRef}
-            label="Ilość:"
-            value={newOrderData.quantity}
-            setValue={setQuantity}
-            containerStyles="mt-4"
-            onSubmitEditing={useOnSubmitEditing(
-              isSubmitting,
-              newOrderData,
-              buyerNameRef,
-              handleCreateOrder,
-              ["additionalInfo"]
-            )}
-          />
+      <View className="flex-1">
+        <QuantityInput
+          ref={quantityRef}
+          label="Ilość:"
+          value={newOrderData.quantity}
+          setValue={setQuantity}
+          containerStyles="mt-4"
+        />
 
-          <DropDownPicker
-            loading={isLoadingBuyers}
-            activityIndicatorColor="rgb(59 130 246)"
-            listMode="SCROLLVIEW"
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            searchable={true}
-            autoScroll={true}
-            addCustomItem={true}
-            closeOnBackPressed={true}
-            containerStyle={{ marginVertical: 16 }}
-            itemSeparator={true}
-            itemSeparatorStyle={{ backgroundColor: "rgb(59 130 246)" }}
-            placeholder="Wprowadź nazwę osoby zamawiającej"
-            searchPlaceholder="Szukaj..."
-            textStyle={{ fontFamily: "Poppins-SemiBold", textTransform: "capitalize" }}
-            labelStyle={{ fontSize: 16, fontFamily: "Poppins-Medium" }}
-            disabledStyle={{ opacity: 0.5 }}
-            onChangeValue={(value) => {
-              if (!value) return;
-              setNewOrderData({ ...newOrderData, buyerName: value });
-            }}
-          />
+        <BuyersDropDownPicker
+          ref={buyerNameRef}
+          label="Kupujący:"
+          buyers={buyers}
+          loading={isLoadingBuyers}
+          onChangeValue={(value: ValueType | null) => {
+            if (!value) return;
+            setNewOrderData({ ...newOrderData, buyerName: value as string });
+          }}
+        />
 
-          <FormField
-            title="Dodatkowe informacje:"
-            placeholder="Jeśli chcesz to możesz dodać dodatkowe informacje do zamówienia"
-            maxLength={250}
-            value={newOrderData.additionalInfo}
-            multiline={true}
-            numberOfLines={4}
-            handleChangeText={(e) => setNewOrderData({ ...newOrderData, additionalInfo: e })}
-          />
+        <FormField
+          title="Dodatkowe informacje:"
+          placeholder="Jeśli chcesz to możesz dodać dodatkowe informacje do zamówienia"
+          maxLength={250}
+          value={newOrderData.additionalInfo}
+          multiline={true}
+          numberOfLines={4}
+          handleChangeText={(e) => setNewOrderData({ ...newOrderData, additionalInfo: e })}
+        />
+      </View>
 
-          <CustomButton
-            text="Utwórz zamówienie"
-            onPress={handleCreateOrder}
-            loading={isSubmitting}
-          />
-        </View>
-      </BottomSheetScrollView>
+      <CustomButton
+        text="Utwórz zamówienie"
+        onPress={handleCreateOrder}
+        loading={isSubmitting}
+        containerStyles="mb-8"
+      />
     </BottomSheet>
   );
 }
