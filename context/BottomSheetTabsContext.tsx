@@ -1,5 +1,3 @@
-import { getCurrentPrice } from "@/api/appwrite/currentPrice";
-import { useAppwrite } from "@/hooks/useAppwrite";
 import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
