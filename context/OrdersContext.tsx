@@ -15,12 +15,15 @@ type OrderContextType = {
   currentPriceId: CurrentPrice["$id"] | undefined;
   ordersData: OrdersDataType | null;
   setOrdersData: React.Dispatch<React.SetStateAction<OrdersDataType | null>>;
+  editedOrder: Order | null;
+  setEditedOrder: (order: Order | null) => void;
 };
 
 export const OrdersContext = createContext<OrderContextType | null>(null);
 
 export default function OrderContextProvider({ children }: { children: React.ReactNode }) {
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
+  const [editedOrder, setEditedOrder] = useState<Order | null>(null);
 
   const { data: currentPriceObj } = useAppwrite(getCurrentPrice, [], {
     title: "Błąd",
@@ -32,6 +35,8 @@ export default function OrderContextProvider({ children }: { children: React.Rea
     currentPriceId: currentPriceObj?.$id,
     ordersData,
     setOrdersData,
+    editedOrder,
+    setEditedOrder,
   };
 
   return <OrdersContext.Provider value={contextValues}>{children}</OrdersContext.Provider>;
