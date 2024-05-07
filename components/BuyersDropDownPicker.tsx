@@ -1,5 +1,5 @@
-import { Dimensions, Text, View } from "react-native";
-import React, { forwardRef, useEffect, useMemo, useState, type ForwardedRef } from "react";
+import { Text, View } from "react-native";
+import React, { forwardRef, useEffect, useState, type ForwardedRef } from "react";
 import DropDownPicker, { type DropDownPickerProps } from "react-native-dropdown-picker";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import type { Buyer } from "@/types/buyers";
@@ -8,37 +8,44 @@ import type { TextInput, TextInputProps } from "react-native";
 type BuyersDropDownPickerProps = {
   label: string;
   buyers?: Buyer[];
+  defaultValue?: string;
   multiple?: false;
   arrowIconStyle?: { tintColor: string };
   searchTextInputProps?: { ref: ForwardedRef<TextInput> } & TextInputProps;
+  dropDownHeight?: number;
 } & Omit<
   DropDownPickerProps<string>,
   "items" | "value" | "setValue" | "open" | "setOpen" | "multiple"
 >;
 
 function InnerBuyersDropDownPicker(
-  { label, buyers, ...props }: BuyersDropDownPickerProps,
+  { label, buyers, defaultValue, dropDownHeight, ...props }: BuyersDropDownPickerProps,
   searchInputRef: ForwardedRef<TextInput>
 ) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<string | null>(null);
+  const [value, setValue] = useState<string | null>(defaultValue || null);
   const [items, setItems] = useState<Record<"label" | "value", string>[]>([]);
   const [isSearchFocused, setSearchFocused] = useState(false);
-
-  const dropdownHeight = useMemo(() => {
-    return Dimensions.get("window").height * 0.425;
-  }, []);
 
   useEffect(() => {
     buyers &&
       setItems(buyers?.map((buyer) => ({ label: buyer.buyerName, value: buyer.buyerName })));
   }, [buyers]);
 
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue);
+    } else {
+      setValue(null);
+    }
+  }, [defaultValue]);
+
   return (
     <View className="my-4">
       <Text className="pb-1 text-base font-medium">{label}</Text>
       <DropDownPicker //@ts-expect-error - bug related with props spreading (different props for multiple and single)
         select
+        listMode="SCROLLVIEW"
         activityIndicatorColor="rgb(59 130 246)"
         open={open}
         value={value}
@@ -118,8 +125,8 @@ function InnerBuyersDropDownPicker(
           shadowRadius: 10,
           elevation: 10,
           shadowOffset: { width: 0, height: 0 },
-          height: dropdownHeight,
-          maxHeight: dropdownHeight,
+          height: dropDownHeight,
+          maxHeight: dropDownHeight,
         }}
         selectedItemLabelStyle={{
           fontFamily: "Poppins-Bold",
