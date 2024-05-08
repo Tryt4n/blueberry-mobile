@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
+import { useModalContext } from "@/hooks/useModalContext";
 import {
   deleteOrder as deleteOrderAppwrite,
   editOrder as editOrderAppwrite,
@@ -25,6 +26,7 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
   const { user } = useGlobalContext();
   const { setOrdersData, setEditedOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
+  const { setModalData, showModal } = useModalContext();
 
   const [order, setOrder] = useState(orderTest);
 
@@ -64,89 +66,65 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
     }
   }
 
-  function deleteOrder(orderId: Order["$id"], orderCreatorId: Order["user"]["$id"]) {
+  async function deleteOrder(orderId: Order["$id"]) {
+    try {
+      await deleteOrderAppwrite(orderId);
+
+      setOrdersData((prevData) => {
+        if (!prevData) return null;
+        return {
+          ...prevData,
+          data: prevData?.data?.filter((order) => order.$id !== orderId),
+        };
+      });
+
+      Toast.show({
+        type: "success",
+        text1: "Zamówienie zostało pomyślnie",
+        text2: "usunięte.",
+        text1Style: { textAlign: "left", fontSize: 16 },
+        text2Style: {
+          textAlign: "left",
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "black",
+        },
+      });
+    } catch (error) {
+      Alert.alert("Błąd", "Nie udało się usunąć zamówienia.");
+    }
+  }
+
+  function openDeleteModalConfirmation(
+    orderId: Order["$id"],
+    orderCreatorId: Order["user"]["$id"]
+  ) {
     if (
       user &&
       (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
     ) {
-      // TODO: Change to custom dialog
-      Alert.alert(
-        "Usuwanie zamówienia",
-        "Czy na pewno chcesz usunąć zamówienie?",
-        [
-          {
-            text: "Usuń",
-            onPress: async () => {
-              try {
-                await deleteOrderAppwrite(orderId);
-
-                setOrdersData((prevData) => {
-                  if (!prevData) return null;
-                  return {
-                    ...prevData,
-                    data: prevData?.data?.filter((order) => order.$id !== orderId),
-                  };
-                });
-
-                Toast.show({
-                  type: "success",
-                  text1: "Zmieniono zostało pomyślnie",
-                  text2: "usunięte.",
-                  text1Style: { textAlign: "left", fontSize: 16 },
-                  text2Style: {
-                    textAlign: "left",
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: "black",
-                  },
-                });
-              } catch (error) {
-                Alert.alert("Błąd", "Nie udało się usunąć zamówienia.");
-              }
-            },
-            style: "destructive",
-          },
-          {
-            text: "Anuluj",
-            style: "cancel",
-          },
-        ],
-        { cancelable: true }
-      );
+      setModalData({
+        title: "Usuwanie zamówienia",
+        description: "Czy na pewno chcesz usunąć zamówienie?",
+        btn1: {
+          text: "Usuń",
+          type: "confirm",
+          color: "danger",
+          onPress: async () => await deleteOrder(orderId),
+        },
+        btn2: {
+          text: "Anuluj",
+          type: "cancel",
+          color: "primary",
+        },
+      });
+      showModal();
     }
   }
-  // async function deleteOrder(orderId: Order["$id"], orderCreatorId: Order["user"]["$id"]) {
-  //   if (
-  //     user &&
-  //     (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
-  //   ) {
-  //     try {
-  //       await deleteOrderAppwrite(orderId);
-
-  //       setOrdersData((prevData) => {
-  //         if (!prevData) return null;
-  //         return {
-  //           ...prevData,
-  //           data: prevData?.data?.filter((order) => order.$id !== orderId),
-  //         };
-  //       });
-
-  //       Toast.show({
-  //         type: "success",
-  //         text1: "Zmieniono zostało pomyślnie",
-  //         text2: "usunięte.",
-  //         text1Style: { textAlign: "left", fontSize: 16 },
-  //         text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
-  //       });
-  //     } catch (error) {
-  //       Alert.alert("Błąd", "Nie udało się usunąć zamówienia.");
-  //     }
-  //   }
-  // }
 
   const orderOptions = [
     { text: "Edytuj", onSelect: () => openEditOrderBottomSheet(order.user.$id) },
-    { text: "Usuń", onSelect: () => deleteOrder(order.$id, order.user.$id) },
+    { text: "Usuń", onSelect: () => openDeleteModalConfirmation(order.$id, order.user.$id) },
   ];
 
   return (
