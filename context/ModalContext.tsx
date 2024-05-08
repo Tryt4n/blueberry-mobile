@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import type { ModalDataType } from "@/components/Modal";
 
 type ModalContextType = {
@@ -24,6 +24,7 @@ export default function ModalContextProvider({ children }: { children: React.Rea
     },
   };
   const [modalData, setModalData] = useState(modalDataInitialState);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   function showModal() {
     setVisible(true);
@@ -32,14 +33,26 @@ export default function ModalContextProvider({ children }: { children: React.Rea
   function handleCancel() {
     modalData.btn2 && modalData.btn2.onPress && modalData.btn2.onPress();
     setVisible(false);
-    setModalData(modalDataInitialState);
+    timeoutRef.current = setTimeout(() => {
+      setModalData(modalDataInitialState);
+    }, 500);
   }
 
   function handleConfirmation() {
     modalData.btn1.onPress && modalData.btn1.onPress();
     setVisible(false);
-    setModalData(modalDataInitialState);
+    timeoutRef.current = setTimeout(() => {
+      setModalData(modalDataInitialState);
+    }, 500);
   }
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const contextValues: ModalContextType = {
     visible,
