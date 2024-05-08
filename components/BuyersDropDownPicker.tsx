@@ -70,6 +70,12 @@ function InnerBuyersDropDownPicker(
         }}
         textStyle={{ fontFamily: "Poppins-SemiBold", textTransform: "capitalize" }}
         labelStyle={{ fontSize: 18, fontFamily: "Poppins-SemiBold" }}
+        customItemLabelStyle={{
+          fontSize: 18,
+          fontFamily: "Poppins-SemiBold",
+          color: "rgb(59 130 246)",
+          fontWeight: "bold",
+        }}
         disabledStyle={{ opacity: 0.5 }}
         ArrowUpIconComponent={() => (
           <Ionicons
@@ -104,14 +110,10 @@ function InnerBuyersDropDownPicker(
           autoCapitalize: "words",
           ref: searchInputRef,
           onFocus: () => setSearchFocused(true),
-          onBlur: () => {
-            setSearchFocused(false);
-            setOpen(false);
-          },
+          onBlur: () => setSearchFocused(false),
         }}
         searchTextInputStyle={{
           fontFamily: "Poppins-SemiBold",
-          color: "#7B7B8B",
           fontSize: 16,
           borderWidth: 2,
           borderColor: isSearchFocused ? "rgb(59 130 246)" : "black",
@@ -125,7 +127,6 @@ function InnerBuyersDropDownPicker(
           shadowRadius: 10,
           elevation: 10,
           shadowOffset: { width: 0, height: 0 },
-          height: dropDownHeight,
           maxHeight: dropDownHeight,
         }}
         selectedItemLabelStyle={{
