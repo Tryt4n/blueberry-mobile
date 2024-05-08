@@ -31,6 +31,7 @@
     "react-native": "0.73.6",
     "react-native-appwrite": "^0.2.2",
     "react-native-bouncy-checkbox": "^4.0.0",
+    "react-native-dialog": "^9.3.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-popup-menu": "^0.16.1",
