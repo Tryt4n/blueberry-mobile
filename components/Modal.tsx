@@ -31,6 +31,7 @@ export default function Modal() {
         visible={visible}
         contentStyle={{ borderRadius: 24 }}
         onBackdropPress={handleCancel}
+        onRequestClose={handleCancel}
       >
         <Dialog.Title style={{ fontFamily: "Poppins-Bold", color: "black" }}>{title}</Dialog.Title>
 
