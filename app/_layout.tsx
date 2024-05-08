@@ -8,6 +8,8 @@ import GlobalContextProvider from "../context/GlobalContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 import OrderContextProvider from "@/context/OrdersContext";
 import Toast from "react-native-toast-message";
+import ModalContextProvider from "@/context/ModalContext";
+import Modal from "@/components/Modal";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,26 +40,29 @@ export default function RootLayout() {
         <OrderContextProvider>
           <BottomSheetTabsContextProvider>
             <MenuProvider>
-              <StatusBar />
+              <ModalContextProvider>
+                <StatusBar />
 
-              <Stack>
-                <Stack.Screen
-                  name="index"
-                  options={{ headerShown: false }}
-                />
+                <Stack>
+                  <Stack.Screen
+                    name="index"
+                    options={{ headerShown: false }}
+                  />
 
-                <Stack.Screen
-                  name="(auth)"
-                  options={{ headerShown: false }}
-                />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false }}
+                  />
 
-                <Stack.Screen
-                  name="(drawer)"
-                  options={{ headerShown: false }}
-                />
-              </Stack>
+                  <Stack.Screen
+                    name="(drawer)"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
 
-              <Toast />
+                <Toast />
+                <Modal />
+              </ModalContextProvider>
             </MenuProvider>
           </BottomSheetTabsContextProvider>
         </OrderContextProvider>
