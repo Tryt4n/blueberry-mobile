@@ -1,13 +1,10 @@
 import { View, Text, Alert, Image } from "react-native";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useModalContext } from "@/hooks/useModalContext";
-import {
-  deleteOrder as deleteOrderAppwrite,
-  editOrder as editOrderAppwrite,
-} from "@/api/appwrite/orders";
+import { editOrder as editOrderAppwrite } from "@/api/appwrite/orders";
 import { Entypo } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale/pl";
@@ -24,103 +21,80 @@ type OrderCardProps = {
 
 export default function OrderCard({ order: orderTest, currentPrice }: OrderCardProps) {
   const { user } = useGlobalContext();
-  const { setOrdersData, setEditedOrder } = useOrdersContext();
+  const { setEditedOrder, deleteOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
   const { setModalData, showModal } = useModalContext();
 
   const [order, setOrder] = useState(orderTest);
 
-  async function changeCompletedStatus(order: Order) {
-    try {
-      const updatedOrder = {
-        userId: order.user.$id,
-        buyerId: order.buyer.$id,
-        quantity: order.quantity,
-        completed: !order.completed,
-        additionalInfo: order.additionalInfo,
-      };
-
-      setOrder((prevOrder) => ({ ...prevOrder, completed: !prevOrder.completed }));
-
-      await editOrderAppwrite(order.$id, updatedOrder);
-
-      Toast.show({
-        type: "success",
-        text1: "Zmieniono status zamówienia na",
-        text2: `${order.completed === false ? "ukończone" : "nieukończone"}.`,
-        text1Style: { textAlign: "left", fontSize: 16 },
-        text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
-      });
-    } catch (error) {
-      Alert.alert("Błąd", "Nie udało się zaktualizować zamówienia.");
-    }
-  }
-
-  function openEditOrderBottomSheet(orderCreatorId: Order["user"]["$id"]) {
-    if (
-      user &&
-      (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
-    ) {
-      setEditedOrder(order);
-      handleOpenBottomSheet();
-    }
-  }
-
-  async function deleteOrder(orderId: Order["$id"]) {
-    try {
-      await deleteOrderAppwrite(orderId);
-
-      setOrdersData((prevData) => {
-        if (!prevData) return null;
-        return {
-          ...prevData,
-          data: prevData?.data?.filter((order) => order.$id !== orderId),
+  const changeCompletedStatus = useCallback(
+    async (order: Order) => {
+      try {
+        const updatedOrder = {
+          userId: order.user.$id,
+          buyerId: order.buyer.$id,
+          quantity: order.quantity,
+          completed: !order.completed,
+          additionalInfo: order.additionalInfo,
         };
-      });
 
-      Toast.show({
-        type: "success",
-        text1: "Zamówienie zostało pomyślnie",
-        text2: "usunięte.",
-        text1Style: { textAlign: "left", fontSize: 16 },
-        text2Style: {
-          textAlign: "left",
-          fontSize: 16,
-          fontWeight: "bold",
-          color: "black",
-        },
-      });
-    } catch (error) {
-      Alert.alert("Błąd", "Nie udało się usunąć zamówienia.");
-    }
-  }
+        setOrder((prevOrder) => ({ ...prevOrder, completed: !prevOrder.completed }));
 
-  function openDeleteModalConfirmation(
-    orderId: Order["$id"],
-    orderCreatorId: Order["user"]["$id"]
-  ) {
-    if (
-      user &&
-      (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
-    ) {
-      setModalData({
-        title: "Usuwanie zamówienia",
-        description: "Czy na pewno chcesz usunąć zamówienie?",
-        btn1: {
-          text: "Usuń",
-          type: "confirm",
-          color: "danger",
-          onPress: async () => await deleteOrder(orderId),
-        },
-        btn2: {
-          text: "Anuluj",
-          type: "cancel",
-          color: "primary",
-        },
-      });
-      showModal();
-    }
-  }
+        await editOrderAppwrite(order.$id, updatedOrder);
+
+        Toast.show({
+          type: "success",
+          text1: "Zmieniono status zamówienia na",
+          text2: `${order.completed === false ? "ukończone" : "nieukończone"}.`,
+          text1Style: { textAlign: "left", fontSize: 16 },
+          text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
+        });
+      } catch (error) {
+        Alert.alert("Błąd", "Nie udało się zaktualizować zamówienia.");
+      }
+    },
+    [order, editOrderAppwrite]
+  );
+
+  const openEditOrderBottomSheet = useCallback(
+    (orderCreatorId: Order["user"]["$id"]) => {
+      if (
+        user &&
+        (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
+      ) {
+        setEditedOrder(order);
+        handleOpenBottomSheet();
+      }
+    },
+    [user, order, setEditedOrder, handleOpenBottomSheet]
+  );
+
+  const openDeleteModalConfirmation = useCallback(
+    (orderId: Order["$id"], orderCreatorId: Order["user"]["$id"]) => {
+      if (
+        user &&
+        (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
+      ) {
+        setModalData({
+          title: "Usuwanie zamówienia",
+          description: "Czy na pewno chcesz usunąć zamówienie?",
+          btn1: {
+            text: "Usuń",
+            type: "confirm",
+            color: "danger",
+            onPress: async () => await deleteOrder(orderId),
+          },
+          btn2: {
+            text: "Anuluj",
+            type: "cancel",
+            color: "primary",
+          },
+        });
+        showModal();
+      }
+    },
+    [user, deleteOrder, showModal]
+  );
 
   const orderOptions = [
     { text: "Edytuj", onSelect: () => openEditOrderBottomSheet(order.user.$id) },
