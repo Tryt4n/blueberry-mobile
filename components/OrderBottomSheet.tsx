@@ -1,4 +1,4 @@
-import { View, Alert, type TextInput, Dimensions } from "react-native";
+import { View, Alert, Text, Dimensions, type TextInput } from "react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
@@ -48,6 +48,15 @@ export default function OrderBottomSheet() {
     if (orderData.buyerName === "")
       return Alert.alert("Błąd zamówienia", "Wprowadź nazwę kupującego.");
 
+    if (
+      editedOrder &&
+      editedOrder.buyer.buyerName === orderData.buyerName &&
+      editedOrder.quantity === orderData.quantity &&
+      editedOrder.additionalInfo?.trim() === orderData.additionalInfo.trim()
+    ) {
+      return handleCloseBottomSheet();
+    }
+
     if (user && buyers && orderData.quantity && typeof orderData.quantity === "number") {
       setIsSubmitting(true);
 
@@ -79,25 +88,23 @@ export default function OrderBottomSheet() {
         const { errors } = editedOrder
           ? await editOrder(editedOrder.$id, {
               userId: editedOrder.user.$id,
-              buyerId: editedOrder.buyer.$id,
+              buyerId: buyerId,
               quantity: orderData.quantity,
               completed: editedOrder.completed,
-              additionalInfo: orderData.additionalInfo,
+              additionalInfo: orderData.additionalInfo.trim(),
             })
           : await createOrder(
               user.$id,
               buyerId,
               orderData.quantity,
               currentPriceId,
-              orderData.additionalInfo
+              orderData.additionalInfo.trim()
             );
 
         if (errors) {
           return Alert.alert("Błąd zamówienia", errors.quantity.join("\n"));
         } else {
           handleCloseBottomSheet();
-          setOrderData(orderDataInitialState);
-          setQuantity(1);
           ordersData && ordersData.refetchData();
           refetchData();
           Toast.show({
@@ -113,6 +120,8 @@ export default function OrderBottomSheet() {
         );
       } finally {
         setIsSubmitting(false);
+        setOrderData(orderDataInitialState);
+        setQuantity(1);
       }
     }
   }
@@ -137,7 +146,7 @@ export default function OrderBottomSheet() {
   }, [editedOrder]);
 
   const dropdownHeight = useMemo(() => {
-    return Dimensions.get("window").height * 0.425;
+    return Dimensions.get("window").height * 0.375;
   }, []);
 
   return (
@@ -163,13 +172,16 @@ export default function OrderBottomSheet() {
       }}
     >
       <BottomSheetScrollView>
-        <View style={{ minHeight: dropdownHeight + 125, zIndex: 1 }}>
+        <View style={{ minHeight: dropdownHeight + 160, zIndex: 1 }}>
+          <Text className="font-poppinsSemiBold text-lg my-4 text-center">
+            {`${editedOrder ? "Edytuj " : "Dodaj nowe"} zamówienie`}
+          </Text>
+
           <QuantityInput
             ref={quantityRef}
             label="Ilość:"
             value={orderData.quantity}
             setValue={setQuantity}
-            containerStyles="mt-4"
           />
 
           <BuyersDropDownPicker
