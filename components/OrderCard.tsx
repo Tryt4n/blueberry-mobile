@@ -12,14 +12,15 @@ import Toast from "react-native-toast-message";
 import BouncyCheckbox from "react-native-bouncy-checkbox/build/dist/BouncyCheckbox";
 import OrderCardMenuOptions from "./OrderCardMenuOptions";
 import type { Order } from "@/types/orders";
+import type { CurrentPrice } from "@/types/currentPrice";
 
 type OrderCardProps = {
   order: Order;
-  currentPrice: number;
+  price: CurrentPrice["price"];
   refetchOrders: () => Promise<void>;
 };
 
-export default function OrderCard({ order: orderTest, currentPrice }: OrderCardProps) {
+export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
   const { user } = useGlobalContext();
   const { setEditedOrder, deleteOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
@@ -144,7 +145,12 @@ export default function OrderCard({ order: orderTest, currentPrice }: OrderCardP
 
           <Text className="pb-2 text-lg font-poppinsRegular">
             Łącznie:&nbsp;
-            <Text className="font-poppinsSemiBold">{currentPrice * order.quantity} zł</Text>
+            <Text className="font-poppinsSemiBold">
+              {order.currentPrice.price * order.quantity} zł
+            </Text>
+            {order.currentPrice.price !== price && (
+              <Text className="text-sm">&nbsp;(po {order.currentPrice.price} zł)</Text>
+            )}
           </Text>
 
           {order.additionalInfo && (
