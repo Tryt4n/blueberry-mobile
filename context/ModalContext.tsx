@@ -7,7 +7,9 @@ type ModalContextType = {
   handleCancel: () => void;
   handleConfirmation: () => void;
   modalData: ModalDataType;
-  setModalData: (data: ModalDataType) => void;
+  setModalData: (data: ModalDataType | ((prevData: ModalDataType) => ModalDataType)) => void;
+  inputValue: string;
+  setInputValue: (value: string) => void;
 };
 
 export const ModalContext = createContext<ModalContextType | null>(null);
@@ -24,6 +26,8 @@ export default function ModalContextProvider({ children }: { children: React.Rea
     },
   };
   const [modalData, setModalData] = useState(modalDataInitialState);
+  const [inputValue, setInputValue] = useState("");
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   function showModal() {
@@ -61,6 +65,8 @@ export default function ModalContextProvider({ children }: { children: React.Rea
     handleConfirmation,
     modalData,
     setModalData,
+    inputValue,
+    setInputValue,
   };
 
   return <ModalContext.Provider value={contextValues}>{children}</ModalContext.Provider>;
