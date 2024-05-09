@@ -1,8 +1,6 @@
-import { createContext, useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { getCurrentPrice } from "@/api/appwrite/currentPrice";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
-import { useAppwrite } from "@/hooks/useAppwrite";
+import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
@@ -14,8 +12,8 @@ type OrdersDataType = {
 };
 
 type OrderContextType = {
-  currentPrice: CurrentPrice["price"] | undefined;
-  currentPriceId: CurrentPrice["$id"] | undefined;
+  currentPrice: CurrentPrice | null;
+  setCurrentPrice: (obj: CurrentPrice) => void;
   ordersData: OrdersDataType | null;
   setOrdersData: React.Dispatch<React.SetStateAction<OrdersDataType | null>>;
   editedOrder: Order | null;
@@ -28,11 +26,7 @@ export const OrdersContext = createContext<OrderContextType | null>(null);
 export default function OrderContextProvider({ children }: { children: React.ReactNode }) {
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
-
-  const { data: currentPriceObj } = useAppwrite(getCurrentPrice, [], {
-    title: "Błąd",
-    message: "Nie udało się pobrać aktualnej ceny.",
-  });
+  const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
 
   const deleteOrder = useCallback(
     async (orderId: Order["$id"]) => {
@@ -67,8 +61,8 @@ export default function OrderContextProvider({ children }: { children: React.Rea
   );
 
   const contextValues: OrderContextType = {
-    currentPrice: currentPriceObj?.price,
-    currentPriceId: currentPriceObj?.$id,
+    currentPrice,
+    setCurrentPrice,
     ordersData,
     setOrdersData,
     editedOrder,
