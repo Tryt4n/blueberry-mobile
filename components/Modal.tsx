@@ -1,12 +1,15 @@
 import { useModalContext } from "@/hooks/useModalContext";
-import Dialog from "react-native-dialog";
 import { StatusBar } from "expo-status-bar";
+import { TextInput, View } from "react-native";
+import Dialog from "react-native-dialog";
+import type { ComponentProps } from "react";
 
 export type ModalDataType = {
   title: string;
   description?: string;
   btn1: ModalButtonType;
   btn2?: ModalButtonType;
+  input?: ComponentProps<typeof TextInput>;
 };
 
 type ModalButtonType = {
@@ -19,9 +22,10 @@ type ModalButtonType = {
 type ModalButtonColorType = "danger" | "primary" | "default";
 
 export default function Modal() {
-  const { visible, handleCancel, handleConfirmation, modalData } = useModalContext();
+  const { visible, handleCancel, handleConfirmation, modalData, inputValue, setInputValue } =
+    useModalContext();
 
-  const { title, description, btn1, btn2 } = modalData;
+  const { title, description, btn1, btn2, input } = modalData;
 
   return (
     <>
@@ -39,6 +43,18 @@ export default function Modal() {
           <Dialog.Description style={{ fontFamily: "Poppins-Medium", color: "black" }}>
             {description}
           </Dialog.Description>
+        )}
+
+        {input && (
+          <View className="flex justify-center items-center">
+            <TextInput
+              className="w-32 my-4 border-b-2 text-center font-poppinsMedium text-3xl"
+              cursorColor="rgb(59 130 246)"
+              value={inputValue}
+              onChangeText={(text) => setInputValue(text)}
+              {...input}
+            />
+          </View>
         )}
 
         <DialogButton
@@ -65,7 +81,7 @@ function DialogButton({ btn, onPress }: { btn: ModalButtonType; onPress: () => v
         fontFamily: "Poppins-Medium",
         color:
           btn.color && btn.color === "danger"
-            ? "red"
+            ? "#FF3333"
             : btn.color === "primary"
             ? "rgb(59 130 246)"
             : "black",
