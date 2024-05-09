@@ -1,5 +1,6 @@
 import type { User } from "./user";
 import type { Buyer } from "./buyers";
+import type { CurrentPrice } from "./currentPrice";
 
 export type Order = {
   readonly $collectionId: string;
@@ -13,5 +14,5 @@ export type Order = {
   readonly completed: boolean;
   readonly user: User;
   readonly buyer: Buyer;
-  readonly currentPrice: number;
+  readonly currentPrice: CurrentPrice;
 };
