@@ -94,7 +94,7 @@ export default function TabOrders() {
                         renderItem={({ item }) => (
                           <OrderCard
                             order={item}
-                            currentPrice={currentPrice}
+                            price={currentPrice.price}
                             refetchOrders={ordersData.refetchData}
                           />
                         )}

@@ -26,7 +26,7 @@ export default function OrderBottomSheet() {
     additionalInfo: "",
     userId: user && user.$id,
   };
-  const { currentPriceId, ordersData, editedOrder, setEditedOrder } = useOrdersContext();
+  const { currentPrice, ordersData, editedOrder, setEditedOrder } = useOrdersContext();
   const [orderData, setOrderData] = useState(orderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,7 +79,7 @@ export default function OrderBottomSheet() {
           buyerId = existingBuyer.$id;
         }
 
-        if (!currentPriceId)
+        if (!currentPrice)
           return Alert.alert(
             "Błąd zamówienia",
             "Nie udało się pobrać aktualnej ceny. Spróbuj ponownie."
@@ -97,7 +97,7 @@ export default function OrderBottomSheet() {
               user.$id,
               buyerId,
               orderData.quantity,
-              currentPriceId,
+              currentPrice.$id,
               orderData.additionalInfo.trim()
             );
 
