@@ -1,5 +1,6 @@
 import { appwriteConfig, databases } from "@/lib/appwrite";
-import { Query } from "react-native-appwrite";
+import { ID, Query } from "react-native-appwrite";
+import { CurrentPriceSchema } from "@/lib/zod/currentPrice";
 import type { CurrentPrice } from "@/types/currentPrice";
 
 export async function getCurrentPrice() {
@@ -7,10 +8,70 @@ export async function getCurrentPrice() {
     const price = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.currentPriceCollectionId,
-      [Query.orderDesc("$createdAt"), Query.limit(1), Query.select(["price", "$id"])]
+      [
+        Query.equal("active", true),
+        Query.orderDesc("$createdAt"),
+        Query.limit(1),
+        Query.select(["price", "$id", "active"]),
+      ]
     );
 
     return price.documents[0] as unknown as CurrentPrice;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]) {
+  const customErrors: string[] = [];
+  const formattedPrice = Number(price.toString().replace(",", "."));
+
+  try {
+    const results = CurrentPriceSchema.safeParse({ price: formattedPrice });
+
+    if (!results.success) {
+      results.error.issues.forEach((issue) => {
+        customErrors.push(issue.message);
+      });
+
+      return customErrors;
+    }
+
+    const isPriceAlreadyExists = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.currentPriceCollectionId,
+      [Query.equal("price", formattedPrice)]
+    );
+
+    if (isPriceAlreadyExists.documents.length > 0) {
+      await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.currentPriceCollectionId,
+        isPriceAlreadyExists.documents[0].$id,
+        {
+          active: true,
+        }
+      );
+    } else {
+      await databases.createDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.currentPriceCollectionId,
+        ID.unique(),
+        {
+          price: formattedPrice,
+          active: true,
+        }
+      );
+    }
+
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.currentPriceCollectionId,
+      oldPriceId,
+      {
+        active: false,
+      }
+    );
   } catch (error: any) {
     throw new Error(error);
   }
