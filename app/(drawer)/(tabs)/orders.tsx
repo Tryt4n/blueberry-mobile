@@ -1,5 +1,5 @@
-import { View, Text, FlatList, ActivityIndicator, RefreshControl } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, Text, ActivityIndicator, RefreshControl, TouchableOpacity } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
@@ -83,7 +83,7 @@ export default function TabOrders() {
                 {ordersData.data && currentPrice && (
                   <>
                     {ordersData.data.length > 0 ? (
-                      <FlatList
+                      <FlashList
                         data={ordersData.data}
                         keyExtractor={(order) => order.$id}
                         contentContainerStyle={{
@@ -104,6 +104,7 @@ export default function TabOrders() {
                             onRefresh={refetchOrders}
                           />
                         }
+                        estimatedItemSize={10}
                       />
                     ) : (
                       <Text className="text-center font-poppinsRegular text-lg">Brak zamówień</Text>
