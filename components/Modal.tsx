@@ -1,20 +1,18 @@
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import { Modal as ReactNativePaperModal, Portal } from "react-native-paper";
 import { useModalContext } from "@/hooks/useModalContext";
-import { StatusBar } from "expo-status-bar";
-import { TextInput, View } from "react-native";
-import Dialog from "react-native-dialog";
 import type { ComponentProps } from "react";
 
-export type ModalDataType = {
+export type ModalProps = {
   title: string;
-  description?: string;
-  btn1: ModalButtonType;
+  subtitle?: string;
+  btn1?: ModalButtonType;
   btn2?: ModalButtonType;
   input?: ComponentProps<typeof TextInput>;
 };
 
 type ModalButtonType = {
-  text: string;
-  readonly type: "confirm" | "cancel";
+  text?: string;
   color?: ModalButtonColorType;
   onPress?: () => void;
 };
@@ -22,72 +20,77 @@ type ModalButtonType = {
 type ModalButtonColorType = "danger" | "primary" | "default";
 
 export default function Modal() {
-  const { visible, handleCancel, handleConfirmation, modalData, inputValue, setInputValue } =
-    useModalContext();
-
-  const { title, description, btn1, btn2, input } = modalData;
+  const { visible, closeModal, modalData } = useModalContext();
+  const { title, subtitle, btn1, btn2, input } = modalData;
 
   return (
-    <>
-      <StatusBar backgroundColor={visible ? "black" : undefined} />
-
-      <Dialog.Container
+    <Portal>
+      <ReactNativePaperModal
         visible={visible}
-        contentStyle={{ borderRadius: 24 }}
-        onBackdropPress={handleCancel}
-        onRequestClose={handleCancel}
+        onDismiss={closeModal}
+        contentContainerStyle={{
+          backgroundColor: "white",
+          padding: 24,
+          borderRadius: 20,
+          maxWidth: "80%",
+          alignSelf: "center",
+        }}
       >
-        <Dialog.Title style={{ fontFamily: "Poppins-Bold", color: "black" }}>{title}</Dialog.Title>
+        <Text className="font-poppinsBold text-xl mb-2">{title}</Text>
 
-        {description && (
-          <Dialog.Description style={{ fontFamily: "Poppins-Medium", color: "black" }}>
-            {description}
-          </Dialog.Description>
-        )}
+        {subtitle && <Text className="font-poppinsMedium text-base">{subtitle}</Text>}
 
         {input && (
-          <View className="flex justify-center items-center">
+          <View className="flex justify-center items-center mt-2">
             <TextInput
-              className="w-32 my-4 border-b-2 text-center font-poppinsMedium text-3xl"
+              className="w-32 border-b-2 text-center font-poppinsMedium text-3xl"
               cursorColor="rgb(59 130 246)"
-              value={inputValue}
-              onChangeText={(text) => setInputValue(text)}
               {...input}
             />
           </View>
         )}
 
-        <DialogButton
-          btn={btn1}
-          onPress={btn1.type === "confirm" ? handleConfirmation : handleCancel}
-        />
+        <View className="flex flex-row justify-end mt-4">
+          {btn1 && (
+            <DialogButton
+              btn={btn1}
+              closeModalFn={closeModal}
+            />
+          )}
 
-        {btn2 && (
-          <DialogButton
-            btn={btn2}
-            onPress={btn2.type === "confirm" ? handleConfirmation : handleCancel}
-          />
-        )}
-      </Dialog.Container>
-    </>
+          {btn2 && (
+            <DialogButton
+              btn={btn2}
+              closeModalFn={closeModal}
+            />
+          )}
+        </View>
+      </ReactNativePaperModal>
+    </Portal>
   );
 }
 
-function DialogButton({ btn, onPress }: { btn: ModalButtonType; onPress: () => void }) {
+function DialogButton({ btn, closeModalFn }: { btn: ModalButtonType; closeModalFn: () => void }) {
   return (
-    <Dialog.Button
-      style={{
-        fontSize: 16,
-        fontFamily: "Poppins-Medium",
-        color:
-          btn.color && btn.color === "danger"
-            ? "#FF3333"
-            : btn.color === "primary"
-            ? "rgb(59 130 246)"
-            : "black",
+    <TouchableOpacity
+      onPress={() => {
+        btn.onPress && btn.onPress();
+        closeModalFn();
       }}
-      label={btn.text}
-      onPress={onPress}
-    />
+    >
+      <Text
+        className="font-poppinsMedium text-base px-2"
+        style={{
+          color:
+            btn.color && btn.color === "danger"
+              ? "#FF3333"
+              : btn.color === "primary"
+              ? "rgb(59 130 246)"
+              : "black",
+        }}
+      >
+        {btn.text}
+      </Text>
+    </TouchableOpacity>
   );
 }
