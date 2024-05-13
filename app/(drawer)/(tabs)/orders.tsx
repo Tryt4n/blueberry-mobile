@@ -95,7 +95,6 @@ export default function TabOrders() {
                           <OrderCard
                             order={item}
                             price={currentPrice.price}
-                            refetchOrders={ordersData.refetchData}
                           />
                         )}
                         refreshControl={
