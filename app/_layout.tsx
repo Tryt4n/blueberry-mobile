@@ -4,6 +4,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MenuProvider } from "react-native-popup-menu";
+import { PaperProvider } from "react-native-paper";
 import GlobalContextProvider from "../context/GlobalContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 import OrderContextProvider from "@/context/OrdersContext";
@@ -40,29 +41,31 @@ export default function RootLayout() {
         <OrderContextProvider>
           <BottomSheetTabsContextProvider>
             <MenuProvider>
-              <ModalContextProvider>
-                <StatusBar />
+              <PaperProvider theme={{ dark: false }}>
+                <ModalContextProvider>
+                  <StatusBar />
 
-                <Stack>
-                  <Stack.Screen
-                    name="index"
-                    options={{ headerShown: false }}
-                  />
+                  <Stack>
+                    <Stack.Screen
+                      name="index"
+                      options={{ headerShown: false }}
+                    />
 
-                  <Stack.Screen
-                    name="(auth)"
-                    options={{ headerShown: false }}
-                  />
+                    <Stack.Screen
+                      name="(auth)"
+                      options={{ headerShown: false }}
+                    />
 
-                  <Stack.Screen
-                    name="(drawer)"
-                    options={{ headerShown: false }}
-                  />
-                </Stack>
+                    <Stack.Screen
+                      name="(drawer)"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack>
 
-                <Toast />
-                <Modal />
-              </ModalContextProvider>
+                  <Toast />
+                  <Modal />
+                </ModalContextProvider>
+              </PaperProvider>
             </MenuProvider>
           </BottomSheetTabsContextProvider>
         </OrderContextProvider>
