@@ -27,6 +27,7 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
   const formattedPrice = Number(price.toString().replace(",", "."));
 
   try {
+    let updatedPrice: CurrentPrice;
     const results = CurrentPriceSchema.safeParse({ price: formattedPrice });
 
     if (!results.success) {
@@ -34,7 +35,7 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
         customErrors.push(issue.message);
       });
 
-      return customErrors;
+      return { updatedPrice: null, errors: customErrors };
     }
 
     const isPriceAlreadyExists = await databases.listDocuments(
@@ -44,7 +45,7 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
     );
 
     if (isPriceAlreadyExists.documents.length > 0) {
-      await databases.updateDocument(
+      const fetchedPrice = await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.currentPriceCollectionId,
         isPriceAlreadyExists.documents[0].$id,
@@ -52,8 +53,9 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
           active: true,
         }
       );
+      updatedPrice = { $id: fetchedPrice.$id, price: fetchedPrice.price };
     } else {
-      await databases.createDocument(
+      const fetchedPrice = await databases.createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.currentPriceCollectionId,
         ID.unique(),
@@ -62,6 +64,7 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
           active: true,
         }
       );
+      updatedPrice = { $id: fetchedPrice.$id, price: fetchedPrice.price };
     }
 
     await databases.updateDocument(
@@ -72,6 +75,8 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
         active: false,
       }
     );
+
+    return { updatedPrice, errors: null };
   } catch (error: any) {
     throw new Error(error);
   }
