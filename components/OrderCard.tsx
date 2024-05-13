@@ -1,10 +1,13 @@
 import { View, Text, Alert, Image } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useModalContext } from "@/hooks/useModalContext";
-import { editOrder as editOrderAppwrite } from "@/api/appwrite/orders";
+import {
+  editOrder as editOrderAppwrite,
+  changeOrderPrice as changeOrderPriceAppwrite,
+} from "@/api/appwrite/orders";
 import { Entypo } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale/pl";
@@ -17,7 +20,6 @@ import type { CurrentPrice } from "@/types/currentPrice";
 type OrderCardProps = {
   order: Order;
   price: CurrentPrice["price"];
-  refetchOrders: () => Promise<void>;
 };
 
 export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
@@ -78,16 +80,14 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
       ) {
         setModalData({
           title: "Usuwanie zamówienia",
-          description: "Czy na pewno chcesz usunąć zamówienie?",
+          subtitle: "Czy na pewno chcesz usunąć zamówienie?",
           btn1: {
             text: "Usuń",
-            type: "confirm",
             color: "danger",
             onPress: async () => await deleteOrder(orderId),
           },
           btn2: {
             text: "Anuluj",
-            type: "cancel",
             color: "primary",
           },
         });
@@ -97,10 +97,85 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
     [user, deleteOrder, showModal]
   );
 
+  const [modalInputValue, setModalInputValue] = useState(order.currentPrice.price.toString() || "");
+
+  const openChangePriceModal = useCallback(
+    (order: Order) => {
+      if (user && (user.role === "admin" || user.role === "moderator")) {
+        setEditedOrder(order);
+        setModalData({
+          title: "Edycja ceny",
+          subtitle: "Wprowadź nową cenę dla zamówienia.",
+          btn1: {
+            text: "Anuluj",
+          },
+          btn2: {
+            text: "Zapisz",
+            color: "primary",
+          },
+          input: {
+            maxLength: 4,
+            keyboardType: "number-pad",
+            defaultValue: modalInputValue,
+            onChangeText: (text) => setModalInputValue(text),
+          },
+        });
+        showModal();
+      }
+    },
+    [setModalData, showModal, setEditedOrder, modalInputValue, setModalInputValue]
+  );
+
+  const changeOrderPrice = useCallback(async () => {
+    if (user && (user.role === "admin" || user.role === "moderator")) {
+      try {
+        const errors = await changeOrderPriceAppwrite(
+          order.$id,
+          order.currentPrice.$id,
+          modalInputValue
+        );
+
+        if (errors) {
+          setModalInputValue(order.currentPrice.price.toString());
+          return Alert.alert("Nieprawidłowa wartość", errors.join("\n"));
+        }
+
+        setOrder((prevOrder) => ({
+          ...prevOrder,
+          currentPrice: { ...prevOrder.currentPrice, price: Number(modalInputValue) },
+        }));
+        Toast.show({
+          type: "success",
+          text1: `Zmieniono cenę zamówienia na ${modalInputValue} zł`,
+          text1Style: { textAlign: "left", fontSize: 16 },
+          text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
+        });
+      } catch (error) {
+        Alert.alert("Błąd", "Nie udało się zmienić ceny zamówienia.");
+      }
+    }
+  }, [modalInputValue]);
+
+  useEffect(() => {
+    setModalData((prevModalData) => ({
+      ...prevModalData,
+      btn2: {
+        ...prevModalData.btn2,
+        onPress: changeOrderPrice,
+      },
+    }));
+  }, [modalInputValue]);
+
   const orderOptions = [
     { text: "Edytuj", onSelect: () => openEditOrderBottomSheet(order.user.$id) },
     { text: "Usuń", onSelect: () => openDeleteModalConfirmation(order.$id, order.user.$id) },
   ];
+  if (user?.role === "admin" || user?.role === "moderator") {
+    orderOptions.push({
+      text: "Zmień cenę",
+      onSelect: () => openChangePriceModal(order),
+    });
+  }
 
   return (
     <>
