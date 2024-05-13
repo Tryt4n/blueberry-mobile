@@ -1,5 +1,6 @@
 import { appwriteConfig, databases } from "@/lib/appwrite";
 import { ID, Query } from "react-native-appwrite";
+import { updatePrice } from "./currentPrice";
 import { OrderSchema } from "@/lib/zod/order";
 import type { User } from "@/types/user";
 import type { Order } from "@/types/orders";
@@ -114,7 +115,6 @@ export async function editOrder(
     quantity: [],
     additionalInfo: [],
   };
-
   try {
     const results = OrderSchema.safeParse(updatedOrderData);
 
@@ -155,6 +155,31 @@ export async function deleteOrder(orderId: Order["$id"]) {
       appwriteConfig.ordersCollectionId,
       orderId
     );
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function changeOrderPrice(
+  orderId: Order["$id"],
+  oldPriceId: CurrentPrice["$id"],
+  newPrice: string
+) {
+  try {
+    const { errors, updatedPrice } = await updatePrice(newPrice, oldPriceId);
+
+    if (errors) {
+      return errors;
+    } else {
+      await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.ordersCollectionId,
+        orderId,
+        {
+          currentPrice: updatedPrice.$id,
+        }
+      );
+    }
   } catch (error: any) {
     throw new Error(error);
   }
