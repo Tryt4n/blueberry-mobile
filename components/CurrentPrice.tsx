@@ -1,16 +1,19 @@
-import { View, Text, Alert, ActivityIndicator } from "react-native";
-import { useCallback, useEffect } from "react";
+import { View, Text, Alert, ActivityIndicator, TextInput } from "react-native";
+import { useCallback, useEffect, useState, type ComponentProps } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { updatePrice as appwriteUpdatePrice, getCurrentPrice } from "@/api/appwrite/currentPrice";
+import Toast from "react-native-toast-message";
 import CustomButton from "./CustomButton";
 
 export default function CurrentPrice() {
   const { user } = useGlobalContext();
-  const { showModal, setModalData, inputValue, setInputValue } = useModalContext();
+  const { showModal, setModalData } = useModalContext();
   const { currentPrice, setCurrentPrice } = useOrdersContext();
+
+  const [modalInputValue, setModalInputValue] = useState(currentPrice?.price.toString() || "");
 
   const {
     data: fetchedCurrentPrice,
@@ -21,65 +24,70 @@ export default function CurrentPrice() {
     message: "Nie udało się pobrać aktualnej ceny.",
   });
 
-  function openModal() {
+  const openModal = useCallback(() => {
     if (!currentPrice) return;
-
-    setInputValue(currentPrice.price.toString() || "");
 
     setModalData({
       title: "Wprowadź nową cenę",
-      btn2: {
-        text: "Anuluj",
-        type: "cancel",
-      },
       btn1: {
+        text: "Anuluj",
+      },
+      btn2: {
         text: "Zapisz",
-        type: "confirm",
         color: "primary",
       },
       input: {
         maxLength: 4,
         keyboardType: "number-pad",
+        defaultValue: modalInputValue,
+        onChangeText: (text) => setModalInputValue(text),
       },
     });
     showModal();
-  }
+  }, [currentPrice, showModal, setModalData, modalInputValue, setModalInputValue]);
 
   const updatePrice = useCallback(async () => {
     if (!currentPrice) return;
-    if (inputValue === "") {
+    if (modalInputValue === "") {
       return Alert.alert("Błąd", "Wprowadź poprawną cenę.");
     }
-    if (inputValue === currentPrice.price?.toString()) {
+    if (modalInputValue === currentPrice.price?.toString()) {
       return;
     }
 
     try {
-      const errors = await appwriteUpdatePrice(inputValue, currentPrice.$id);
-      if (errors) {
-        return Alert.alert("Nieprawidłowa wartość", errors.join("\n"));
+      const updatedPrice = await appwriteUpdatePrice(modalInputValue, currentPrice.$id);
+      if (updatedPrice.errors) {
+        setModalInputValue(currentPrice.price.toString());
+        return Alert.alert("Nieprawidłowa wartość", updatedPrice.errors.join("\n"));
       }
 
+      Toast.show({
+        type: "success",
+        text1: "Cena została zaktualizowana.",
+        text1Style: { textAlign: "left", fontSize: 16 },
+      });
       refetchPrice();
     } catch (error: any) {
       Alert.alert("Błąd", "Nie udało się zaktualizować ceny.");
     }
-  }, [inputValue, currentPrice]);
+  }, [modalInputValue, currentPrice]);
 
   useEffect(() => {
     setModalData((prevModalData) => ({
       ...prevModalData,
-      btn1: {
-        ...prevModalData.btn1,
+      btn2: {
+        ...prevModalData.btn2,
         onPress: updatePrice,
       },
     }));
-  }, [inputValue]);
+  }, [modalInputValue]);
 
   useEffect(() => {
     if (!fetchedCurrentPrice) return;
 
     setCurrentPrice(fetchedCurrentPrice);
+    setModalInputValue(fetchedCurrentPrice.price.toString());
   }, [fetchedCurrentPrice]);
 
   return (
@@ -103,7 +111,7 @@ export default function CurrentPrice() {
           text="Zmień cenę"
           textStyles="text-xs p-3"
           onPress={openModal}
-          disabled={isPriceLoading}
+          disabled={currentPrice === null || isPriceLoading}
         />
       )}
     </View>
