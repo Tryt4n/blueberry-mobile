@@ -1,5 +1,5 @@
-import { View, Text, Alert, ActivityIndicator, TextInput } from "react-native";
-import { useCallback, useEffect, useState, type ComponentProps } from "react";
+import { View, Text, Alert, ActivityIndicator } from "react-native";
+import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -13,8 +13,12 @@ export default function CurrentPrice() {
   const { showModal, setModalData } = useModalContext();
   const { currentPrice, setCurrentPrice } = useOrdersContext();
 
+  // Create local state for modal input value
   const [modalInputValue, setModalInputValue] = useState(currentPrice?.price.toString() || "");
 
+  const userHasAccess = user?.role === "admin" || user?.role === "moderator";
+
+  // Fetch current price
   const {
     data: fetchedCurrentPrice,
     isLoading: isPriceLoading,
@@ -47,21 +51,29 @@ export default function CurrentPrice() {
   }, [currentPrice, showModal, setModalData, modalInputValue, setModalInputValue]);
 
   const updatePrice = useCallback(async () => {
-    if (!currentPrice) return;
+    if (!userHasAccess) return; // If user doesn't have access, return
+
+    if (!currentPrice) return; // If currentPrice is null, return
+
     if (modalInputValue === "") {
+      // If modalInputValue is empty, return alert
       return Alert.alert("Błąd", "Wprowadź poprawną cenę.");
     }
     if (modalInputValue === currentPrice.price?.toString()) {
+      // If price doesn't change, do nothing
       return;
     }
 
     try {
       const updatedPrice = await appwriteUpdatePrice(modalInputValue, currentPrice.$id);
+
+      // If there are errors, show alert and return
       if (updatedPrice.errors) {
         setModalInputValue(currentPrice.price.toString());
         return Alert.alert("Nieprawidłowa wartość", updatedPrice.errors.join("\n"));
       }
 
+      // else show success toast and refetch price
       Toast.show({
         type: "success",
         text1: "Cena została zaktualizowana.",
@@ -84,7 +96,7 @@ export default function CurrentPrice() {
   }, [modalInputValue]);
 
   useEffect(() => {
-    if (!fetchedCurrentPrice) return;
+    if (!fetchedCurrentPrice) return; // Wait for fetchedCurrentPrice to be defined
 
     setCurrentPrice(fetchedCurrentPrice);
     setModalInputValue(fetchedCurrentPrice.price.toString());
@@ -95,18 +107,16 @@ export default function CurrentPrice() {
       <Text className="font-poppinsRegular text-base w-fit">
         Cena:&nbsp;
         {isPriceLoading ? (
-          <View className="">
-            <ActivityIndicator
-              size="small"
-              color="rgb(59 130 246)"
-            />
-          </View>
+          <ActivityIndicator
+            size="small"
+            color="rgb(59 130 246)"
+          />
         ) : (
           <Text className="font-poppinsMedium text-xl">{currentPrice?.price} zł</Text>
         )}
       </Text>
 
-      {(user?.role === "admin" || user?.role === "moderator") && (
+      {userHasAccess && (
         <CustomButton
           text="Zmień cenę"
           textStyles="text-xs p-3"
