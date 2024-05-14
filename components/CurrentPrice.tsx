@@ -85,6 +85,7 @@ export default function CurrentPrice() {
     }
   }, [modalInputValue, currentPrice]);
 
+  // Update the updatePrice function in the modal data when the input value changes
   useEffect(() => {
     setModalData((prevModalData) => ({
       ...prevModalData,
@@ -95,6 +96,7 @@ export default function CurrentPrice() {
     }));
   }, [modalInputValue]);
 
+  // Update the current price and set modal input default value when the fetchedCurrentPrice is defined
   useEffect(() => {
     if (!fetchedCurrentPrice) return; // Wait for fetchedCurrentPrice to be defined
 

@@ -29,7 +29,11 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
   const { setModalData, showModal } = useModalContext();
 
   const [order, setOrder] = useState(orderTest);
+  const [modalInputValue, setModalInputValue] = useState(order.currentPrice.price.toString() || "");
 
+  const userHasAccess = user?.role === "admin" || user?.role === "moderator";
+
+  // Toggle the completed status of the passed order
   const changeCompletedStatus = useCallback(
     async (order: Order) => {
       try {
@@ -41,10 +45,13 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           additionalInfo: order.additionalInfo,
         };
 
+        // Update the order in the local state for immediate feedback to the user
         setOrder((prevOrder) => ({ ...prevOrder, completed: !prevOrder.completed }));
 
+        // Update the order in the database
         await editOrderAppwrite(order.$id, updatedOrder);
 
+        // Show a success message to the user
         Toast.show({
           type: "success",
           text1: "Zmieniono status zamówienia na",
@@ -53,18 +60,17 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
         });
       } catch (error) {
+        // Show an alert to the user if the operation failed
         Alert.alert("Błąd", "Nie udało się zaktualizować zamówienia.");
       }
     },
     [order, editOrderAppwrite]
   );
 
+  // Open the bottom sheet with the order data to edit
   const openEditOrderBottomSheet = useCallback(
     (orderCreatorId: Order["user"]["$id"]) => {
-      if (
-        user &&
-        (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
-      ) {
+      if (user && (user.$id === orderCreatorId || userHasAccess)) {
         setEditedOrder(order);
         handleOpenBottomSheet();
       }
@@ -72,12 +78,10 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
     [user, order, setEditedOrder, handleOpenBottomSheet]
   );
 
+  // Open the modal with the delete confirmation
   const openDeleteModalConfirmation = useCallback(
     (orderId: Order["$id"], orderCreatorId: Order["user"]["$id"]) => {
-      if (
-        user &&
-        (user.$id === orderCreatorId || user.role === "admin" || user.role === "moderator")
-      ) {
+      if (user && (user.$id === orderCreatorId || userHasAccess)) {
         setModalData({
           title: "Usuwanie zamówienia",
           subtitle: "Czy na pewno chcesz usunąć zamówienie?",
@@ -97,11 +101,10 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
     [user, deleteOrder, showModal]
   );
 
-  const [modalInputValue, setModalInputValue] = useState(order.currentPrice.price.toString() || "");
-
+  // Open the modal with the input to change the order price
   const openChangePriceModal = useCallback(
     (order: Order) => {
-      if (user && (user.role === "admin" || user.role === "moderator")) {
+      if (user && userHasAccess) {
         setEditedOrder(order);
         setModalData({
           title: "Edycja ceny",
@@ -126,8 +129,9 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
     [setModalData, showModal, setEditedOrder, modalInputValue, setModalInputValue]
   );
 
+  // Change the price of the order
   const changeOrderPrice = useCallback(async () => {
-    if (user && (user.role === "admin" || user.role === "moderator")) {
+    if (user && userHasAccess) {
       try {
         const errors = await changeOrderPriceAppwrite(
           order.$id,
@@ -135,11 +139,13 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           modalInputValue
         );
 
+        // If there are errors, show alert with those errors, reset input value and return
         if (errors) {
           setModalInputValue(order.currentPrice.price.toString());
           return Alert.alert("Nieprawidłowa wartość", errors.join("\n"));
         }
 
+        // else update the price in the local state and show success message
         setOrder((prevOrder) => ({
           ...prevOrder,
           currentPrice: { ...prevOrder.currentPrice, price: Number(modalInputValue) },
@@ -151,11 +157,13 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
         });
       } catch (error) {
+        // If there was an error, show alert
         Alert.alert("Błąd", "Nie udało się zmienić ceny zamówienia.");
       }
     }
   }, [modalInputValue]);
 
+  // Update the onPress function of the confirmation button in the modal data when the input value changes
   useEffect(() => {
     setModalData((prevModalData) => ({
       ...prevModalData,
@@ -170,7 +178,9 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
     { text: "Edytuj", onSelect: () => openEditOrderBottomSheet(order.user.$id) },
     { text: "Usuń", onSelect: () => openDeleteModalConfirmation(order.$id, order.user.$id) },
   ];
-  if (user?.role === "admin" || user?.role === "moderator") {
+
+  // If the user is admin or moderator, add the option to change the price
+  if (userHasAccess) {
     orderOptions.push({
       text: "Zmień cenę",
       onSelect: () => openChangePriceModal(order),
