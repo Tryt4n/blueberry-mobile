@@ -1,0 +1,29 @@
+import React, { type ComponentProps } from "react";
+import BouncyCheckbox from "react-native-bouncy-checkbox/build/dist/BouncyCheckbox";
+import { Entypo } from "@expo/vector-icons";
+
+type CheckboxProps = {
+  status: boolean;
+} & ComponentProps<typeof BouncyCheckbox>;
+
+export default function Checkbox({ status, ...props }: CheckboxProps) {
+  return (
+    <BouncyCheckbox
+      size={50}
+      fillColor="rgb(59 130 246)"
+      unFillColor="white"
+      disableText={true}
+      isChecked={status}
+      iconComponent={
+        <Entypo
+          name="check"
+          size={30}
+          color={status ? "white" : "hsl(0, 0%, 97%)"}
+        />
+      }
+      innerIconStyle={{ borderWidth: status ? 0 : 2 }}
+      textStyle={{ fontFamily: "Poppins-Medium" }}
+      {...props}
+    />
+  );
+}
