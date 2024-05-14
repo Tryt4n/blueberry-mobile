@@ -35,15 +35,10 @@ function InnerFormField(
         />
 
         {props.secureTextEntry && (
-          <TouchableOpacity
+          <ShowPasswordBtn
+            visible={showPassword}
             onPress={() => setShowPassword(!showPassword)}
-            className="absolute right-0 p-4"
-          >
-            <Ionicons
-              name={!showPassword ? "eye" : "eye-off"}
-              size={24}
-            />
-          </TouchableOpacity>
+          />
         )}
       </View>
 
@@ -53,3 +48,20 @@ function InnerFormField(
 }
 
 export const FormField = forwardRef(InnerFormField);
+
+function ShowPasswordBtn({
+  visible,
+  ...props
+}: { visible: boolean } & ComponentProps<typeof TouchableOpacity>) {
+  return (
+    <TouchableOpacity
+      className="absolute right-0 p-4"
+      {...props}
+    >
+      <Ionicons
+        name={!visible ? "eye" : "eye-off"}
+        size={24}
+      />
+    </TouchableOpacity>
+  );
+}
