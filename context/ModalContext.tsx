@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import type { ModalProps } from "@/components/Modal";
+import type { ModalProps } from "@/components/Modal/Modal";
 
 type ModalContextType = {
   visible: boolean;

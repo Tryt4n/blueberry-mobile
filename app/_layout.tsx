@@ -10,7 +10,7 @@ import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 import OrderContextProvider from "@/context/OrdersContext";
 import Toast from "react-native-toast-message";
 import ModalContextProvider from "@/context/ModalContext";
-import Modal from "@/components/Modal";
+import Modal from "@/components/Modal/Modal";
 
 SplashScreen.preventAutoHideAsync();
 

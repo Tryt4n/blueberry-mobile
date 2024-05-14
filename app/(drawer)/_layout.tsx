@@ -11,7 +11,7 @@ import { Redirect, router, usePathname } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
-import OrderBottomSheet from "@/components/OrderBottomSheet";
+import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
 
 export default function DrawerLayout() {
   const { isLoggedIn } = useGlobalContext();
