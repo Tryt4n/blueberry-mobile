@@ -1,4 +1,4 @@
-import { View, Text, Alert, Image } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -8,12 +8,12 @@ import {
   editOrder as editOrderAppwrite,
   changeOrderPrice as changeOrderPriceAppwrite,
 } from "@/api/appwrite/orders";
-import { Entypo } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale/pl";
-import Toast from "react-native-toast-message";
-import BouncyCheckbox from "react-native-bouncy-checkbox/build/dist/BouncyCheckbox";
+import Checkbox from "../Checkbox";
 import OrderCardMenuOptions from "./OrderCardMenuOptions";
+import OrderCardUserAvatar from "./OrderCardUserAvatar";
+import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
 
@@ -196,26 +196,9 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           }`}
         >
           <View className="items-end">
-            <BouncyCheckbox
-              size={50}
-              fillColor="rgb(59 130 246)"
-              unFillColor="white"
-              disableText={true}
-              isChecked={order.completed}
-              iconComponent={
-                <Entypo
-                  name="check"
-                  size={30}
-                  color={order.completed ? "white" : "hsl(0, 0%, 97%)"}
-                />
-              }
-              innerIconStyle={{ borderWidth: order.completed ? 0 : 2 }}
-              textStyle={{ fontFamily: "Poppins-Medium" }}
-              onPress={
-                user.role === "admin" || user.role === "moderator"
-                  ? () => changeCompletedStatus(order)
-                  : undefined
-              }
+            <Checkbox
+              status={order.completed}
+              onPress={userHasAccess ? () => changeCompletedStatus(order) : undefined}
               disabled={user.role !== "admin" && user.role !== "moderator"}
             />
           </View>
@@ -249,14 +232,11 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
             <OrderCardMenuOptions options={orderOptions} />
 
             <View className="mt-8">
-              {(user.role === "admin" || user.role === "moderator") && (
-                <View className="flex gap-y-1">
-                  <Image
-                    source={{ uri: user.avatar }}
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <Text className="font-poppinsMedium capitalize">{order.user.username}</Text>
-                </View>
+              {userHasAccess && (
+                <OrderCardUserAvatar
+                  source={{ uri: order.user.avatar }}
+                  username={order.user.username}
+                />
               )}
               <Text className="font-poppinsLight text-xs">
                 {formatDistanceToNow(order.$createdAt, {
