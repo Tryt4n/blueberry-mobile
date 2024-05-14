@@ -1,6 +1,6 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import React, { forwardRef, useRef, type ComponentProps, type ForwardedRef } from "react";
-import { Entypo } from "@expo/vector-icons";
+import ChangeQuantityBtn from "./ChangeQuantityBtn";
 
 type QuantityInputProps = {
   value: number;
@@ -75,20 +75,13 @@ function InnerQuantityInput(
       {label && <Text className="pb-1 text-base font-medium text-center">{label}</Text>}
 
       <View className="flex flex-row justify-center items-center max-w-max mx-auto border border-gray-500 rounded-xl overflow-hidden h-16">
-        <TouchableOpacity
-          className={`h-full px-2 bg-blue-500 justify-center${value <= 0.25 ? " opacity-50" : ""}`}
-          activeOpacity={0.7}
+        <ChangeQuantityBtn
+          type="decrease"
+          borderlineValue={value}
           onPress={() => handleValue("decrease")}
           onLongPress={() => handleLongPress("decrease")}
           onPressOut={handlePressOut}
-          disabled={value <= 0.25}
-        >
-          <Entypo
-            name="minus"
-            size={32}
-            color="white"
-          />
-        </TouchableOpacity>
+        />
 
         <TextInput
           className="w-20 h-full text-xl text-center justify-center font-poppinsSemiBold"
@@ -101,20 +94,13 @@ function InnerQuantityInput(
           onBlur={handleBlur}
         />
 
-        <TouchableOpacity
-          className={`h-full px-2 bg-blue-500 justify-center${value >= 100 ? " opacity-50" : ""}`}
-          activeOpacity={0.7}
+        <ChangeQuantityBtn
+          type="increase"
+          borderlineValue={value}
           onPress={() => handleValue("increase")}
           onLongPress={() => handleLongPress("increase")}
           onPressOut={handlePressOut}
-          disabled={value >= 100}
-        >
-          <Entypo
-            name="plus"
-            size={32}
-            color="white"
-          />
-        </TouchableOpacity>
+        />
       </View>
     </View>
   );
