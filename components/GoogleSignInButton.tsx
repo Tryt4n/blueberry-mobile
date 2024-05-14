@@ -36,7 +36,6 @@ export default function GoogleSignInButton({ setIsSubmitting, ...props }: Google
         }
       }
     } catch (error) {
-      console.error(error);
       Alert.alert("Błąd logowania", "Nie udało się zalogować. Spróbuj ponownie.");
     } finally {
       setIsSubmitting(false);
