@@ -8,10 +8,10 @@ import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
-import { FormField } from "./FormField";
+import { FormField } from "../FormField";
 import { QuantityInput } from "./QuantityInput";
 import { BuyersDropDownPicker } from "./BuyersDropDownPicker";
-import CustomButton from "./CustomButton";
+import CustomButton from "../CustomButton";
 import type { Buyer } from "@/types/buyers";
 import type { ValueType } from "react-native-dropdown-picker";
 
@@ -34,20 +34,25 @@ export default function OrderBottomSheet() {
   const buyerNameRef = useRef<TextInput>(null);
   const additionalInfoRef = useRef<TextInput>(null);
 
+  // Fetch all buyers
   const {
     data: buyers,
     isLoading: isLoadingBuyers,
-    refetchData,
+    refetchData: buyersRefetchData,
   } = useAppwrite(getAllBuyers, [], {
     title: "Błąd",
     message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
   });
 
   async function handleOrder() {
+    // Check if quantity is provided
     if (!orderData.quantity) return Alert.alert("Błąd zamówienia", "Wprowadź ilość.");
+
+    // Check if buyer name is provided
     if (orderData.buyerName === "")
       return Alert.alert("Błąd zamówienia", "Wprowadź nazwę kupującego.");
 
+    // Do nothing and close bottom sheet in edit mode if no changes were made
     if (
       editedOrder &&
       editedOrder.buyer.buyerName === orderData.buyerName &&
@@ -57,34 +62,42 @@ export default function OrderBottomSheet() {
       return handleCloseBottomSheet();
     }
 
-    if (user && buyers && orderData.quantity && typeof orderData.quantity === "number") {
+    if (user && buyers) {
       setIsSubmitting(true);
 
       const trimmedBuyerName = orderData.buyerName.replace(/\s+/g, " ").trim().toLowerCase(); // trim and lowercase buyer name
-      const existingBuyer = buyers.find((buyer) => buyer.buyerName === trimmedBuyerName);
+      const existingBuyer = buyers.find((buyer) => buyer.buyerName === trimmedBuyerName); // check if buyer already exists
 
       try {
         let buyerId: Buyer["$id"];
+
+        // Create new buyer if it doesn't exist
         if (!existingBuyer) {
           const { buyer: newBuyer, error } = await createNewBuyer(
             orderData.buyerName.toLowerCase()
           );
 
+          // Check if new buyer was created successfully and set buyerId to new buyer's id
           if (newBuyer) {
             buyerId = newBuyer.$id;
           } else {
+            // Show error alert if new buyer wasn't created
             return Alert.alert("Błąd zamówienia", error.join("\n"));
           }
         } else {
+          // Set buyerId if buyer already exists
           buyerId = existingBuyer.$id;
         }
 
-        if (!currentPrice)
+        // Check if current price is available and show error alert if not
+        if (!currentPrice) {
           return Alert.alert(
             "Błąd zamówienia",
             "Nie udało się pobrać aktualnej ceny. Spróbuj ponownie."
           );
+        }
 
+        // Edit order if in edit mode, otherwise create new order
         const { errors } = editedOrder
           ? await editOrder(editedOrder.$id, {
               userId: editedOrder.user.$id,
@@ -101,12 +114,13 @@ export default function OrderBottomSheet() {
               orderData.additionalInfo.trim()
             );
 
+        // Show error alert if there are any errors, otherwise close bottom sheet, show success toast, refetch data for orders and buyers
         if (errors) {
           return Alert.alert("Błąd zamówienia", errors.quantity.join("\n"));
         } else {
           handleCloseBottomSheet();
           ordersData && ordersData.refetchData();
-          refetchData();
+          buyersRefetchData();
           Toast.show({
             type: "success",
             text1: `Zamówienie zostało ${editedOrder ? "edytowane" : "utworzone"}.`,
@@ -114,15 +128,20 @@ export default function OrderBottomSheet() {
           });
         }
       } catch (error) {
+        // Show error alert if there was an error during order creation or edition
         Alert.alert(
           "Błąd",
           `Nie udało się ${editedOrder ? "edytować" : "utworzyć"} zamówienia. Spróbuj ponownie.`
         );
       } finally {
+        // Reset states
         setIsSubmitting(false);
         setOrderData(orderDataInitialState);
         setQuantity(1);
       }
+    } else {
+      // Close bottom sheet if user or buyers are not available
+      handleCloseBottomSheet();
     }
   }
 
