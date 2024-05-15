@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
 import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
@@ -15,10 +15,14 @@ type OrderContextType = {
   currentPrice: CurrentPrice | null;
   setCurrentPrice: (obj: CurrentPrice) => void;
   ordersData: OrdersDataType | null;
-  setOrdersData: React.Dispatch<React.SetStateAction<OrdersDataType | null>>;
+  setOrdersData: (obj: OrdersDataType | null) => void;
   editedOrder: Order | null;
   setEditedOrder: (order: Order | null) => void;
   deleteOrder: (orderId: Order["$id"]) => Promise<void>;
+  isBannerVisible: boolean;
+  setIsBannerVisible: (value: boolean) => void;
+  dateRange: { startDate: string | undefined; endDate: string | undefined };
+  setDateRange: (value: { startDate: string | undefined; endDate: string | undefined }) => void;
 };
 
 export const OrdersContext = createContext<OrderContextType | null>(null);
@@ -27,6 +31,14 @@ export default function OrderContextProvider({ children }: { children: React.Rea
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
   const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
+  const [isBannerVisible, setIsBannerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState<{
+    startDate: string | undefined;
+    endDate: string | undefined;
+  }>({
+    startDate: undefined,
+    endDate: undefined,
+  });
 
   const deleteOrder = useCallback(
     async (orderId: Order["$id"]) => {
@@ -68,6 +80,10 @@ export default function OrderContextProvider({ children }: { children: React.Rea
     editedOrder,
     setEditedOrder,
     deleteOrder,
+    isBannerVisible,
+    setIsBannerVisible,
+    dateRange,
+    setDateRange,
   };
 
   return <OrdersContext.Provider value={contextValues}>{children}</OrdersContext.Provider>;
