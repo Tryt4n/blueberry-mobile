@@ -5,8 +5,8 @@ import type { ComponentProps } from "react";
 type TabIconProps = {
   icon: ComponentProps<typeof Ionicons>["name"];
   color: string;
-  name: string;
-  focused: boolean;
+  name?: string;
+  focused?: boolean;
   gap?: number;
   iconsSize?: number;
 };
@@ -28,13 +28,15 @@ export default function TabIcon({
         disabled={!focused}
       />
 
-      <Text
-        className={`${
-          focused ? "font-poppinsSemiBold" : "font-poppinsRegular"
-        } text-sm text-center`}
-      >
-        {name}
-      </Text>
+      {name && (
+        <Text
+          className={`${
+            focused ? "font-poppinsSemiBold" : "font-poppinsRegular"
+          } text-sm text-center`}
+        >
+          {name}
+        </Text>
+      )}
     </View>
   );
 }
