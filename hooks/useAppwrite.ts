@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 export function useAppwrite<T>(
-  fn: (...args: string[]) => Promise<T>,
-  args: string[],
+  fn: (...args: any[]) => Promise<T>,
+  args: any[],
   errorMessage?: { title: string; message: string }
 ) {
   const [data, setData] = useState<T>();
