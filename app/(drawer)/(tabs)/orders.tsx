@@ -3,34 +3,39 @@ import React, { useEffect } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { getOrders } from "@/api/appwrite/orders";
+import { getOrders, getOrdersBySearchParams } from "@/api/appwrite/orders";
 import OrdersList from "@/components/Orders/OrdersList";
 import OrdersHeader from "@/components/Orders/OrdersHeader";
 
 export default function TabOrders() {
   const { user } = useGlobalContext();
-  const { ordersData, setOrdersData } = useOrdersContext();
+  const { ordersData, setOrdersData, dateRange } = useOrdersContext();
 
-  const appwriteOrdersData = useAppwrite(
-    getOrders,
-    user && user.role !== "admin" && user.role !== "moderator" ? [user.$id] : [],
-    {
-      title: "Błąd",
-      message: "Nie udało się pobrać zamówień. Spróbuj odświeżyć stronę.",
-    }
-  );
+  const appwriteOrdersData =
+    dateRange?.startDate && dateRange?.endDate
+      ? useAppwrite(getOrdersBySearchParams, [dateRange.startDate, dateRange.endDate], {
+          title: "Błąd",
+          message: "Nie udało się pobrać zamówień. Spróbuj odświeżyć stronę.",
+        })
+      : useAppwrite(
+          getOrders,
+          user && user.role !== "admin" && user.role !== "moderator" ? [user.$id] : [],
+          {
+            title: "Błąd",
+            message: "Nie udało się pobrać zamówień. Spróbuj odświeżyć stronę.",
+          }
+        );
 
   useEffect(() => {
     setOrdersData(appwriteOrdersData);
-  }, [appwriteOrdersData.isLoading]);
+  }, [appwriteOrdersData.isLoading, dateRange]);
 
   return (
     <View className="h-full w-[90%] mx-auto">
       {user && ordersData && (
         <>
-          <OrdersHeader />
-
-          <View className="h-[80%]">
+          <View className="h-full">
+            <OrdersHeader />
             {ordersData.isLoading ? (
               <ActivityIndicator
                 size="large"
