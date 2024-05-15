@@ -33,6 +33,7 @@
     "react-native": "0.73.6",
     "react-native-appwrite": "^0.2.2",
     "react-native-bouncy-checkbox": "^4.0.0",
+    "react-native-calendars": "^1.1304.1",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-paper": "^5.12.3",
