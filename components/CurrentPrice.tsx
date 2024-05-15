@@ -105,7 +105,7 @@ export default function CurrentPrice() {
   }, [fetchedCurrentPrice]);
 
   return (
-    <View className="flex-row items-center gap-4 mb-4">
+    <View className="flex-row items-center gap-x-4">
       <Text className="font-poppinsRegular text-base w-fit">
         Cena:&nbsp;
         {isPriceLoading ? (
