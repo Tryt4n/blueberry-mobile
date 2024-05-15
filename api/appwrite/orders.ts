@@ -184,3 +184,20 @@ export async function changeOrderPrice(
     throw new Error(error);
   }
 }
+
+export async function getOrdersBySearchParams(startDate: string, endDate: string) {
+  try {
+    // Add time to endDate to include the whole day instead of just the midnight
+    endDate = endDate + "T23:59:59.999Z";
+
+    const orders = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.ordersCollectionId,
+      [Query.between("$createdAt", startDate, endDate)]
+    );
+
+    return orders.documents as Order[];
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
