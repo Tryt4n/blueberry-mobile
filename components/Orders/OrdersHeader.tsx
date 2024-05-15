@@ -4,6 +4,8 @@ import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import AddButton from "../AddButton";
 import CurrentPrice from "../CurrentPrice";
+import OpenSearchBannerBtn from "./OpenSearchBannerBtn";
+import OrdersBanner from "./OrdersBanner";
 
 export default function OrdersHeader() {
   const { user } = useGlobalContext();
@@ -12,7 +14,7 @@ export default function OrdersHeader() {
 
   return (
     <>
-      <View className="mt-8 flex flex-row justify-between pb-2">
+      <View className="mt-8 flex flex-row justify-between mb-2">
         <Text className="font-poppinsBold text-3xl">
           {user?.role === "admin" || user?.role === "moderator" ? "Zamówienia" : "Twoje zamówienia"}
         </Text>
@@ -25,6 +27,10 @@ export default function OrdersHeader() {
       </View>
 
       <CurrentPrice />
+
+      <OpenSearchBannerBtn />
+
+      <OrdersBanner />
     </>
   );
 }
