@@ -16,3 +16,15 @@ export type Order = {
   readonly buyer: Buyer;
   readonly currentPrice: CurrentPrice;
 };
+
+export type OrdersDataType = {
+  data: Order[] | undefined;
+  isLoading: boolean;
+  refetchData: () => Promise<void>;
+};
+
+export type OrdersSearchParams = {
+  startDate: string | undefined;
+  endDate: string | undefined;
+  userId: User["$id"] | undefined;
+};
