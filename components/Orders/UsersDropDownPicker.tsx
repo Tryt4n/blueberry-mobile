@@ -1,0 +1,31 @@
+import { Text } from "react-native";
+import { useEffect, useState, type ComponentProps } from "react";
+import { CustomDropDownPicker } from "../CustomDropDownPicker";
+import type { User } from "@/types/user";
+
+type UsersDropDownPickerProps = {
+  users?: User[];
+} & Omit<ComponentProps<typeof CustomDropDownPicker>, "items" | "setItems" | "label">;
+
+export function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProps) {
+  const [items, setItems] = useState<Record<"label" | "value", string>[]>([]);
+
+  useEffect(() => {
+    users && setItems(users?.map((user) => ({ label: user.username, value: user.$id })));
+  }, [users]);
+
+  return (
+    <CustomDropDownPicker
+      label="Użytkownik:"
+      placeholder="Wprowadź użytkownika"
+      listMode="MODAL"
+      items={items}
+      addCustomItem={false}
+      setItems={setItems}
+      ListEmptyComponent={() => (
+        <Text className="font-poppinsSemiBold text-base text-center">Brak wyników</Text>
+      )}
+      {...props}
+    />
+  );
+}
