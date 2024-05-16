@@ -22,13 +22,11 @@ export default function BottomSheetTabsContextProvider({
   children: React.ReactNode;
 }) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["25%", "50%", "70%"], []);
+  const snapPoints = useMemo(() => ["70%"], []);
 
   const handleOpenBottomSheet = () => bottomSheetModalRef.current?.expand();
 
   const handleCloseBottomSheet = () => bottomSheetModalRef.current?.close();
-
-  // const snapToIndex = (index:number) => bottomSheetModalRef.current?.snapToIndex(index);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
