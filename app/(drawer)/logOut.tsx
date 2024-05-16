@@ -8,7 +8,7 @@ import { signOutWithGoogle } from "@/api/auth/google";
 import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
-  const { isLoggedIn, setIsLoggedIn, setUser, authProvider } = useGlobalContext();
+  const { isLoggedIn, setIsLoggedIn, setUser, authProvider, setAuthProvider } = useGlobalContext();
   const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
     useOrdersContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +29,9 @@ export default function LogOutPage() {
       setEditedOrder(null);
       setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
       setIsBannerVisible(false);
+
+      // Reset provider
+      setAuthProvider("appwrite");
 
       router.replace("/signIn");
     } catch (error) {
