@@ -2,12 +2,15 @@ import { View, Text, Alert, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { signOut } from "@/api/auth/appwrite";
 import { signOutWithGoogle } from "@/api/auth/google";
 import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
   const { isLoggedIn, setIsLoggedIn, setUser, authProvider } = useGlobalContext();
+  const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
+    useOrdersContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function logOut() {
@@ -18,8 +21,14 @@ export default function LogOutPage() {
     try {
       authProvider === "google" ? signOutWithGoogle() : await signOut();
 
+      // Reset all app states
       setUser(null);
       setIsLoggedIn(false);
+
+      setOrdersData(null);
+      setEditedOrder(null);
+      setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
+      setIsBannerVisible(false);
 
       router.replace("/signIn");
     } catch (error) {
