@@ -26,7 +26,14 @@ export default function OrderBottomSheet() {
     additionalInfo: "",
     userId: user && user.$id,
   };
-  const { currentPrice, ordersData, editedOrder, setEditedOrder } = useOrdersContext();
+  const {
+    currentPrice,
+    ordersData,
+    editedOrder,
+    setEditedOrder,
+    setOrdersSearchParams,
+    setIsBannerVisible,
+  } = useOrdersContext();
   const [orderData, setOrderData] = useState(orderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -114,10 +121,12 @@ export default function OrderBottomSheet() {
               orderData.additionalInfo.trim()
             );
 
-        // Show error alert if there are any errors, otherwise close bottom sheet, show success toast, refetch data for orders and buyers
+        // Show error alert if there are any errors, otherwise close bottom sheet and banner, reset search params, show success toast, refetch data for orders and buyers
         if (errors) {
           return Alert.alert("Błąd zamówienia", errors.quantity.join("\n"));
         } else {
+          setIsBannerVisible(false);
+          setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
           handleCloseBottomSheet();
           ordersData && ordersData.refetchData();
           buyersRefetchData();
