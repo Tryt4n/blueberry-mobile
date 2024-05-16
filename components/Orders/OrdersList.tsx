@@ -8,11 +8,12 @@ import Toast from "react-native-toast-message";
 
 export default function OrdersList() {
   const { user } = useGlobalContext();
-  const { currentPrice, ordersData } = useOrdersContext();
+  const { currentPrice, ordersData, setIsBannerVisible } = useOrdersContext();
   const [refreshing, setRefreshing] = useState(false);
 
   async function refetchOrders() {
     setRefreshing(true);
+    setIsBannerVisible(false);
 
     ordersData && (await ordersData.refetchData());
 
@@ -27,7 +28,7 @@ export default function OrdersList() {
 
   return (
     <>
-      {user && ordersData && currentPrice && (
+      {user && ordersData && ordersData.data && ordersData.data.length > 0 && currentPrice && (
         <FlashList
           data={ordersData.data}
           keyExtractor={(order) => order.$id}
