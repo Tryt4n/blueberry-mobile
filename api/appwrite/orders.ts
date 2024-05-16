@@ -185,15 +185,25 @@ export async function changeOrderPrice(
   }
 }
 
-export async function getOrdersBySearchParams(startDate: string, endDate: string) {
+export async function getOrdersBySearchParams(
+  startDate: string,
+  endDate: string,
+  userId?: User["$id"]
+) {
   try {
     // Add time to endDate to include the whole day instead of just the midnight
     endDate = endDate + "T23:59:59.999Z";
 
+    let ordersFilters = [Query.between("$createdAt", startDate, endDate)];
+
+    if (userId) {
+      ordersFilters.push(Query.equal("user", userId));
+    }
+
     const orders = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.ordersCollectionId,
-      [Query.between("$createdAt", startDate, endDate)]
+      ordersFilters
     );
 
     return orders.documents as Order[];
