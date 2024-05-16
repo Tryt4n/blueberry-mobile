@@ -229,7 +229,8 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           )}
 
           <View className="flex flex-row-reverse justify-between items-end">
-            <OrderCardMenuOptions options={orderOptions} />
+            {((user.role === "admin" || user.role === "moderator") && order.completed) ||
+              (!order.completed && <OrderCardMenuOptions options={orderOptions} />)}
 
             <View className="mt-8">
               {userHasAccess && (
