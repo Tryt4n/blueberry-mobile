@@ -207,7 +207,6 @@ export default function OrderBottomSheet() {
             ref={buyerNameRef}
             defaultValue={editedOrder ? editedOrder.buyer.buyerName : undefined}
             dropDownHeight={dropdownHeight}
-            label="Kupujący:"
             buyers={buyers}
             loading={isLoadingBuyers}
             onChangeValue={(value: ValueType | null) => {
