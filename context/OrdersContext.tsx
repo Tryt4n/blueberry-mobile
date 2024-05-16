@@ -2,14 +2,8 @@ import { createContext, useCallback, useState } from "react";
 import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
 import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
-import type { Order } from "@/types/orders";
+import type { Order, OrdersDataType, OrdersSearchParams } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
-
-type OrdersDataType = {
-  data: Order[] | undefined;
-  isLoading: boolean;
-  refetchData: () => Promise<void>;
-};
 
 type OrderContextType = {
   currentPrice: CurrentPrice | null;
@@ -21,8 +15,10 @@ type OrderContextType = {
   deleteOrder: (orderId: Order["$id"]) => Promise<void>;
   isBannerVisible: boolean;
   setIsBannerVisible: (value: boolean) => void;
-  dateRange: { startDate: string | undefined; endDate: string | undefined };
-  setDateRange: (value: { startDate: string | undefined; endDate: string | undefined }) => void;
+  ordersSearchParams: OrdersSearchParams;
+  setOrdersSearchParams: (
+    value: ((prevState: OrdersSearchParams) => OrdersSearchParams) | OrdersSearchParams
+  ) => void;
 };
 
 export const OrdersContext = createContext<OrderContextType | null>(null);
@@ -32,12 +28,10 @@ export default function OrderContextProvider({ children }: { children: React.Rea
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
   const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const [dateRange, setDateRange] = useState<{
-    startDate: string | undefined;
-    endDate: string | undefined;
-  }>({
+  const [ordersSearchParams, setOrdersSearchParams] = useState<OrdersSearchParams>({
     startDate: undefined,
     endDate: undefined,
+    userId: undefined,
   });
 
   const deleteOrder = useCallback(
@@ -82,8 +76,8 @@ export default function OrderContextProvider({ children }: { children: React.Rea
     deleteOrder,
     isBannerVisible,
     setIsBannerVisible,
-    dateRange,
-    setDateRange,
+    ordersSearchParams,
+    setOrdersSearchParams,
   };
 
   return <OrdersContext.Provider value={contextValues}>{children}</OrdersContext.Provider>;
