@@ -8,7 +8,7 @@ import { useAppwrite } from "@/hooks/useAppwrite";
 import { getListOfUsers } from "@/api/appwrite/users";
 import { DateInput } from "../DateInput";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { UsersDropDownPicker } from "./UsersDropDownPicker";
 import Toast from "react-native-toast-message";
 import type { ValueType } from "react-native-dropdown-picker";
@@ -138,6 +138,7 @@ export default function OrdersBanner() {
         <UsersDropDownPicker
           users={fetchedListOfUsers.data}
           loading={fetchedListOfUsers.isLoading}
+          defaultValue={ordersSearchParams.userId}
           onChangeValue={(value: ValueType | null) => {
             if (!value || !userHasAccess) return;
             setSearchedUserId(value as string);
@@ -166,13 +167,6 @@ export default function OrdersBanner() {
         ...prevModalData.btn2,
         onPress: saveSearchedUser,
       },
-      children: (
-        <UsersDropDownPicker
-          users={fetchedListOfUsers.data}
-          loading={fetchedListOfUsers.isLoading}
-          defaultValue={ordersSearchParams.userId}
-        />
-      ),
     }));
   }, [searchedUserId, ordersSearchParams.userId]);
 
@@ -260,18 +254,46 @@ export default function OrdersBanner() {
         </View>
 
         {userHasAccess && (
-          <TouchableOpacity
-            onPress={openSelectUserModal}
-            className={`mt-6 p-2 self-end${
-              searchedUserId ? "" : " border-2 rounded-full border-blue-500"
-            }`}
-          >
-            <Entypo
-              name={searchedUserId ? "user" : "add-user"}
-              size={24}
-              color="rgb(59 130 246)"
-            />
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              onPress={openSelectUserModal}
+              className={`mt-6 p-2 self-end${
+                ordersSearchParams.userId ? "" : " border-2 rounded-full border-blue-500"
+              }`}
+            >
+              <Entypo
+                name={ordersSearchParams.userId ? "user" : "add-user"}
+                size={24}
+                color="rgb(59 130 246)"
+              />
+            </TouchableOpacity>
+
+            {ordersSearchParams.userId && fetchedListOfUsers && fetchedListOfUsers.data && (
+              <>
+                <Text>Wyszukiwany użytkownik:&nbsp;</Text>
+
+                <View className="mt-2 flex flex-row items-center gap-x-2">
+                  <Text className="font-poppinsMedium">
+                    {
+                      fetchedListOfUsers.data.find((user) => user.$id === ordersSearchParams.userId)
+                        ?.username
+                    }
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      setOrdersSearchParams((prevState) => ({ ...prevState, userId: undefined }))
+                    }
+                  >
+                    <Ionicons
+                      name="close-outline"
+                      color="#FF3333"
+                      size={26}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </>
         )}
       </View>
     </Banner>
