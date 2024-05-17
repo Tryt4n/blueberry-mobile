@@ -1,174 +1,19 @@
 import { View, Text, Dimensions, Alert } from "react-native";
 import { Banner, type BannerProps } from "react-native-paper";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
-import { useModalContext } from "@/hooks/useModalContext";
-import { useAppwrite } from "@/hooks/useAppwrite";
-import { getListOfUsers } from "@/api/appwrite/users";
-import { DateInput } from "../DateInput";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import { UsersDropDownPicker } from "./UsersDropDownPicker";
+import OrdersSearchBannerDates from "./OrdersSearchBannerDates";
+import OrdersSearchBannerUser from "./OrdersSearchBannerUser";
 import Toast from "react-native-toast-message";
-import type { ValueType } from "react-native-dropdown-picker";
-import type { User } from "@/types/user";
 
 export default function OrdersSearchBanner() {
   const { user } = useGlobalContext();
-  const {
-    isBannerVisible,
-    setIsBannerVisible,
-    ordersSearchParams,
-    setOrdersSearchParams,
-    ordersData,
-  } = useOrdersContext();
-  const { showModal, setModalData } = useModalContext();
-
-  const [startDate, setStartDate] = useState<string | undefined>();
-  const [endDate, setEndDate] = useState<string | undefined>();
-  const [searchedUserId, setSearchedUserId] = useState<User["$id"] | undefined>();
+  const { isBannerVisible, setIsBannerVisible, ordersSearchParams, ordersData } =
+    useOrdersContext();
 
   const { width } = Dimensions.get("window");
   const containerWidth = width * 0.9 - 32;
-  const inputWidth = (containerWidth - 16) / 2;
-
-  const userHasAccess = user?.role === "admin" || user?.role === "moderator";
-  const todayDate = new Date();
-
-  const openSelectDateModal = useCallback(
-    (period: "start" | "end") => {
-      setModalData({
-        title: `Wybierz datę ${period === "start" ? "początkową" : "końcową"}`,
-        onDismiss: () => clearModalDates(period),
-        btn1: {
-          text: "Anuluj",
-          onPress: () => clearModalDates(period),
-        },
-        btn2: {
-          text: "Zapisz",
-          color: "primary",
-        },
-        calendar: {
-          onDayPress: (day) => {
-            period === "start" ? setStartDate(day.dateString) : setEndDate(day.dateString);
-          },
-          markedDates: {
-            [startDate || ordersSearchParams.startDate || ""]: {
-              selected: true,
-              selectedColor: "rgb(59 130 246)",
-            },
-            [endDate || ordersSearchParams.endDate || ""]: {
-              selected: true,
-              selectedColor: "rgb(59 130 246)",
-            },
-          },
-          minDate: period === "start" ? undefined : startDate,
-          maxDate: period === "start" && endDate ? endDate : todayDate.toISOString().split("T")[0], // today for end date and endDate for start date if it exists or today if not
-        },
-      });
-      showModal();
-    },
-    [startDate, endDate, ordersSearchParams, setModalData, showModal]
-  );
-
-  // Reset the startDate or endDate in the modal
-  function clearModalDates(period: "start" | "end") {
-    if (period === "start") {
-      setStartDate(undefined);
-    } else {
-      setEndDate(undefined);
-    }
-  }
-
-  // Save the selected date range
-  const saveDateRange = useCallback(() => {
-    setOrdersSearchParams((prevState) => ({
-      ...prevState,
-      startDate: startDate,
-      endDate: endDate,
-    }));
-  }, [startDate, endDate, setOrdersSearchParams]);
-
-  // Update the saveDateRange function in the modal when startDate or endDate changes
-  useEffect(() => {
-    setModalData((prevModalData) => ({
-      ...prevModalData,
-      btn2: {
-        ...prevModalData.btn2,
-        onPress: saveDateRange,
-      },
-      calendar: {
-        ...prevModalData.calendar,
-        markedDates: {
-          [startDate || ordersSearchParams.startDate || ""]: {
-            selected: true,
-            selectedColor: "rgb(59 130 246)",
-          },
-          [endDate || ordersSearchParams.endDate || ""]: {
-            selected: true,
-            selectedColor: "rgb(59 130 246)",
-          },
-        },
-      },
-    }));
-  }, [startDate, endDate]);
-
-  // Fetch the list of users if the user has access
-  const fetchedListOfUsers =
-    userHasAccess &&
-    useAppwrite(getListOfUsers, [], {
-      title: "Błąd",
-      message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
-    });
-
-  const openSelectUserModal = useCallback(() => {
-    if (!fetchedListOfUsers) return Alert.alert("Błąd", "Nie udało się pobrać listy użytkowników.");
-
-    setModalData({
-      title: "Wybierz użytkownika którego chcesz zobaczyć zamówienia",
-      btn1: {
-        text: "Anuluj",
-      },
-      btn2: {
-        text: "Wybierz",
-        color: "primary",
-      },
-      children: (
-        <UsersDropDownPicker
-          users={fetchedListOfUsers.data}
-          loading={fetchedListOfUsers.isLoading}
-          defaultValue={ordersSearchParams.userId}
-          onChangeValue={(value: ValueType | null) => {
-            if (!value || !userHasAccess) return;
-            setSearchedUserId(value as string);
-          }}
-        />
-      ),
-    });
-    showModal();
-  }, [fetchedListOfUsers, setModalData, showModal, user, userHasAccess]);
-
-  // Reset the searchedUserId in the modal
-  const saveSearchedUser = useCallback(() => {
-    setOrdersSearchParams((prevState) => ({
-      ...prevState,
-      userId: searchedUserId,
-    }));
-  }, [searchedUserId, setOrdersSearchParams]);
-
-  // Update the saveSearchedUser function in the modal when searchedUserId changes
-  useEffect(() => {
-    if (!fetchedListOfUsers) return;
-
-    setModalData((prevModalData) => ({
-      ...prevModalData,
-      btn2: {
-        ...prevModalData.btn2,
-        onPress: saveSearchedUser,
-      },
-    }));
-  }, [searchedUserId, ordersSearchParams.userId]);
 
   // Fetch new orders based on the selected date range
   const getNewOrders = useCallback(() => {
@@ -188,11 +33,8 @@ export default function OrdersSearchBanner() {
       // Refetch the data with the new parameters
       ordersData.refetchData();
 
-      // Reset values
+      // Hide the banner
       setIsBannerVisible(false);
-      setStartDate(undefined);
-      setEndDate(undefined);
-      setSearchedUserId(undefined);
 
       // Show a success message
       Toast.show({
@@ -203,7 +45,7 @@ export default function OrdersSearchBanner() {
         text2Style: { textAlign: "left", fontSize: 14 },
       });
     }
-  }, [ordersSearchParams, ordersData, setIsBannerVisible, setStartDate, setEndDate]);
+  }, [ordersSearchParams, ordersData, setIsBannerVisible]);
 
   // Actions for the <Banner /> component
   const bannerActions: BannerProps["actions"] = [
@@ -237,64 +79,9 @@ export default function OrdersSearchBanner() {
         Wyszukaj zamówienia
       </Text>
       <View style={{ width: containerWidth }}>
-        <View className="flex flex-row justify-between">
-          <DateInput
-            containerProps={{ style: { width: inputWidth } }}
-            label="Od:"
-            text={ordersSearchParams.startDate || "Początek"}
-            onPress={() => openSelectDateModal("start")}
-          />
+        <OrdersSearchBannerDates containerWidth={containerWidth} />
 
-          <DateInput
-            containerProps={{ style: { width: inputWidth } }}
-            label="Do:"
-            text={ordersSearchParams.endDate || "Koniec"}
-            onPress={() => openSelectDateModal("end")}
-          />
-        </View>
-
-        {userHasAccess && (
-          <>
-            <TouchableOpacity
-              onPress={openSelectUserModal}
-              className={`mt-6 p-2 self-end${
-                ordersSearchParams.userId ? "" : " border-2 rounded-full border-blue-500"
-              }`}
-            >
-              <Entypo
-                name={ordersSearchParams.userId ? "user" : "add-user"}
-                size={24}
-                color="rgb(59 130 246)"
-              />
-            </TouchableOpacity>
-
-            {ordersSearchParams.userId && fetchedListOfUsers && fetchedListOfUsers.data && (
-              <>
-                <Text>Wyszukiwany użytkownik:&nbsp;</Text>
-
-                <View className="mt-2 flex flex-row items-center gap-x-2">
-                  <Text className="font-poppinsMedium">
-                    {
-                      fetchedListOfUsers.data.find((user) => user.$id === ordersSearchParams.userId)
-                        ?.username
-                    }
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      setOrdersSearchParams((prevState) => ({ ...prevState, userId: undefined }))
-                    }
-                  >
-                    <Ionicons
-                      name="close-outline"
-                      color="#FF3333"
-                      size={26}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-          </>
-        )}
+        {(user?.role === "admin" || user?.role === "moderator") && <OrdersSearchBannerUser />}
       </View>
     </Banner>
   );
