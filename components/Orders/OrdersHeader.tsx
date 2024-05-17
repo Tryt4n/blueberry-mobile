@@ -5,7 +5,7 @@ import { useOrdersContext } from "@/hooks/useOrdersContext";
 import AddButton from "../AddButton";
 import CurrentPrice from "../CurrentPrice";
 import OpenSearchBannerBtn from "./OpenSearchBannerBtn";
-import OrdersBanner from "./OrdersBanner";
+import OrdersSearchBanner from "./OrdersSearchBanner";
 
 export default function OrdersHeader() {
   const { user } = useGlobalContext();
@@ -30,7 +30,7 @@ export default function OrdersHeader() {
 
       <OpenSearchBannerBtn />
 
-      <OrdersBanner />
+      <OrdersSearchBanner />
     </>
   );
 }

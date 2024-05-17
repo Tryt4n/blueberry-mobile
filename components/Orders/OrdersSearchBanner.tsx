@@ -14,7 +14,7 @@ import Toast from "react-native-toast-message";
 import type { ValueType } from "react-native-dropdown-picker";
 import type { User } from "@/types/user";
 
-export default function OrdersBanner() {
+export default function OrdersSearchBanner() {
   const { user } = useGlobalContext();
   const {
     isBannerVisible,
