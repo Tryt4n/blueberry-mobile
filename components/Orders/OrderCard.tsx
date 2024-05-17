@@ -36,6 +36,9 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
   // Toggle the completed status of the passed order
   const changeCompletedStatus = useCallback(
     async (order: Order) => {
+      // If the user is not the creator of the order and doesn't have access, return
+      if (user && order.user.$id !== user.$id && !userHasAccess) return;
+
       try {
         const updatedOrder = {
           userId: order.user.$id,
@@ -198,8 +201,8 @@ export default function OrderCard({ order: orderTest, price }: OrderCardProps) {
           <View className="items-end">
             <Checkbox
               status={order.completed}
-              onPress={userHasAccess ? () => changeCompletedStatus(order) : undefined}
-              disabled={user.role !== "admin" && user.role !== "moderator"}
+              disabled={order.user.$id !== user.$id && !userHasAccess}
+              onPress={() => changeCompletedStatus(order)}
             />
           </View>
 
