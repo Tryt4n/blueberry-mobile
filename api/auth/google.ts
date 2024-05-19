@@ -1,33 +1,49 @@
 import { appwriteConfig, avatars, databases } from "@/lib/appwrite";
 import { parsedEnv } from "@/lib/zod/env";
-import { GoogleSignin, type User as GoogleUser } from "@react-native-google-signin/google-signin";
 import { ID, Query } from "react-native-appwrite";
+import { Platform } from "react-native";
 import type { User } from "@/types/user";
+import type {
+  GoogleSignin as GoogleSigninType,
+  User as GoogleUser,
+} from "@react-native-google-signin/google-signin";
+
+// Use GoogleSignInButton only on native platforms
+let GoogleSignin: typeof GoogleSigninType;
+if (Platform.OS !== "web") {
+  ({ GoogleSignin } = require("@react-native-google-signin/google-signin"));
+}
 
 export function configureGoogleSignIn() {
-  GoogleSignin.configure({
-    //@ts-expect-error - missing type for androidClientId
-    androidClientId: parsedEnv.EXPO_PUBLIC_ANDROID_CLIENT_ID,
-  });
+  if (GoogleSignin) {
+    GoogleSignin.configure({
+      //@ts-expect-error - missing type for androidClientId
+      androidClientId: parsedEnv.EXPO_PUBLIC_ANDROID_CLIENT_ID,
+    });
+  }
 }
 
 export async function signInWithGoogle() {
-  try {
-    await GoogleSignin.hasPlayServices();
+  if (GoogleSignin) {
+    try {
+      await GoogleSignin.hasPlayServices();
 
-    const userInfo = await GoogleSignin.signIn();
+      const userInfo = await GoogleSignin.signIn();
 
-    await createGoogleUserInAppwrite(userInfo.user);
+      await createGoogleUserInAppwrite(userInfo.user);
 
-    return userInfo;
-  } catch (error: any) {
-    throw new Error(error);
+      return userInfo;
+    } catch (error: any) {
+      throw new Error(error);
+    }
   }
 }
 
 export function signOutWithGoogle() {
-  GoogleSignin.revokeAccess();
-  GoogleSignin.signOut();
+  if (GoogleSignin) {
+    GoogleSignin.revokeAccess();
+    GoogleSignin.signOut();
+  }
 }
 
 async function createGoogleUserInAppwrite(user: GoogleUser["user"]) {

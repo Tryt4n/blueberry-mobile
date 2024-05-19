@@ -1,15 +1,23 @@
-import { Alert, View } from "react-native";
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import { Alert, Platform, View } from "react-native";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { configureGoogleSignIn, getGoogleCurrentUser, signInWithGoogle } from "@/api/auth/google";
+import type { GoogleSigninButton as GoogleSigninButtonType } from "@react-native-google-signin/google-signin";
+
+// Use GoogleSignInButton only on native platforms
+let GoogleSigninButton: typeof GoogleSigninButtonType;
+if (Platform.OS !== "web") {
+  ({ GoogleSigninButton } = require("@react-native-google-signin/google-signin"));
+}
 
 type GoogleSignInButtonProps = {
   setIsSubmitting: (value: boolean) => void;
 } & React.ComponentProps<typeof GoogleSigninButton>;
 
 export default function GoogleSignInButton({ setIsSubmitting, ...props }: GoogleSignInButtonProps) {
+  if (GoogleSignInButton === undefined) return null;
+
   const { setUser, setIsLoggedIn, setAuthProvider } = useGlobalContext();
 
   useEffect(() => {

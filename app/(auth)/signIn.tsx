@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
@@ -64,7 +64,7 @@ export default function SignInPage() {
 
   return (
     <AuthLayout type="signIn">
-      <GoogleSignInButton setIsSubmitting={setIsSubmitting} />
+      {Platform.OS !== "web" && <GoogleSignInButton setIsSubmitting={setIsSubmitting} />}
 
       <FormField
         ref={loginRef}
