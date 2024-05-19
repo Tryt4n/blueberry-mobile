@@ -1,6 +1,6 @@
 import { GestureHandlerRootView, TouchableOpacity } from "react-native-gesture-handler";
 import { Drawer as SideMenu } from "expo-router/drawer";
-import { Text, Image } from "react-native";
+import { Text, Image, Platform } from "react-native";
 import React, { type ComponentProps } from "react";
 import {
   DrawerContentScrollView,
@@ -79,7 +79,7 @@ export default function DrawerLayout() {
         />
       </SideMenu>
 
-      <OrderBottomSheet />
+      {Platform.OS !== "web" && <OrderBottomSheet />}
     </GestureHandlerRootView>
   );
 }
