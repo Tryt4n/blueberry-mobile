@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "blueberry-mobile",
+    "name": "Borówka",
     "slug": "blueberry-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/favicon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -13,16 +13,28 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
+    "plugins": ["expo-router", "@react-native-google-signin/google-signin"],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.plantation.blueberry",
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.631863393828-ifq3irpfp6solcs7ftmuq9b1vshfrt7k"
+            ]
+          }
+        ]
+      },
+      "icon": "./assets/images/favicon.png",
       "package": "com.plantation.blueberry"
     },
     "android": {
+      "package": "com.plantation.blueberry",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "transparent"
       },
-      "package": "com.plantation.blueberry",
       "android.permissions": ["VIBRATE"]
     },
     "web": {
@@ -30,7 +42,6 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "@react-native-google-signin/google-signin"],
     "experiments": {
       "typedRoutes": true
     },
