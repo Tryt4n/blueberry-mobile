@@ -7,22 +7,11 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // colors: {
-      //   primary: "#161622",
-      //   secondary: {
-      //     DEFAULT: "#FF9C01",
-      //     100: "#FF9001",
-      //     200: "#FF8E01",
-      //   },
-      //   black: {
-      //     DEFAULT: "#000",
-      //     100: "#1E1E2D",
-      //     200: "#232533",
-      //   },
-      //   gray: {
-      //     100: "#CDCDE0",
-      //   },
-      // },
+      colors: {
+        primary: "#3B82F6",
+        danger: "#FF3333",
+        placeholder: "#7B7B8B",
+      },
       fontFamily: {
         poppinsThin: ["Poppins-Thin", "sans-serif"],
         poppingExtraLight: ["Poppins-ExtraLight", "sans-serif"],
