@@ -1,17 +1,24 @@
-import { View, Text } from "react-native";
-import React, { useCallback, useState } from "react";
+import { View, Text, Alert } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useModalContext } from "@/hooks/useModalContext";
+import { changeOrderPrice as changeOrderPriceAppwrite } from "@/api/appwrite/orders";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { pl } from "date-fns/locale/pl";
 import OrderCardMenuOptions from "./OrderCardMenuOptions";
 import OrderCardUserAvatar from "./OrderCardUserAvatar";
+import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
 
-export default function OrderCardOptions({ order }: { order: Order }) {
+type OrderCardOptionsProps = {
+  order: Order;
+  setOrder: (order: Order | ((prevOrder: Order) => Order)) => void;
+};
+
+export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsProps) {
   const { user } = useGlobalContext();
   const { setEditedOrder, deleteOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
@@ -89,7 +96,46 @@ export default function OrderCardOptions({ order }: { order: Order }) {
   ];
 
   // If the user is admin or moderator, add the option to change the price
-  if (userHasAccess) {
+  if (user && userHasAccess) {
+    // Change the price of the order
+    const changeOrderPrice = useCallback(async () => {
+      try {
+        const errors = await changeOrderPriceAppwrite(order.$id, modalInputValue);
+
+        // If there are errors, show alert with those errors, reset input value and return
+        if (errors) {
+          setModalInputValue(order.currentPrice.price.toString());
+          return Alert.alert("Nieprawidłowa wartość", errors.join("\n"));
+        }
+
+        // else update the price in the local state and show success message
+        setOrder((prevOrder) => ({
+          ...prevOrder,
+          currentPrice: { ...prevOrder.currentPrice, price: Number(modalInputValue) },
+        }));
+        Toast.show({
+          type: "success",
+          text1: `Zmieniono cenę zamówienia na ${modalInputValue} zł`,
+          text1Style: { textAlign: "left", fontSize: 16 },
+          text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
+        });
+      } catch (error) {
+        // If there was an error, show alert
+        Alert.alert("Błąd", "Nie udało się zmienić ceny zamówienia.");
+      }
+    }, [modalInputValue]);
+
+    // Update the onPress function of the confirmation button in the modal data when the input value changes
+    useEffect(() => {
+      setModalData((prevModalData) => ({
+        ...prevModalData,
+        btn2: {
+          ...prevModalData.btn2,
+          onPress: changeOrderPrice,
+        },
+      }));
+    }, [modalInputValue]);
+
     orderOptions.push({
       text: "Zmień cenę",
       onSelect: () => openChangePriceModal(order),
