@@ -1,5 +1,6 @@
-import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Platform, Text, TouchableOpacity } from "react-native";
 import React, { type ComponentPropsWithoutRef } from "react";
+import tw from "@/lib/twrnc";
 
 type CustomButtonProps = {
   text: string;
@@ -19,15 +20,15 @@ export default function CustomButton({
 }: CustomButtonProps) {
   return (
     <TouchableOpacity
-      className={`bg-blue-500 rounded-xl justify-center items-center${
-        props.disabled ? " opacity-70 cursor-not-allowed" : ""
+      style={tw`bg-primary rounded-xl justify-center items-center${
+        Platform.OS === "web" && props.disabled ? " opacity-70 cursor-not-allowed" : ""
       }${containerStyles ? ` ${containerStyles}` : ""}`}
       {...props}
       activeOpacity={0.7}
     >
       {!loading ? (
         <Text
-          className={`text-white font-poppinsSemiBold text-base p-4${
+          style={tw`text-white font-poppinsSemiBold text-base p-4${
             textStyles ? ` ${textStyles}` : ""
           }`}
         >
@@ -35,7 +36,7 @@ export default function CustomButton({
         </Text>
       ) : (
         <ActivityIndicator
-          className="p-3 text-base font-poppinsSemiBold"
+          style={tw`p-3 text-base`}
           size="large"
           color={loadingColor}
         />

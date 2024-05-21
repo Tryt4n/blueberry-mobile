@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { useState } from "react";
+import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import OrderCardCompleteCheckbox from "./OrderCardCompleteCheckbox";
 import OrderCardOptions from "./OrderCardOptions";
@@ -20,7 +21,7 @@ export default function OrderCard({ order: orderData, price }: OrderCardProps) {
     <>
       {user && (
         <View
-          className={`mb-4 p-4 rounded-xl bg-white shadow-md shadow-black${
+          style={tw`mb-4 p-4 rounded-xl bg-white shadow-md shadow-black${
             order.completed ? " opacity-50" : ""
           }`}
         >
@@ -29,28 +30,28 @@ export default function OrderCard({ order: orderData, price }: OrderCardProps) {
             setOrder={setOrder}
           />
 
-          <Text className="text-xl text-center font-poppinsRegular">
-            Ilość: <Text className="font-poppinsSemiBold">{order.quantity}kg</Text>
+          <Text style={tw`text-xl text-center font-poppinsRegular`}>
+            Ilość: <Text style={tw`font-poppinsSemiBold`}>{order.quantity}kg</Text>
           </Text>
 
-          <Text className="py-2 text-lg font-poppinsRegular">
-            Dla: <Text className="font-poppinsSemiBold capitalize">{order.buyer.buyerName}</Text>
+          <Text style={tw`py-2 text-lg font-poppinsRegular`}>
+            Dla: <Text style={tw`font-poppinsSemiBold capitalize`}>{order.buyer.buyerName}</Text>
           </Text>
 
-          <Text className="pb-2 text-lg font-poppinsRegular">
+          <Text style={tw`pb-2 text-lg font-poppinsRegular`}>
             Łącznie:&nbsp;
-            <Text className="font-poppinsSemiBold">
+            <Text style={tw`font-poppinsSemiBold`}>
               {order.currentPrice.price * order.quantity} zł
             </Text>
             {order.currentPrice.price !== price && (
-              <Text className="text-sm">&nbsp;(po {order.currentPrice.price} zł)</Text>
+              <Text style={tw`text-sm`}>&nbsp;(po {order.currentPrice.price} zł)</Text>
             )}
           </Text>
 
           {order.additionalInfo && (
-            <View className="pt-2 pb-4">
-              <Text className="font-poppinsMedium text-sm">Informacje dodatkowe:</Text>
-              <Text className="font-poppinsRegular text-[16px]">{order.additionalInfo}</Text>
+            <View style={tw`pt-2 pb-4`}>
+              <Text style={tw`font-poppinsMedium text-sm`}>Informacje dodatkowe:</Text>
+              <Text style={tw`font-poppinsRegular text-[16px]`}>{order.additionalInfo}</Text>
             </View>
           )}
 

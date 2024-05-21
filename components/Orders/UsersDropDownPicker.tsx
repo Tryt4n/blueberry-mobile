@@ -1,5 +1,6 @@
 import { Text } from "react-native";
 import { useEffect, useState, type ComponentProps } from "react";
+import tw from "@/lib/twrnc";
 import { CustomDropDownPicker } from "../CustomDropDownPicker";
 import type { User } from "@/types/user";
 
@@ -23,7 +24,7 @@ export function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProp
       addCustomItem={false}
       setItems={setItems}
       ListEmptyComponent={() => (
-        <Text className="font-poppinsSemiBold text-base text-center">Brak wyników</Text>
+        <Text style={tw`font-poppinsSemiBold text-base text-center`}>Brak wyników</Text>
       )}
       {...props}
     />

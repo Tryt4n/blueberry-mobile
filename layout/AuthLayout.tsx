@@ -1,6 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React from "react";
+import tw from "@/lib/twrnc";
 import AuthAccountInfo from "@/components/AuthAccountInfo";
 
 type AuthLayoutProps = {
@@ -10,10 +10,12 @@ type AuthLayoutProps = {
 
 export default function AuthLayout({ type, children }: AuthLayoutProps) {
   return (
-    <SafeAreaView className="h-full">
+    <SafeAreaView
+      style={tw`h-full w-full ${Platform.OS === "web" ? " max-w-[720px] mx-auto" : ""}`}
+    >
       <ScrollView>
-        <View className="px-4 pb-8">
-          <Text className="my-10 font-poppinsSemiBold text-2xl text-center">
+        <View style={tw`px-4 pb-8`}>
+          <Text style={tw`my-10 font-poppinsSemiBold text-2xl text-center`}>
             {type === "signIn" ? "Zaloguj się" : "Zarejestruj się"}
           </Text>
 

@@ -1,6 +1,7 @@
 import { Alert, Platform, View } from "react-native";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
+import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { configureGoogleSignIn, getGoogleCurrentUser, signInWithGoogle } from "@/api/auth/google";
 import type { GoogleSigninButton as GoogleSigninButtonType } from "@react-native-google-signin/google-signin";
@@ -51,7 +52,7 @@ export default function GoogleSignInButton({ setIsSubmitting, ...props }: Google
   }
 
   return (
-    <View className="h-[70] w-full mb-8">
+    <View style={tw`h-[70] w-full mb-8`}>
       <GoogleSigninButton
         onPress={handleGoogleSignIn}
         {...props}

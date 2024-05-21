@@ -1,4 +1,5 @@
 import { TouchableOpacity } from "react-native";
+import tw from "@/lib/twrnc";
 import { Entypo } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 
@@ -21,7 +22,7 @@ export default function ChangeQuantityBtn({
 
   return (
     <TouchableOpacity
-      className={`h-full px-2 bg-blue-500 justify-center${condition ? " opacity-50" : ""}`}
+      style={tw`h-full px-2 bg-primary justify-center${condition ? " opacity-50" : ""}`}
       activeOpacity={0.7}
       disabled={condition}
       {...props}

@@ -1,5 +1,7 @@
 import { View, Alert, Text, Dimensions, type TextInput } from "react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -185,7 +187,7 @@ export default function OrderBottomSheet() {
       enableContentPanningGesture={false}
       keyboardBehavior="extend"
       enablePanDownToClose={true}
-      handleIndicatorStyle={{ backgroundColor: "rgb(59 130 246)" }}
+      handleIndicatorStyle={{ backgroundColor: colors.primary }}
       backdropComponent={renderBackdrop}
       onClose={() => {
         quantityRef.current?.blur();
@@ -201,7 +203,7 @@ export default function OrderBottomSheet() {
     >
       <BottomSheetScrollView>
         <View style={{ minHeight: dropdownHeight + 160, zIndex: 1 }}>
-          <Text className="font-poppinsSemiBold text-lg my-4 text-center">
+          <Text style={tw`font-poppinsSemiBold text-lg my-4 text-center`}>
             {`${editedOrder ? "Edytuj " : "Dodaj nowe"} zamówienie`}
           </Text>
 

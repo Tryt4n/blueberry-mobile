@@ -1,10 +1,10 @@
 import { ActivityIndicator, View } from "react-native";
-import React from "react";
+import tw from "@/lib/twrnc";
 
 export default function LoadingSpinner({ color }: { color?: string }) {
   return (
     <View
-      className="h-full flex justify-center"
+      style={tw`h-full flex justify-center`}
       aria-label="Loading..."
     >
       <ActivityIndicator

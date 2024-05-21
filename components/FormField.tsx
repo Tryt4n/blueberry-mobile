@@ -1,5 +1,7 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Platform } from "react-native";
 import { forwardRef, useState, type ComponentProps, type ForwardedRef } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { Ionicons } from "@expo/vector-icons";
 import ErrorsList from "./ErrorsList";
 
@@ -15,23 +17,40 @@ function InnerFormField(
   ref: ForwardedRef<TextInput>
 ) {
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <View className={`relative mb-4${otherStyles ? ` ${otherStyles}` : ""}`}>
-      <Text className="pb-1 text-base font-medium">{title}</Text>
+    <View style={tw`relative mb-4${otherStyles ? ` ${otherStyles}` : ""}`}>
+      <Text style={tw`pb-1 text-base font-medium`}>{title}</Text>
 
-      <View className="border-2 border-black-200 w-full p-4 bg-black-100 rounded-2xl focus:border-blue-500 flex-row items-center">
+      <View
+        style={tw.style(
+          `border-2 w-full p-4 rounded-2xl flex-row items-center`,
+          isFocused && `border-primary`
+        )}
+      >
         <TextInput
           {...props}
           ref={ref}
-          cursorColor="rgb(59 130 246)"
-          className="flex-1 font-poppinsSemiBold text-base"
-          placeholderTextColor="#7B7B8B"
+          cursorColor={colors.primary}
+          style={[
+            tw`flex-1 font-poppinsSemiBold text-base`,
+            Platform.OS === "web"
+              ? {
+                  // @ts-ignore - `caretColor` is not recognized for <TextInput/>
+                  outline: "none",
+                  caretColor: colors.primary,
+                }
+              : {},
+          ]}
+          placeholderTextColor={colors.placeholder}
           onChangeText={handleChangeText}
           secureTextEntry={props.secureTextEntry && !showPassword}
           keyboardType={
             props.secureTextEntry && showPassword ? "visible-password" : props.keyboardType
           }
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
 
         {props.secureTextEntry && (
@@ -55,7 +74,7 @@ function ShowPasswordBtn({
 }: { visible: boolean } & ComponentProps<typeof TouchableOpacity>) {
   return (
     <TouchableOpacity
-      className="absolute right-0 p-4"
+      style={tw`absolute right-0 p-4`}
       {...props}
     >
       <Ionicons

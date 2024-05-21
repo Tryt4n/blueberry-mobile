@@ -1,6 +1,7 @@
 import { Calendar } from "react-native-calendars";
 import { LocaleConfig } from "react-native-calendars";
 import { FontAwesome } from "@expo/vector-icons";
+import { colors } from "@/helpers/colors";
 import type { ComponentProps } from "react";
 
 export default function ModalCalendar({ ...props }: ComponentProps<typeof Calendar>) {
@@ -55,7 +56,7 @@ function Arrow({ direction }: { direction: "left" | "right" }) {
     <FontAwesome
       name={direction === "left" ? "caret-left" : "caret-right"}
       size={16}
-      color="rgb(59 130 246)"
+      color={colors.primary}
     />
   );
 }

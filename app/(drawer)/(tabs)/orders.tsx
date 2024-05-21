@@ -1,5 +1,7 @@
 import { View, Text, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
@@ -70,16 +72,16 @@ export default function TabOrders() {
   }, [ordersData, ordersSearchParams]);
 
   return (
-    <View className="h-full w-[90%] mx-auto">
+    <View style={tw`h-full w-[90%] mx-auto`}>
       {user && ordersData && (
         <>
-          <View className="h-full">
+          <View style={tw`h-full`}>
             <OrdersHeader />
             {ordersData.isLoading ? (
               <ActivityIndicator
                 size="large"
-                color="rgb(59 130 246)"
-                className="my-8"
+                color={colors.primary}
+                style={tw`my-8`}
               />
             ) : (
               <>
@@ -87,7 +89,7 @@ export default function TabOrders() {
                   <OrdersList />
                 ) : (
                   <>
-                    <Text className="text-center font-poppinsRegular text-lg">{`Brak zamówień${
+                    <Text style={tw`text-center font-poppinsRegular text-lg`}>{`Brak zamówień${
                       isOrdersSearchParamsReset ? " o określonych parametrach wyszukiwania." : ""
                     }`}</Text>
 

@@ -1,7 +1,9 @@
 import { View, Text, type TextInput, type TextInputProps } from "react-native";
 import React, { forwardRef, useEffect, useState, type ForwardedRef } from "react";
+import tw from "@/lib/twrnc";
 import DropDownPicker, { type DropDownPickerProps } from "react-native-dropdown-picker";
 import { Entypo, Ionicons } from "@expo/vector-icons";
+import { colors } from "@/helpers/colors";
 
 type CustomDropDownPickerProps = {
   label: string;
@@ -32,12 +34,12 @@ function InnerCustomDropDownPicker(
   }, [defaultValue]);
 
   return (
-    <View className="my-4">
-      <Text className="pb-1 text-base font-medium">{label}</Text>
-      <DropDownPicker //@ts-expect-error - bug related with props spreading (different props for multiple and single)
+    <View style={tw`my-4`}>
+      <Text style={tw`pb-1 text-base font-medium`}>{label}</Text>
+      <DropDownPicker
         select
         listMode="SCROLLVIEW"
-        activityIndicatorColor="rgb(59 130 246)"
+        activityIndicatorColor={colors.primary}
         open={open}
         multiple={false}
         value={value}
@@ -56,14 +58,14 @@ function InnerCustomDropDownPicker(
         searchPlaceholder="Szukaj..."
         style={{
           borderWidth: 2,
-          borderColor: open && !isSearchFocused ? "rgb(59 130 246)" : "black",
+          borderColor: open && !isSearchFocused ? colors.primary : "black",
         }}
         textStyle={{ fontFamily: "Poppins-SemiBold", textTransform: "capitalize" }}
         labelStyle={{ fontSize: 18, fontFamily: "Poppins-SemiBold" }}
         customItemLabelStyle={{
           fontSize: 18,
           fontFamily: "Poppins-SemiBold",
-          color: "rgb(59 130 246)",
+          color: colors.primary,
           fontWeight: "bold",
         }}
         disabledStyle={{ opacity: 0.5 }}
@@ -71,24 +73,28 @@ function InnerCustomDropDownPicker(
           <Ionicons
             name="chevron-up"
             size={24}
-            color="rgb(59 130 246)"
+            color={colors.primary}
           />
         )}
         ArrowDownIconComponent={() => (
           <Ionicons
             name="chevron-down"
             size={24}
-            color="rgb(59 130 246)"
+            color={colors.primary}
           />
         )}
         TickIconComponent={() => (
           <Entypo
             name="check"
             size={24}
-            color="rgb(59 130 246)"
+            color={colors.primary}
           />
         )}
-        placeholderStyle={{ fontFamily: "Poppins-SemiBold", color: "#7B7B8B", fontSize: 14 }}
+        placeholderStyle={{
+          fontFamily: "Poppins-SemiBold",
+          color: colors.placeholder,
+          fontSize: 14,
+        }}
         listItemLabelStyle={{ fontFamily: "Poppins-SemiBold", fontSize: 16, textAlign: "center" }}
         searchContainerStyle={{
           paddingVertical: 24,
@@ -96,8 +102,9 @@ function InnerCustomDropDownPicker(
         }}
         searchTextInputProps={{
           maxLength: 100,
-          cursorColor: "rgb(59 130 246)",
+          cursorColor: colors.primary,
           autoCapitalize: "words",
+          // @ts-ignore - `ref` is not recognized for <TextInput/>
           ref: searchInputRef,
           onFocus: () => setSearchFocused(true),
           onBlur: () => setSearchFocused(false),
@@ -106,10 +113,10 @@ function InnerCustomDropDownPicker(
           fontFamily: "Poppins-SemiBold",
           fontSize: 16,
           borderWidth: 2,
-          borderColor: isSearchFocused ? "rgb(59 130 246)" : "black",
+          borderColor: isSearchFocused ? colors.primary : "black",
         }}
         dropDownContainerStyle={{
-          borderColor: open && !isSearchFocused ? "rgb(59 130 246)" : "black",
+          borderColor: open && !isSearchFocused ? colors.primary : "black",
           borderTopWidth: 1,
           borderWidth: 2,
           shadowColor: "black",
@@ -123,7 +130,7 @@ function InnerCustomDropDownPicker(
           fontFamily: "Poppins-Bold",
           fontSize: 16,
           transform: [{ translateX: 16 }],
-          color: "rgb(59 130 246)",
+          color: colors.primary,
         }}
         listItemContainerStyle={{ height: 40 }}
         {...props}

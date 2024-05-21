@@ -1,6 +1,7 @@
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
 import { BorderlessButton } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
+import { colors } from "@/helpers/colors";
 
 type OrderCardMenuOptionsProps = {
   options: { text: string; onSelect: () => void }[];
@@ -17,7 +18,7 @@ export default function OrderCardMenuOptions({ options }: OrderCardMenuOptionsPr
         <Ionicons
           name="ellipsis-vertical"
           size={32}
-          color="rgb(59 130 246)"
+          color={colors.primary}
         />
       </MenuTrigger>
 

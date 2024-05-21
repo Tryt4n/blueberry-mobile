@@ -1,4 +1,5 @@
 import { View, Text } from "react-native";
+import tw from "@/lib/twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 
@@ -20,7 +21,7 @@ export default function TabIcon({
   iconsSize = 24,
 }: TabIconProps) {
   return (
-    <View className={`items-center gap-${gap}`}>
+    <View style={tw`items-center gap-${gap}`}>
       <Ionicons
         name={icon}
         size={iconsSize}
@@ -30,9 +31,9 @@ export default function TabIcon({
 
       {name && (
         <Text
-          className={`${
+          style={tw`text-sm text-center ${
             focused ? "font-poppinsSemiBold" : "font-poppinsRegular"
-          } text-sm text-center`}
+          }`}
         >
           {name}
         </Text>

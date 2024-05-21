@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import type { ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
+import tw from "@/lib/twrnc";
 
 type DateInputProps = {
   label: string;
@@ -9,18 +10,22 @@ type DateInputProps = {
 };
 
 export function DateInput({ label, text, onPress, containerProps }: DateInputProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View
-      className="pt-4"
+      style={tw`pt-4`}
       {...containerProps}
     >
-      <Text className="text-base font-medium pb-1">{label}</Text>
+      <Text style={tw`text-base font-medium pb-1`}>{label}</Text>
 
       <TouchableOpacity
-        className="border-2 border-black-200 p-4 rounded-2xl hover:border-blue-500"
+        style={tw`border-2 p-4 rounded-2xl${isFocused ? " border-primary" : ""}`}
         onPress={onPress}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       >
-        <Text className="font-poppinsMedium text-center">{text}</Text>
+        <Text style={tw`font-poppinsMedium text-center`}>{text}</Text>
       </TouchableOpacity>
     </View>
   );

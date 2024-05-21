@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useCallback, useState } from "react";
+import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
@@ -96,19 +97,19 @@ export default function OrderCardOptions({ order }: { order: Order }) {
   }
 
   return (
-    <View className="flex flex-row-reverse justify-between items-end">
+    <View style={tw`flex flex-row-reverse justify-between items-end`}>
       {((userHasAccess && order.completed) || !order.completed) && ( // Show options only when order is not completed or if order is completed but the user has access
         <OrderCardMenuOptions options={orderOptions} />
       )}
 
-      <View className="mt-8">
+      <View style={tw`mt-8`}>
         {userHasAccess && (
           <OrderCardUserAvatar
             source={{ uri: order.user.avatar }}
             username={order.user.username}
           />
         )}
-        <Text className="font-poppinsLight text-xs">
+        <Text style={tw`font-poppinsLight text-xs`}>
           {formatDistanceToNow(order.$createdAt, {
             addSuffix: true,
             locale: pl,

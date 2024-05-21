@@ -1,5 +1,7 @@
 import { View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { DateInput } from "../DateInput";
@@ -34,12 +36,12 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
           markedDates: {
             [startDate || ordersSearchParams.startDate || ""]: {
               selected: true,
-              selectedColor: "rgb(59 130 246)",
+              selectedColor: colors.primary,
               marked: endDate === startDate,
             },
             [endDate || ordersSearchParams.endDate || ""]: {
               selected: true,
-              selectedColor: "rgb(59 130 246)",
+              selectedColor: colors.primary,
               marked: endDate === startDate,
             },
           },
@@ -83,12 +85,12 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
         markedDates: {
           [startDate || ordersSearchParams.startDate || ""]: {
             selected: true,
-            selectedColor: "rgb(59 130 246)",
+            selectedColor: colors.primary,
             marked: endDate === startDate,
           },
           [endDate || ordersSearchParams.endDate || ""]: {
             selected: true,
-            selectedColor: "rgb(59 130 246)",
+            selectedColor: colors.primary,
             marked: endDate === startDate,
           },
         },
@@ -97,7 +99,7 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
   }, [startDate, endDate]);
 
   return (
-    <View className="flex flex-row justify-between">
+    <View style={tw`flex flex-row justify-between mt-4`}>
       <DateInput
         containerProps={{ style: { width: inputWidth } }}
         label="Od:"

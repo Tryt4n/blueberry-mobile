@@ -1,13 +1,14 @@
 import { View, Text } from "react-native";
-import React from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 
 export default function ErrorsList({ errors }: { errors: string[] }) {
   return (
-    <View className="mt-2 mx-2">
+    <View style={tw`mt-2 mx-2`}>
       {errors.map((error, index) => (
         <Text
           key={index}
-          className="text-red-500 text-sm mb-2 font-poppinsMedium"
+          style={tw`text-[${colors.danger}] text-sm mb-2 font-poppinsMedium`}
         >
           {error}
         </Text>

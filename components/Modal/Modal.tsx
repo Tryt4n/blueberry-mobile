@@ -1,5 +1,6 @@
 import { View, Text, type TextInput } from "react-native";
 import { Modal as ReactNativePaperModal, Portal } from "react-native-paper";
+import tw from "@/lib/twrnc";
 import { useModalContext } from "@/hooks/useModalContext";
 import ModalButton from "./ModalButton";
 import ModalInput from "./ModalInput";
@@ -43,9 +44,9 @@ export default function Modal() {
           alignSelf: "center",
         }}
       >
-        <Text className="font-poppinsBold text-xl mb-2">{title}</Text>
+        <Text style={tw`font-poppinsBold text-xl mb-2`}>{title}</Text>
 
-        {subtitle && <Text className="font-poppinsMedium text-base">{subtitle}</Text>}
+        {subtitle && <Text style={tw`font-poppinsMedium text-base`}>{subtitle}</Text>}
 
         {input && <ModalInput {...input} />}
 
@@ -53,7 +54,7 @@ export default function Modal() {
 
         {children && children}
 
-        <View className="flex flex-row justify-end mt-4">
+        <View style={tw`flex flex-row justify-end mt-4`}>
           {btn1 && (
             <ModalButton
               btn={btn1}

@@ -1,5 +1,7 @@
 import { View, Text, Dimensions, Alert } from "react-native";
 import { Banner, type BannerProps } from "react-native-paper";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useCallback } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -57,7 +59,7 @@ export default function OrdersSearchBanner() {
     {
       label: "Wyszukaj",
       onPress: getNewOrders,
-      labelStyle: { color: "rgb(59 130 246)", fontFamily: "Poppins-SemiBold", fontSize: 16 },
+      labelStyle: { color: colors.primary, fontFamily: "Poppins-SemiBold", fontSize: 16 },
     },
   ];
 
@@ -66,18 +68,9 @@ export default function OrdersSearchBanner() {
       visible={isBannerVisible}
       actions={bannerActions}
       elevation={3}
-      style={{
-        borderRadius: 16,
-        backgroundColor: "white",
-      }}
-      className="my-4"
+      style={tw`my-4 bg-white rounded-2xl`}
     >
-      <Text
-        style={{ fontSize: 24 }}
-        className="font-poppinsBold"
-      >
-        Wyszukaj zamówienia
-      </Text>
+      <Text style={[tw`font-poppinsBold`, { fontSize: 24 }]}>Wyszukaj zamówienia</Text>
       <View style={{ width: containerWidth }}>
         <OrdersSearchBannerDates containerWidth={containerWidth} />
 

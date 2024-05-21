@@ -1,5 +1,7 @@
 import { View, Text, TextInput } from "react-native";
 import React, { forwardRef, useRef, type ComponentProps, type ForwardedRef } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import ChangeQuantityBtn from "./ChangeQuantityBtn";
 
 type QuantityInputProps = {
@@ -72,9 +74,11 @@ function InnerQuantityInput(
 
   return (
     <View className={containerStyles}>
-      {label && <Text className="pb-1 text-base font-medium text-center">{label}</Text>}
+      {label && <Text style={tw`pb-1 text-base font-medium text-center`}>{label}</Text>}
 
-      <View className="flex flex-row justify-center items-center max-w-max mx-auto border border-gray-500 rounded-xl overflow-hidden h-16">
+      <View
+        style={tw`flex flex-row justify-center items-center mx-auto border border-gray-500 rounded-xl overflow-hidden h-16`}
+      >
         <ChangeQuantityBtn
           type="decrease"
           borderlineValue={value}
@@ -84,10 +88,10 @@ function InnerQuantityInput(
         />
 
         <TextInput
-          className="w-20 h-full text-xl text-center justify-center font-poppinsSemiBold"
+          style={tw`w-20 h-full text-xl text-center justify-center font-poppinsSemiBold`}
           {...props}
           ref={ref}
-          cursorColor="rgb(59 130 246)"
+          cursorColor={colors.primary}
           value={value.toString()}
           keyboardType="numeric"
           onChangeText={handleTextChange}

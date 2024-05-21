@@ -1,4 +1,5 @@
 import { View, Text } from "react-native";
+import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -14,8 +15,8 @@ export default function OrdersHeader() {
 
   return (
     <>
-      <View className="mt-8 flex flex-row justify-between mb-2">
-        <Text className="font-poppinsBold text-3xl">
+      <View style={tw`mt-8 flex flex-row justify-between mb-2`}>
+        <Text style={tw`font-poppinsBold text-3xl`}>
           {user?.role === "admin" || user?.role === "moderator" ? "Zamówienia" : "Twoje zamówienia"}
         </Text>
 

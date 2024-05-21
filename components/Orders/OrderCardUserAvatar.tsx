@@ -1,4 +1,5 @@
 import { View, Text, Image, type ImageSourcePropType } from "react-native";
+import tw from "@/lib/twrnc";
 import type { Order } from "@/types/orders";
 
 type OrderCardUserAvatarProps = {
@@ -8,13 +9,13 @@ type OrderCardUserAvatarProps = {
 
 export default function OrderCardUserAvatar({ source, username }: OrderCardUserAvatarProps) {
   return (
-    <View className="gap-y-1 flex-shrink items-start">
-      <View className="flex items-center">
+    <View style={tw`gap-y-1 flex-shrink items-start`}>
+      <View style={tw`flex items-center`}>
         <Image
           source={source}
-          className="w-12 h-12 rounded-full"
+          style={tw`w-12 h-12 rounded-full`}
         />
-        <Text className="font-poppinsMedium capitalize">{username}</Text>
+        <Text style={tw`mt-1 font-poppinsMedium capitalize`}>{username}</Text>
       </View>
     </View>
   );

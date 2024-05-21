@@ -1,4 +1,5 @@
 import { Text, TouchableOpacity } from "react-native";
+import tw from "@/lib/twrnc";
 
 type ModalButtonProps = {
   btn: ModalButtonType;
@@ -22,15 +23,13 @@ export default function ModalButton({ btn, closeModalFn }: ModalButtonProps) {
       }}
     >
       <Text
-        className="font-poppinsMedium text-base px-2"
-        style={{
-          color:
-            btn.color && btn.color === "danger"
-              ? "#FF3333"
-              : btn.color === "primary"
-              ? "rgb(59 130 246)"
-              : "black",
-        }}
+        style={tw`font-poppinsMedium text-base px-2 ${
+          btn.color && btn.color === "danger"
+            ? "text-danger"
+            : btn.color === "primary"
+            ? "text-primary"
+            : "text-black"
+        }`}
       >
         {btn.text}
       </Text>

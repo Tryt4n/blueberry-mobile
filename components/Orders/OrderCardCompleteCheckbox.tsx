@@ -1,5 +1,6 @@
 import { Alert, View } from "react-native";
 import React, { useCallback } from "react";
+import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { editOrder } from "@/api/appwrite/orders";
 import Checkbox from "../Checkbox";
@@ -57,7 +58,7 @@ export default function OrderCardCompleteCheckbox({
   );
 
   return (
-    <View className="items-end">
+    <View style={tw`items-end`}>
       <Checkbox
         status={order.completed}
         disabled={order.user.$id !== user?.$id && !userHasAccess}

@@ -1,5 +1,7 @@
 import { View, Text, Alert, ActivityIndicator } from "react-native";
 import { useCallback, useEffect, useState } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -105,16 +107,16 @@ export default function CurrentPrice() {
   }, [fetchedCurrentPrice]);
 
   return (
-    <View className="flex-row items-center gap-x-4">
-      <Text className="font-poppinsRegular text-base w-fit">
+    <View style={tw`flex-row items-center gap-x-4`}>
+      <Text style={tw`font-poppinsRegular text-base`}>
         Cena:&nbsp;
         {isPriceLoading ? (
           <ActivityIndicator
             size="small"
-            color="rgb(59 130 246)"
+            color={colors.primary}
           />
         ) : (
-          <Text className="font-poppinsMedium text-xl">{currentPrice?.price} zł</Text>
+          <Text style={tw`font-poppinsMedium text-xl`}>{currentPrice?.price} zł</Text>
         )}
       </Text>
 

@@ -1,5 +1,7 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
@@ -78,23 +80,23 @@ export default function OrdersSearchBannerUser() {
     <>
       <TouchableOpacity
         onPress={openSelectUserModal}
-        className={`mt-6 p-2 self-end${
-          ordersSearchParams.userId ? "" : " border-2 rounded-full border-blue-500"
+        style={tw`mt-6 p-2 self-end${
+          ordersSearchParams.userId ? "" : " border-2 rounded-full border-primary"
         }`}
       >
         <Entypo
           name={ordersSearchParams.userId ? "user" : "add-user"}
           size={24}
-          color="rgb(59 130 246)"
+          color={colors.primary}
         />
       </TouchableOpacity>
 
       {ordersSearchParams.userId && fetchedListOfUsers && fetchedListOfUsers.data && (
         <>
-          <Text>Wyszukiwany użytkownik:&nbsp;</Text>
+          <Text style={tw`font-poppinsRegular`}>Wyszukiwany użytkownik:&nbsp;</Text>
 
-          <View className="mt-2 flex flex-row items-center gap-x-2">
-            <Text className="font-poppinsMedium">
+          <View style={tw`mt-2 flex flex-row items-center gap-x-2`}>
+            <Text style={tw`font-poppinsMedium`}>
               {
                 fetchedListOfUsers.data.find((user) => user.$id === ordersSearchParams.userId)
                   ?.username
@@ -107,7 +109,7 @@ export default function OrdersSearchBannerUser() {
             >
               <Ionicons
                 name="close-outline"
-                color="#FF3333"
+                color={colors.danger}
                 size={26}
               />
             </TouchableOpacity>

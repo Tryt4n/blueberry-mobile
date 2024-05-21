@@ -1,6 +1,8 @@
 import { View, Text, Alert, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
+import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { signOut } from "@/api/auth/appwrite";
@@ -50,16 +52,16 @@ export default function LogOutPage() {
       }}
     >
       <View>
-        <Text className="font-poppinsSemiBold text-2xl text-center mb-4">Wylogować się?</Text>
-        <View className="flex flex-row justify-between gap-4 h-">
+        <Text style={tw`font-poppinsSemiBold text-2xl text-center mb-4`}>Wylogować się?</Text>
+        <View style={tw`flex flex-row justify-between gap-4`}>
           <CustomButton
             text="Tak"
             onPress={logOut}
             disabled={isSubmitting}
-            containerStyles="bg-transparent border-2 border-blue-500 px-8 h-16"
+            containerStyles="bg-transparent border-2 border-primary px-8 h-16"
             textStyles="text-black"
             loading={isSubmitting}
-            loadingColor="rgb(59 130 246)"
+            loadingColor={colors.primary}
           />
 
           <CustomButton
