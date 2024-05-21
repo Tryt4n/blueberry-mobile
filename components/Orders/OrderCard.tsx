@@ -55,7 +55,10 @@ export default function OrderCard({ order: orderData, price }: OrderCardProps) {
             </View>
           )}
 
-          <OrderCardOptions order={order} />
+          <OrderCardOptions
+            order={order}
+            setOrder={setOrder}
+          />
         </View>
       )}
     </>
