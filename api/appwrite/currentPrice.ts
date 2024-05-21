@@ -23,6 +23,25 @@ export async function getCurrentPrice() {
 }
 
 export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]) {
+  try {
+    const { errors, updatedPrice } = await getOrCreatePrice(price);
+
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.currentPriceCollectionId,
+      oldPriceId,
+      {
+        active: false,
+      }
+    );
+
+    return { updatedPrice, errors: errors };
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function getOrCreatePrice(price: string) {
   const customErrors: string[] = [];
   const formattedPrice = Number(price.toString().replace(",", "."));
 
@@ -66,15 +85,6 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
       );
       updatedPrice = { $id: fetchedPrice.$id, price: fetchedPrice.price };
     }
-
-    await databases.updateDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.currentPriceCollectionId,
-      oldPriceId,
-      {
-        active: false,
-      }
-    );
 
     return { updatedPrice, errors: null };
   } catch (error: any) {
