@@ -1,20 +1,16 @@
-import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
-import { BorderlessButton } from "react-native-gesture-handler";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text } from "react-native";
+import { Menu, MenuOption, MenuOptions, MenuTrigger, renderers } from "react-native-popup-menu";
 import { colors } from "@/helpers/colors";
+import tw from "@/lib/twrnc";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import type { OrderOption } from "./OrderCardOptions";
 
-type OrderCardMenuOptionsProps = {
-  options: { text: string; onSelect: () => void }[];
-};
+export default function OrderCardMenuOptions({ options }: { options: OrderOption[] }) {
+  const { SlideInMenu } = renderers;
 
-export default function OrderCardMenuOptions({ options }: OrderCardMenuOptionsProps) {
   return (
-    <Menu>
-      <MenuTrigger
-        customStyles={{
-          TriggerTouchableComponent: BorderlessButton,
-        }}
-      >
+    <Menu renderer={SlideInMenu}>
+      <MenuTrigger>
         <Ionicons
           name="ellipsis-vertical"
           size={32}
@@ -24,28 +20,23 @@ export default function OrderCardMenuOptions({ options }: OrderCardMenuOptionsPr
 
       <MenuOptions
         customStyles={{
-          optionsContainer: {
-            width: "auto",
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            borderRadius: 16,
-          },
-          optionText: {
-            fontFamily: "Poppins-SemiBold",
-            fontSize: 16,
-            color: "black",
-            paddingHorizontal: 16,
-            paddingVertical: 4,
-            textAlign: "center",
-          },
+          optionsContainer: tw`py-8 px-4 rounded-2xl shadow-2xl`,
         }}
       >
-        {options.map((option, index) => (
+        {options.map((option) => (
           <MenuOption
-            key={index}
-            text={option.text}
+            key={option.text}
             onSelect={option.onSelect}
-          />
+          >
+            <View style={tw`flex flex-row justify-center items-center gap-2 py-2`}>
+              <FontAwesome
+                name={option.icon.name}
+                size={24}
+                color={colors[option.icon.color]}
+              />
+              <Text style={tw`font-poppinsSemiBold text-base`}>{option.text}</Text>
+            </View>
+          </MenuOption>
         ))}
       </MenuOptions>
     </Menu>
