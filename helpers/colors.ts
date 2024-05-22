@@ -6,4 +6,4 @@ export const colors = {
   primary: tailwindColors.primary,
   danger: tailwindColors.danger,
   placeholder: tailwindColors.placeholder,
-};
+} as const;
