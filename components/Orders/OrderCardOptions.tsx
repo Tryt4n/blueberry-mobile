@@ -1,6 +1,7 @@
 import { View, Text, Alert } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "@/lib/twrnc";
+import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
@@ -12,10 +13,17 @@ import OrderCardMenuOptions from "./OrderCardMenuOptions";
 import OrderCardUserAvatar from "./OrderCardUserAvatar";
 import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
+import type { FontAwesome } from "@expo/vector-icons";
 
 type OrderCardOptionsProps = {
   order: Order;
   setOrder: (order: Order | ((prevOrder: Order) => Order)) => void;
+};
+
+export type OrderOption = {
+  text: string;
+  icon: { name: Extract<keyof typeof FontAwesome.glyphMap, string>; color: keyof typeof colors };
+  onSelect: () => void;
 };
 
 export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsProps) {
@@ -90,9 +98,17 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
     [setModalData, showModal, setEditedOrder, modalInputValue, setModalInputValue]
   );
 
-  const orderOptions = [
-    { text: "Edytuj", onSelect: () => openEditOrderBottomSheet(order.user.$id) },
-    { text: "Usuń", onSelect: () => openDeleteModalConfirmation(order.$id, order.user.$id) },
+  const orderOptions: OrderOption[] = [
+    {
+      text: "Edytuj",
+      icon: { name: "edit", color: "primary" },
+      onSelect: () => openEditOrderBottomSheet(order.user.$id),
+    },
+    {
+      text: "Usuń",
+      icon: { name: "trash", color: "danger" },
+      onSelect: () => openDeleteModalConfirmation(order.$id, order.user.$id),
+    },
   ];
 
   // If the user is admin or moderator, add the option to change the price
@@ -138,6 +154,7 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
 
     orderOptions.push({
       text: "Zmień cenę",
+      icon: { name: "dollar", color: "primary" },
       onSelect: () => openChangePriceModal(order),
     });
   }
