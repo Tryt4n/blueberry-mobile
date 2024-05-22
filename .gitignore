@@ -47,3 +47,5 @@ android
 %ProgramData%
 
 eas.json
+
+.vercel
