@@ -22,7 +22,7 @@ function InnerBuyersDropDownPicker(
     <CustomDropDownPicker
       label="Kupujący:"
       placeholder="Wprowadź nazwę osoby zamawiającej"
-      listMode="SCROLLVIEW"
+      listMode="MODAL"
       items={items}
       addCustomItem={true}
       setItems={setItems}
