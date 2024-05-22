@@ -1,14 +1,9 @@
-import {
-  BottomSheetBackdrop,
-  type BottomSheetBackdropProps,
-  type BottomSheetModal,
-} from "@gorhom/bottom-sheet";
-import type { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { createContext, useCallback, useMemo, useRef } from "react";
+import { BottomSheetBackdrop, type BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import { createContext, useCallback, useRef } from "react";
+import type { ActionSheetRef } from "react-native-actions-sheet";
 
 type BottomSheetTabsContextType = {
-  bottomSheetModalRef: React.RefObject<BottomSheetModalMethods>;
-  snapPoints: string[];
+  bottomSheetModalRef: React.RefObject<ActionSheetRef>;
   handleOpenBottomSheet: () => void;
   handleCloseBottomSheet: () => void;
   renderBackdrop: (props: BottomSheetBackdropProps) => React.ReactNode;
@@ -21,12 +16,10 @@ export default function BottomSheetTabsContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["70%"], []);
+  const bottomSheetModalRef = useRef<ActionSheetRef>(null);
 
-  const handleOpenBottomSheet = () => bottomSheetModalRef.current?.expand();
-
-  const handleCloseBottomSheet = () => bottomSheetModalRef.current?.close();
+  const handleOpenBottomSheet = () => bottomSheetModalRef.current?.show();
+  const handleCloseBottomSheet = () => bottomSheetModalRef.current?.hide();
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -42,7 +35,6 @@ export default function BottomSheetTabsContextProvider({
 
   const contextValues: BottomSheetTabsContextType = {
     bottomSheetModalRef,
-    snapPoints,
     handleOpenBottomSheet,
     handleCloseBottomSheet,
     renderBackdrop,

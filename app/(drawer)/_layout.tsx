@@ -80,7 +80,7 @@ export default function DrawerLayout() {
         />
       </SideMenu>
 
-      {Platform.OS !== "web" && <OrderBottomSheet />}
+      <OrderBottomSheet />
     </GestureHandlerRootView>
   );
 }

@@ -1,26 +1,24 @@
-import { View, Alert, Text, Dimensions, type TextInput } from "react-native";
+import { View, Text, Alert, Dimensions, type TextInput } from "react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
-import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
+import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import ActionSheet, { ScrollView } from "react-native-actions-sheet";
 import Toast from "react-native-toast-message";
-import { FormField } from "../FormField";
 import { QuantityInput } from "./QuantityInput";
 import { BuyersDropDownPicker } from "./BuyersDropDownPicker";
+import { FormField } from "../FormField";
 import CustomButton from "../CustomButton";
-import type { Buyer } from "@/types/buyers";
 import type { ValueType } from "react-native-dropdown-picker";
+import type { Buyer } from "@/types/buyers";
 
 export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
-  const { bottomSheetModalRef, snapPoints, handleCloseBottomSheet, renderBackdrop } =
-    useBottomSheetContext();
+  const { bottomSheetModalRef, handleCloseBottomSheet } = useBottomSheetContext();
   const [quantity, setQuantity] = useState(1);
   const orderDataInitialState = {
     quantity: quantity,
@@ -180,15 +178,8 @@ export default function OrderBottomSheet() {
   }, []);
 
   return (
-    <BottomSheet
+    <ActionSheet
       ref={bottomSheetModalRef}
-      index={-1}
-      snapPoints={snapPoints}
-      enableContentPanningGesture={false}
-      keyboardBehavior="extend"
-      enablePanDownToClose={true}
-      handleIndicatorStyle={{ backgroundColor: colors.primary }}
-      backdropComponent={renderBackdrop}
       onClose={() => {
         quantityRef.current?.blur();
         buyerNameRef.current?.blur();
@@ -197,13 +188,15 @@ export default function OrderBottomSheet() {
         setEditedOrder(null);
         setQuantity(1);
       }}
-      style={{
-        paddingHorizontal: 16,
-      }}
+      useBottomSafeAreaPadding={true}
+      gestureEnabled={true}
+      defaultOverlayOpacity={0.5}
+      indicatorStyle={tw`bg-primary my-4`}
+      containerStyle={tw`w-full max-w-[700px] px-4`}
     >
-      <BottomSheetScrollView>
-        <View style={{ minHeight: dropdownHeight + 160, zIndex: 1 }}>
-          <Text style={tw`font-poppinsSemiBold text-lg my-4 text-center`}>
+      <ScrollView>
+        <View style={tw`min-h-[${dropdownHeight + 160}px]`}>
+          <Text style={tw`font-poppinsSemiBold text-lg mb-4 text-center`}>
             {`${editedOrder ? "Edytuj " : "Dodaj nowe"} zamówienie`}
           </Text>
 
@@ -242,9 +235,9 @@ export default function OrderBottomSheet() {
           text={editedOrder ? "Zapisz zmiany" : "Utwórz zamówienie"}
           onPress={handleOrder}
           loading={isSubmitting}
-          containerStyles="mb-8"
+          containerStyles="mb-8 z-0"
         />
-      </BottomSheetScrollView>
-    </BottomSheet>
+      </ScrollView>
+    </ActionSheet>
   );
 }
