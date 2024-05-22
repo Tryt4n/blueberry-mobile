@@ -52,7 +52,7 @@ export default function GoogleSignInButton({ setIsSubmitting, ...props }: Google
   }
 
   return (
-    <View style={tw`h-[70] w-full mb-8`}>
+    <View style={tw`h-[70px] w-full mb-8`}>
       <GoogleSigninButton
         onPress={handleGoogleSignIn}
         {...props}
