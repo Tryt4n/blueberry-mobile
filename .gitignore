@@ -48,4 +48,5 @@ android
 
 eas.json
 
-.vercel
+# Local Netlify folder
+.netlify
