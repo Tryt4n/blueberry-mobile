@@ -1,4 +1,5 @@
-import { createContext, useEffect, useState } from "react";
+import { Alert, Platform } from "react-native";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "@/api/auth/appwrite";
 import type { User } from "../types/user";
 import type { AuthProviders } from "@/types/authProviders";
@@ -11,6 +12,8 @@ type GlobalContextValues = {
   isLoading: boolean;
   authProvider: AuthProviders;
   setAuthProvider: (value: AuthProviders) => void;
+  platform: typeof Platform.OS | undefined;
+  showAlert: (title: string, message: string) => void;
 };
 
 export const GlobalContext = createContext<GlobalContextValues | null>(null);
@@ -20,6 +23,15 @@ export default function GlobalContextProvider({ children }: { children: React.Re
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authProvider, setAuthProvider] = useState<AuthProviders>("appwrite");
+  const platform = useMemo(() => Platform.OS, []);
+
+  function showAlert(title: string, message: string) {
+    if (platform === "web") {
+      return window.alert(message);
+    } else {
+      return Alert.alert(title, message);
+    }
+  }
 
   useEffect(() => {
     getCurrentUser()
@@ -48,6 +60,8 @@ export default function GlobalContextProvider({ children }: { children: React.Re
     isLoading,
     authProvider,
     setAuthProvider,
+    platform,
+    showAlert,
   };
 
   return <GlobalContext.Provider value={contextValues}>{children}</GlobalContext.Provider>;
