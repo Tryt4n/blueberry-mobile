@@ -1,4 +1,4 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
@@ -27,7 +27,7 @@ export type OrderOption = {
 };
 
 export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsProps) {
-  const { user } = useGlobalContext();
+  const { user, showAlert } = useGlobalContext();
   const { setEditedOrder, deleteOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
   const { setModalData, showModal } = useModalContext();
@@ -121,7 +121,7 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
         // If there are errors, show alert with those errors, reset input value and return
         if (errors) {
           setModalInputValue(order.currentPrice.price.toString());
-          return Alert.alert("Nieprawidłowa wartość", errors.join("\n"));
+          return showAlert("Nieprawidłowa wartość", errors.join("\n"));
         }
 
         // else update the price in the local state and show success message
@@ -137,7 +137,7 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
         });
       } catch (error) {
         // If there was an error, show alert
-        Alert.alert("Błąd", "Nie udało się zmienić ceny zamówienia.");
+        return showAlert("Błąd", "Nie udało się zmienić ceny zamówienia.");
       }
     }, [modalInputValue]);
 

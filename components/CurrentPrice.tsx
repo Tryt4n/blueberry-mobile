@@ -1,4 +1,4 @@
-import { View, Text, Alert, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
@@ -11,7 +11,7 @@ import Toast from "react-native-toast-message";
 import CustomButton from "./CustomButton";
 
 export default function CurrentPrice() {
-  const { user } = useGlobalContext();
+  const { user, showAlert } = useGlobalContext();
   const { showModal, setModalData } = useModalContext();
   const { currentPrice, setCurrentPrice } = useOrdersContext();
 
@@ -59,7 +59,7 @@ export default function CurrentPrice() {
 
     if (modalInputValue === "") {
       // If modalInputValue is empty, return alert
-      return Alert.alert("Błąd", "Wprowadź poprawną cenę.");
+      return showAlert("Błąd", "Wprowadź poprawną cenę.");
     }
     if (modalInputValue === currentPrice.price?.toString()) {
       // If price doesn't change, do nothing
@@ -71,8 +71,7 @@ export default function CurrentPrice() {
 
       // If there are errors, show alert and return
       if (updatedPrice.errors) {
-        setModalInputValue(currentPrice.price.toString());
-        return Alert.alert("Nieprawidłowa wartość", updatedPrice.errors.join("\n"));
+        return showAlert("Nieprawidłowa wartość", `${updatedPrice.errors?.join("\n")}`);
       }
 
       // else show success toast and refetch price
@@ -83,7 +82,12 @@ export default function CurrentPrice() {
       });
       refetchPrice();
     } catch (error: any) {
-      Alert.alert("Błąd", "Nie udało się zaktualizować ceny.");
+      setModalData((prevState) => ({
+        ...prevState,
+        title: "Błąd",
+        subtitle: "Nie udało się zaktualizować ceny.",
+      }));
+      showModal();
     }
   }, [modalInputValue, currentPrice]);
 

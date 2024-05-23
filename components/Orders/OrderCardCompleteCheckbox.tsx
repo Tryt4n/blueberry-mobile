@@ -1,4 +1,4 @@
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import React, { useCallback } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
@@ -16,7 +16,7 @@ export default function OrderCardCompleteCheckbox({
   order,
   setOrder,
 }: OrderCardCompleteCheckboxProps) {
-  const { user } = useGlobalContext();
+  const { user, showAlert } = useGlobalContext();
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
 
@@ -51,7 +51,7 @@ export default function OrderCardCompleteCheckbox({
         });
       } catch (error) {
         // Show an alert to the user if the operation failed
-        Alert.alert("Błąd", "Nie udało się zaktualizować zamówienia.");
+        showAlert("Błąd", "Nie udało się zaktualizować zamówienia.");
       }
     },
     [order, editOrder]

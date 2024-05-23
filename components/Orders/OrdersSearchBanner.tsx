@@ -1,9 +1,10 @@
-import { View, Text, Dimensions, Alert } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import { Banner, type BannerProps } from "react-native-paper";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
 import { useCallback } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import OrdersSearchBannerDates from "./OrdersSearchBannerDates";
 import OrdersSearchBannerUser from "./OrdersSearchBannerUser";
@@ -11,6 +12,7 @@ import Toast from "react-native-toast-message";
 
 export default function OrdersSearchBanner() {
   const { user } = useGlobalContext();
+  const { setModalData, showModal } = useModalContext();
   const { isBannerVisible, setIsBannerVisible, ordersSearchParams, ordersData } =
     useOrdersContext();
 
@@ -20,13 +22,31 @@ export default function OrdersSearchBanner() {
   // Fetch new orders based on the selected date range
   const getNewOrders = useCallback(() => {
     if (!ordersSearchParams.startDate && !ordersSearchParams.endDate) {
-      return Alert.alert("Błąd", "Wybierz zakres dat przed wyszukaniem.");
+      setModalData({
+        title: "Błąd",
+        subtitle: "Wybierz zakres dat przed wyszukaniem.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
+      return;
     }
     if (!ordersSearchParams.startDate) {
-      return Alert.alert("Błąd", "Wybierz datę początkową.");
+      setModalData({
+        title: "Błąd",
+        subtitle: "Wybierz datę początkową.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
+      return;
     }
     if (!ordersSearchParams.endDate) {
-      return Alert.alert("Błąd", "Wybierz datę końcową.");
+      setModalData({
+        title: "Błąd",
+        subtitle: "Wybierz datę końcową.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
+      return;
     }
 
     if (ordersData?.isLoading) return;

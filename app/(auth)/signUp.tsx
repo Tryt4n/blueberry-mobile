@@ -1,17 +1,20 @@
-import { Alert, type TextInput } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useModalContext } from "@/hooks/useModalContext";
 import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { createUser } from "@/api/auth/appwrite";
 import AuthLayout from "@/layout/AuthLayout";
 import Toast from "react-native-toast-message";
 import { FormField } from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
+import { type TextInput } from "react-native";
 import type { ErrorKeys } from "@/types/Errors";
 
 export default function SignUpPage() {
   const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { setModalData, showModal } = useModalContext();
+
   const [signInForm, setSignInForm] = useState({
     username: "",
     email: "",
@@ -40,10 +43,22 @@ export default function SignUpPage() {
       signInForm.password === "" ||
       signInForm.passwordConfirmation === ""
     ) {
-      return Alert.alert("Puste pola", "Wszystkie pola muszą być wypełnione.");
+      setModalData({
+        title: "Puste pola",
+        subtitle: "Wszystkie pola muszą być wypełnione.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
+      return;
     }
     if (signInForm.password !== signInForm.passwordConfirmation) {
-      return Alert.alert("Niezgodność haseł", "Hasła muszą być identyczne.");
+      setModalData({
+        title: "Niezgodność haseł",
+        subtitle: "Hasła muszą być identyczne.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
+      return;
     }
 
     setIsSubmitting(true);
@@ -73,14 +88,24 @@ export default function SignUpPage() {
         setErrors(result.errors);
       }
     } catch (error) {
-      Alert.alert("Błąd rejestracji", "Nie udało się utworzyć konta. Spróbuj ponownie.");
+      setModalData({
+        title: "Błąd rejestracji",
+        subtitle: "Nie udało się utworzyć konta. Spróbuj ponownie.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
     } finally {
       setIsSubmitting(false);
     }
   }
 
   if (errors.alert && errors.alert.length > 0) {
-    Alert.alert("Błąd rejestracji", errors.alert.join("\n")); // Every error message will be displayed in a new line
+    setModalData({
+      title: "Błąd rejestracji",
+      subtitle: `${errors.alert?.join("\n")}`,
+      btn1: { text: "Ok" },
+    });
+    showModal();
     setErrors({ ...errors, alert: [] });
   }
 

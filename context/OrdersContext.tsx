@@ -1,6 +1,6 @@
 import { createContext, useCallback, useState } from "react";
 import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
-import { Alert } from "react-native";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import Toast from "react-native-toast-message";
 import type { Order, OrdersDataType, OrdersSearchParams } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
@@ -24,6 +24,8 @@ type OrderContextType = {
 export const OrdersContext = createContext<OrderContextType | null>(null);
 
 export default function OrderContextProvider({ children }: { children: React.ReactNode }) {
+  const { showAlert } = useGlobalContext();
+
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
   const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
@@ -60,7 +62,7 @@ export default function OrderContextProvider({ children }: { children: React.Rea
           },
         });
       } catch (error) {
-        Alert.alert("Błąd", "Nie udało się usunąć zamówienia.");
+        showAlert("Błąd", "Nie udało się usunąć zamówienia.");
       }
     },
     [deleteOrderAppwrite]

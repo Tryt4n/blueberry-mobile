@@ -1,7 +1,7 @@
-import { Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useModalContext } from "@/hooks/useModalContext";
 import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { getCurrentUser, signIn } from "@/api/auth/appwrite";
 import AuthLayout from "@/layout/AuthLayout";
@@ -11,7 +11,9 @@ import { FormField } from "@/components/FormField";
 import type { TextInput } from "react-native-gesture-handler";
 
 export default function SignInPage() {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { setUser, setIsLoggedIn, platform } = useGlobalContext();
+  const { setModalData, showModal } = useModalContext();
+
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -29,7 +31,13 @@ export default function SignInPage() {
 
   async function handleLogin() {
     if (loginForm.email === "" || loginForm.password === "") {
-      return Alert.alert("Puste pola", "Wszystkie pola muszą być wypełnione.");
+      setModalData({
+        title: "Puste pola",
+        subtitle: "Wszystkie pola muszą być wypełnione.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
+      return;
     }
 
     setIsSubmitting(true);
@@ -53,10 +61,13 @@ export default function SignInPage() {
         setErrors(errors);
       }
     } catch (error) {
-      Alert.alert(
-        "Błąd logowania",
-        "Nie udało się zalogować. Sprawdź czy wszystkie dane są wprowadzone poprawnie i spróbuj ponownie."
-      );
+      setModalData({
+        title: "Błąd logowania",
+        subtitle:
+          "Nie udało się zalogować. Sprawdź czy wszystkie dane są wprowadzone poprawnie i spróbuj ponownie.",
+        btn1: { text: "Ok" },
+      });
+      showModal();
     } finally {
       setIsSubmitting(false);
     }
@@ -64,7 +75,7 @@ export default function SignInPage() {
 
   return (
     <AuthLayout type="signIn">
-      {Platform.OS !== "web" && <GoogleSignInButton setIsSubmitting={setIsSubmitting} />}
+      {platform !== "web" && <GoogleSignInButton setIsSubmitting={setIsSubmitting} />}
 
       <FormField
         ref={loginRef}

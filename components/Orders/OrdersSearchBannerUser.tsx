@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
@@ -29,7 +29,17 @@ export default function OrdersSearchBannerUser() {
     });
 
   const openSelectUserModal = useCallback(() => {
-    if (!fetchedListOfUsers) return Alert.alert("Błąd", "Nie udało się pobrać listy użytkowników.");
+    if (!fetchedListOfUsers) {
+      setModalData({
+        title: "Błąd",
+        subtitle: "Nie udało się pobrać listy użytkowników.",
+        btn1: {
+          text: "Anuluj",
+        },
+      });
+      showModal();
+      return;
+    }
 
     setModalData({
       title: "Wybierz użytkownika którego chcesz zobaczyć zamówienia",

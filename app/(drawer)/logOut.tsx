@@ -1,9 +1,10 @@
-import { View, Text, Alert, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { signOut } from "@/api/auth/appwrite";
 import { signOutWithGoogle } from "@/api/auth/google";
@@ -11,6 +12,7 @@ import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
   const { isLoggedIn, setIsLoggedIn, setUser, authProvider, setAuthProvider } = useGlobalContext();
+  const { setModalData, showModal } = useModalContext();
   const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
     useOrdersContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,7 +39,12 @@ export default function LogOutPage() {
 
       router.replace("/signIn");
     } catch (error) {
-      Alert.alert("Błąd", "Nie udało się wylogować. Spróbuj ponownie.");
+      setModalData((prevState) => ({
+        ...prevState,
+        title: "Błąd",
+        subtitle: "Nie udało się wylogować. Spróbuj ponownie.",
+      }));
+      showModal();
     } finally {
       setIsSubmitting(false);
     }

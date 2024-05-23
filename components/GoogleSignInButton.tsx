@@ -1,8 +1,9 @@
-import { Alert, Platform, View } from "react-native";
+import { Platform, View } from "react-native";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useModalContext } from "@/hooks/useModalContext";
 import { configureGoogleSignIn, getGoogleCurrentUser, signInWithGoogle } from "@/api/auth/google";
 import type { GoogleSigninButton as GoogleSigninButtonType } from "@react-native-google-signin/google-signin";
 
@@ -20,6 +21,7 @@ export default function GoogleSignInButton({ setIsSubmitting, ...props }: Google
   if (GoogleSignInButton === undefined) return null;
 
   const { setUser, setIsLoggedIn, setAuthProvider } = useGlobalContext();
+  const { setModalData, showModal } = useModalContext();
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -45,7 +47,12 @@ export default function GoogleSignInButton({ setIsSubmitting, ...props }: Google
         }
       }
     } catch (error) {
-      Alert.alert("Błąd logowania", "Nie udało się zalogować. Spróbuj ponownie.");
+      setModalData((prevState) => ({
+        ...prevState,
+        title: "Błąd logowania",
+        subtitle: "Nie udało się zalogować. Spróbuj ponownie.",
+      }));
+      showModal();
     } finally {
       setIsSubmitting(false);
     }

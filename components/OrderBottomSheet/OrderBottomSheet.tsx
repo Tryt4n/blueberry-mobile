@@ -1,4 +1,4 @@
-import { View, Text, Alert, Dimensions, type TextInput } from "react-native";
+import { View, Text, Dimensions, type TextInput } from "react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
@@ -17,7 +17,7 @@ import type { ValueType } from "react-native-dropdown-picker";
 import type { Buyer } from "@/types/buyers";
 
 export default function OrderBottomSheet() {
-  const { user } = useGlobalContext();
+  const { user, platform, showAlert } = useGlobalContext();
   const { bottomSheetModalRef, handleCloseBottomSheet } = useBottomSheetContext();
   const [quantity, setQuantity] = useState(1);
   const orderDataInitialState = {
@@ -53,11 +53,14 @@ export default function OrderBottomSheet() {
 
   async function handleOrder() {
     // Check if quantity is provided
-    if (!orderData.quantity) return Alert.alert("Błąd zamówienia", "Wprowadź ilość.");
+    if (!orderData.quantity) {
+      return showAlert("Błąd zamówienia", "Wprowadź ilość.");
+    }
 
     // Check if buyer name is provided
-    if (orderData.buyerName === "")
-      return Alert.alert("Błąd zamówienia", "Wprowadź nazwę kupującego.");
+    if (orderData.buyerName === "") {
+      return showAlert("Błąd zamówienia", "Wprowadź nazwę kupującego.");
+    }
 
     // Do nothing and close bottom sheet in edit mode if no changes were made
     if (
@@ -89,7 +92,7 @@ export default function OrderBottomSheet() {
             buyerId = newBuyer.$id;
           } else {
             // Show error alert if new buyer wasn't created
-            return Alert.alert("Błąd zamówienia", error.join("\n"));
+            return showAlert("Błąd zamówienia", `${error.join("\n")}`);
           }
         } else {
           // Set buyerId if buyer already exists
@@ -98,7 +101,7 @@ export default function OrderBottomSheet() {
 
         // Check if current price is available and show error alert if not
         if (!currentPrice) {
-          return Alert.alert(
+          return showAlert(
             "Błąd zamówienia",
             "Nie udało się pobrać aktualnej ceny. Spróbuj ponownie."
           );
@@ -123,7 +126,11 @@ export default function OrderBottomSheet() {
 
         // Show error alert if there are any errors, otherwise close bottom sheet and banner, reset search params, show success toast, refetch data for orders and buyers
         if (errors) {
-          return Alert.alert("Błąd zamówienia", errors.quantity.join("\n"));
+          if (platform === "web") {
+            return window.alert(errors.quantity.join("\n"));
+          } else {
+            return showAlert("Błąd zamówienia", `${errors.quantity.join("\n")}`);
+          }
         } else {
           setIsBannerVisible(false);
           setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
@@ -138,10 +145,16 @@ export default function OrderBottomSheet() {
         }
       } catch (error) {
         // Show error alert if there was an error during order creation or edition
-        Alert.alert(
-          "Błąd",
-          `Nie udało się ${editedOrder ? "edytować" : "utworzyć"} zamówienia. Spróbuj ponownie.`
-        );
+        if (platform === "web") {
+          return window.alert(
+            `Nie udało się ${editedOrder ? "edytować" : "utworzyć"} zamówienia. Spróbuj ponownie.`
+          );
+        } else {
+          return showAlert(
+            "Błąd",
+            `Nie udało się ${editedOrder ? "edytować" : "utworzyć"} zamówienia. Spróbuj ponownie.`
+          );
+        }
       } finally {
         // Reset states
         setIsSubmitting(false);
