@@ -18,9 +18,8 @@
       "package": "com.plantation.blueberry",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "transparent"
-      },
-      "android.permissions": ["VIBRATE"]
+        "backgroundColor": "#ffffff"
+      }
     },
     "web": {
       "bundler": "metro",
