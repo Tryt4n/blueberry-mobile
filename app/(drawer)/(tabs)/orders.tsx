@@ -9,6 +9,7 @@ import { getOrders, getOrdersBySearchParams } from "@/api/appwrite/orders";
 import OrdersList from "@/components/Orders/OrdersList";
 import OrdersHeader from "@/components/Orders/OrdersHeader";
 import CustomButton from "@/components/CustomButton";
+import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
 
 export default function TabOrders() {
   const { user } = useGlobalContext();
@@ -113,6 +114,8 @@ export default function TabOrders() {
           </View>
         </>
       )}
+
+      <OrderBottomSheet />
     </View>
   );
 }
