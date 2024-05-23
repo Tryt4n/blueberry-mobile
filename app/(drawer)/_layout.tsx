@@ -1,6 +1,6 @@
-import { GestureHandlerRootView, TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { Drawer as SideMenu } from "expo-router/drawer";
-import { Text, Image, Platform } from "react-native";
+import { Text, Image } from "react-native";
 import React, { type ComponentProps } from "react";
 import tw from "@/lib/twrnc";
 import {
@@ -8,19 +8,19 @@ import {
   DrawerItemList,
   DrawerToggleButton,
 } from "@react-navigation/drawer";
-import { Redirect, router, usePathname } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
-import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
+import { Ionicons } from "@expo/vector-icons";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function DrawerLayout() {
-  const { isLoggedIn } = useGlobalContext();
+  const { isLoading } = useGlobalContext();
 
-  if (!isLoggedIn) return <Redirect href="/signIn" />;
+  if (isLoading) return <LoadingSpinner />;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <>
       <SideMenu
         screenOptions={{
           headerTitleStyle: { fontFamily: "Poppins-SemiBold" },
@@ -79,14 +79,12 @@ export default function DrawerLayout() {
           }}
         />
       </SideMenu>
-
-      <OrderBottomSheet />
-    </GestureHandlerRootView>
+    </>
   );
 }
 
 function CustomDrawerContent(props: ComponentProps<typeof DrawerItemList>) {
-  const { user } = useGlobalContext();
+  const { user, platform } = useGlobalContext();
   const pathname = usePathname();
 
   return (
@@ -95,7 +93,7 @@ function CustomDrawerContent(props: ComponentProps<typeof DrawerItemList>) {
         {user && (
           <TouchableOpacity
             activeOpacity={0.7}
-            style={tw`mx-auto mb-8 items-center${Platform.OS === "web" ? " mt-8" : ""}`}
+            style={tw`mx-auto mb-8 items-center${platform === "web" ? " mt-8" : ""}`}
             disabled={pathname === "/settings"}
             onPress={() => {
               router.push("/settings");
