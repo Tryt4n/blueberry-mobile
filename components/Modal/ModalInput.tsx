@@ -1,9 +1,11 @@
-import { View, TextInput, Platform } from "react-native";
+import { View, TextInput } from "react-native";
 import { useState, type ComponentProps } from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
 
 export default function ModalInput({ ...props }: ComponentProps<typeof TextInput>) {
+  const { platform } = useGlobalContext();
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -14,7 +16,7 @@ export default function ModalInput({ ...props }: ComponentProps<typeof TextInput
             isFocused ? " border-primary" : ""
           }`,
           //@ts-ignore - `caretColor` is not recognized for <TextInput/>
-          Platform.OS === "web" ? { outline: "none", caretColor: colors.primary } : {},
+          platform === "web" ? { outline: "none", caretColor: colors.primary } : {},
         ]}
         cursorColor={colors.primary}
         onFocus={() => setIsFocused(true)}

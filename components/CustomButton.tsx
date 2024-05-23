@@ -1,5 +1,6 @@
-import { ActivityIndicator, Platform, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import React, { type ComponentPropsWithoutRef } from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import tw from "@/lib/twrnc";
 
 type CustomButtonProps = {
@@ -18,10 +19,12 @@ export default function CustomButton({
   loadingColor = "white",
   ...props
 }: CustomButtonProps) {
+  const { platform } = useGlobalContext();
+
   return (
     <TouchableOpacity
       style={tw`bg-primary rounded-xl justify-center items-center${
-        Platform.OS === "web" && props.disabled ? " opacity-70 cursor-not-allowed" : ""
+        platform === "web" && props.disabled ? " opacity-70 cursor-not-allowed" : ""
       }${containerStyles ? ` ${containerStyles}` : ""}`}
       {...props}
       activeOpacity={0.7}

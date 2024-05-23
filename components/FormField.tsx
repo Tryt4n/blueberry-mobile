@@ -1,5 +1,6 @@
-import { View, Text, TextInput, TouchableOpacity, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { forwardRef, useState, type ComponentProps, type ForwardedRef } from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,6 +17,7 @@ function InnerFormField(
   { title, handleChangeText, otherStyles, errors, ...props }: FormFieldProps,
   ref: ForwardedRef<TextInput>
 ) {
+  const { platform } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -35,7 +37,7 @@ function InnerFormField(
           cursorColor={colors.primary}
           style={[
             tw`flex-1 font-poppinsSemiBold text-base`,
-            Platform.OS === "web"
+            platform === "web"
               ? {
                   // @ts-ignore - `caretColor` is not recognized for <TextInput/>
                   outline: "none",
