@@ -8,38 +8,23 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/favicon.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
     "plugins": ["expo-router", "@react-native-google-signin/google-signin"],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.plantation.blueberry",
-      "infoPlist": {
-        "CFBundleURLTypes": [
-          {
-            "CFBundleURLSchemes": [
-              "com.googleusercontent.apps.631863393828-ifq3irpfp6solcs7ftmuq9b1vshfrt7k"
-            ]
-          }
-        ]
-      },
-      "icon": "./assets/images/favicon.png",
-      "package": "com.plantation.blueberry"
-    },
     "android": {
       "package": "com.plantation.blueberry",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "transparent"
       },
       "android.permissions": ["VIBRATE"]
     },
     "web": {
       "bundler": "metro",
-      "output": "server",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "experiments": {
