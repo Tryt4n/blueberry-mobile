@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MenuProvider } from "react-native-popup-menu";
 import { PaperProvider } from "react-native-paper";
+import tw from "@/lib/twrnc";
 import GlobalContextProvider from "../context/GlobalContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 import OrderContextProvider from "@/context/OrdersContext";
@@ -36,7 +37,7 @@ export default function RootLayout() {
   if (!fontsLoaded && !error) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={tw`flex-1 overflow-hidden`}>
       <GlobalContextProvider>
         <OrderContextProvider>
           <BottomSheetTabsContextProvider>
