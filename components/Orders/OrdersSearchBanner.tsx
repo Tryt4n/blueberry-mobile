@@ -1,8 +1,8 @@
-import { View, Text, Dimensions } from "react-native";
+import { View, Text, useWindowDimensions } from "react-native";
 import { Banner, type BannerProps } from "react-native-paper";
 import tw from "@/lib/twrnc";
 import { colors } from "@/helpers/colors";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -15,9 +15,11 @@ export default function OrdersSearchBanner() {
   const { setModalData, showModal } = useModalContext();
   const { isBannerVisible, setIsBannerVisible, ordersSearchParams, ordersData } =
     useOrdersContext();
+  const { width } = useWindowDimensions();
 
-  const { width } = Dimensions.get("window");
-  const containerWidth = width * 0.9 - 32;
+  const containerWidth = useMemo(() => {
+    return width * 0.9 - 32 <= 700 ? width * 0.9 - 32 : 700 - 32;
+  }, [width]);
 
   // Fetch new orders based on the selected date range
   const getNewOrders = useCallback(() => {
@@ -88,7 +90,7 @@ export default function OrdersSearchBanner() {
       visible={isBannerVisible}
       actions={bannerActions}
       elevation={3}
-      style={tw`my-4 bg-white rounded-2xl`}
+      style={tw`my-4 bg-white rounded-2xl w-full max-w-[700px] mx-auto`}
     >
       <Text style={[tw`font-poppinsBold`, { fontSize: 24 }]}>Wyszukaj zamówienia</Text>
       <View style={{ width: containerWidth }}>
