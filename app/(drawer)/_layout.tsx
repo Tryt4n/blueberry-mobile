@@ -8,16 +8,18 @@ import {
   DrawerItemList,
   DrawerToggleButton,
 } from "@react-navigation/drawer";
-import { router, usePathname } from "expo-router";
+import { Redirect, router, usePathname } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function DrawerLayout() {
-  const { isLoading } = useGlobalContext();
+  const { isLoading, isLoggedIn } = useGlobalContext();
 
   if (isLoading) return <LoadingSpinner />;
+
+  if (!isLoading && !isLoggedIn) return <Redirect href="/signIn" />;
 
   return (
     <>
