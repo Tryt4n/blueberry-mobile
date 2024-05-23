@@ -1,5 +1,5 @@
 import { FlashList } from "@shopify/flash-list";
-import { RefreshControl } from "react-native";
+import { RefreshControl, useWindowDimensions } from "react-native";
 import { useState } from "react";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
@@ -7,9 +7,10 @@ import OrderCard from "./OrderCard";
 import Toast from "react-native-toast-message";
 
 export default function OrdersList() {
-  const { user } = useGlobalContext();
+  const { user, platform } = useGlobalContext();
   const { currentPrice, ordersData, setIsBannerVisible } = useOrdersContext();
   const [refreshing, setRefreshing] = useState(false);
+  const { width } = useWindowDimensions();
 
   async function refetchOrders() {
     setRefreshing(true);
@@ -32,14 +33,13 @@ export default function OrdersList() {
         <FlashList
           data={ordersData.data}
           keyExtractor={(order) => order.$id}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingBottom: user.role === "admin" || user.role === "moderator" ? 16 : 0,
-          }}
+          horizontal={platform === "web" && width > 700 ? false : undefined}
+          numColumns={platform === "web" ? (width >= 1400 ? 3 : width >= 700 ? 2 : 1) : undefined}
           renderItem={({ item }) => (
             <OrderCard
               order={item}
               price={currentPrice.price}
+              additionalStyles={platform === "web" && width > 700 ? "max-w-[95%] mr-4" : ""}
             />
           )}
           refreshControl={

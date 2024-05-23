@@ -10,20 +10,20 @@ import type { CurrentPrice } from "@/types/currentPrice";
 type OrderCardProps = {
   order: Order;
   price: CurrentPrice["price"];
+  additionalStyles?: string;
 };
 
-export default function OrderCard({ order: orderData, price }: OrderCardProps) {
+export default function OrderCard({ order: orderData, price, additionalStyles }: OrderCardProps) {
   const { user } = useGlobalContext();
-
   const [order, setOrder] = useState(orderData);
 
   return (
     <>
       {user && (
         <View
-          style={tw`mb-4 p-4 rounded-xl bg-white shadow-md shadow-black${
+          style={tw`w-full mb-4 p-4 rounded-xl bg-white shadow-md shadow-black${
             order.completed ? " opacity-50" : ""
-          }`}
+          }${additionalStyles ? ` ${additionalStyles}` : ""}`}
         >
           <OrderCardCompleteCheckbox
             order={order}
