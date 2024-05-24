@@ -5,7 +5,8 @@ import { useModalContext } from "@/hooks/useModalContext";
 import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { getCurrentUser, signIn } from "@/api/auth/appwrite";
 import AuthLayout from "@/layout/AuthLayout";
-import GoogleSignInButton from "@/components/GoogleSignInButton";
+import GoogleSignInButtonNative from "@/components/GoogleSignInButtonNative";
+import GoogleSignInButtonWeb from "@/components/GoogleSignInButtonWeb";
 import CustomButton from "@/components/CustomButton";
 import { FormField } from "@/components/FormField";
 import type { TextInput } from "react-native-gesture-handler";
@@ -75,7 +76,11 @@ export default function SignInPage() {
 
   return (
     <AuthLayout type="signIn">
-      {platform !== "web" && <GoogleSignInButton setIsSubmitting={setIsSubmitting} />}
+      {platform === "web" ? (
+        <GoogleSignInButtonWeb setIsSubmitting={setIsSubmitting} />
+      ) : (
+        <GoogleSignInButtonNative setIsSubmitting={setIsSubmitting} />
+      )}
 
       <FormField
         ref={loginRef}
