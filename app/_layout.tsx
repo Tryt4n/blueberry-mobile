@@ -1,8 +1,10 @@
+import { Platform } from "react-native";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { MenuProvider } from "react-native-popup-menu";
 import { PaperProvider } from "react-native-paper";
 import tw from "@/lib/twrnc";
@@ -36,41 +38,55 @@ export default function RootLayout() {
 
   if (!fontsLoaded && !error) return null;
 
+  // Google OAuth Provider Wrapper for web
+  const GoogleOAuthProviderWrapper = ({ children }: { children: React.ReactNode }) => (
+    <GoogleOAuthProvider clientId={process.env.EXPO_PUBLIC_WEB_OAUTH_CLIENT_ID!}>
+      {children}
+    </GoogleOAuthProvider>
+  );
+
+  // For other platforms return empty fragment
+  const OtherWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
+  const Wrapper = Platform.OS === "web" ? GoogleOAuthProviderWrapper : OtherWrapper;
+
   return (
-    <GestureHandlerRootView style={tw`flex-1 overflow-hidden`}>
-      <GlobalContextProvider>
-        <OrderContextProvider>
-          <BottomSheetTabsContextProvider>
-            <MenuProvider>
-              <PaperProvider theme={{ dark: false }}>
-                <ModalContextProvider>
-                  <StatusBar />
+    <Wrapper>
+      <GestureHandlerRootView style={tw`flex-1 overflow-hidden`}>
+        <GlobalContextProvider>
+          <OrderContextProvider>
+            <BottomSheetTabsContextProvider>
+              <MenuProvider>
+                <PaperProvider theme={{ dark: false }}>
+                  <ModalContextProvider>
+                    <StatusBar />
 
-                  <Stack>
-                    <Stack.Screen
-                      name="index"
-                      options={{ headerShown: false }}
-                    />
+                    <Stack>
+                      <Stack.Screen
+                        name="index"
+                        options={{ headerShown: false }}
+                      />
 
-                    <Stack.Screen
-                      name="(auth)"
-                      options={{ headerShown: false }}
-                    />
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false }}
+                      />
 
-                    <Stack.Screen
-                      name="(drawer)"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack>
+                      <Stack.Screen
+                        name="(drawer)"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
 
-                  <Toast />
-                  <Modal />
-                </ModalContextProvider>
-              </PaperProvider>
-            </MenuProvider>
-          </BottomSheetTabsContextProvider>
-        </OrderContextProvider>
-      </GlobalContextProvider>
-    </GestureHandlerRootView>
+                    <Toast />
+                    <Modal />
+                  </ModalContextProvider>
+                </PaperProvider>
+              </MenuProvider>
+            </BottomSheetTabsContextProvider>
+          </OrderContextProvider>
+        </GlobalContextProvider>
+      </GestureHandlerRootView>
+    </Wrapper>
   );
 }
