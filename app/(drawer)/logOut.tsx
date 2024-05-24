@@ -6,12 +6,14 @@ import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
-import { signOut } from "@/api/auth/appwrite";
-import { signOutWithGoogle } from "@/api/auth/google";
+import { signOut as AppwriteAuthLogout } from "@/api/auth/appwrite";
+import { signOutWithGoogle as GoogleLogoutNative } from "@/api/auth/google";
+import { googleLogout as GoogleLogoutWeb } from "@react-oauth/google";
 import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
-  const { isLoggedIn, setIsLoggedIn, setUser, authProvider, setAuthProvider } = useGlobalContext();
+  const { isLoggedIn, setIsLoggedIn, setUser, authProvider, setAuthProvider, platform } =
+    useGlobalContext();
   const { setModalData, showModal } = useModalContext();
   const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
     useOrdersContext();
@@ -23,7 +25,11 @@ export default function LogOutPage() {
     setIsSubmitting(true);
 
     try {
-      authProvider === "google" ? signOutWithGoogle() : await signOut();
+      authProvider === "google"
+        ? platform === "web"
+          ? GoogleLogoutWeb()
+          : GoogleLogoutNative()
+        : await AppwriteAuthLogout();
 
       // Reset all app states
       setUser(null);
