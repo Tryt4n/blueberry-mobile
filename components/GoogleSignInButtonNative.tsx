@@ -17,9 +17,10 @@ type GoogleSignInButtonProps = {
   setIsSubmitting: (value: boolean) => void;
 } & React.ComponentProps<typeof GoogleSigninButton>;
 
-export default function GoogleSignInButton({ setIsSubmitting, ...props }: GoogleSignInButtonProps) {
-  if (GoogleSignInButton === undefined) return null;
-
+export default function GoogleSignInButtonNative({
+  setIsSubmitting,
+  ...props
+}: GoogleSignInButtonProps) {
   const { setUser, setIsLoggedIn, setAuthProvider } = useGlobalContext();
   const { setModalData, showModal } = useModalContext();
 
