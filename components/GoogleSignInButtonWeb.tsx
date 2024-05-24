@@ -37,11 +37,11 @@ export default function GoogleSignInButtonWeb({
         }
       }
     } catch (error) {
-      setModalData((prevState) => ({
-        ...prevState,
+      setModalData({
         title: "Błąd logowania",
         subtitle: "Nie udało się zalogować. Spróbuj ponownie.",
-      }));
+        btn1: { text: "Ok" },
+      });
       showModal();
     } finally {
       setIsSubmitting(false);

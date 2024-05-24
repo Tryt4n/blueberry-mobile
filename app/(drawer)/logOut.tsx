@@ -39,17 +39,18 @@ export default function LogOutPage() {
       setEditedOrder(null);
       setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
       setIsBannerVisible(false);
+      setModalData({ title: "true" });
 
       // Reset provider
       setAuthProvider("appwrite");
 
       router.replace("/signIn");
     } catch (error) {
-      setModalData((prevState) => ({
-        ...prevState,
+      setModalData({
         title: "Błąd",
         subtitle: "Nie udało się wylogować. Spróbuj ponownie.",
-      }));
+        btn1: { text: "Ok" },
+      });
       showModal();
     } finally {
       setIsSubmitting(false);

@@ -82,11 +82,11 @@ export default function CurrentPrice() {
       });
       refetchPrice();
     } catch (error: any) {
-      setModalData((prevState) => ({
-        ...prevState,
+      setModalData({
         title: "Błąd",
         subtitle: "Nie udało się zaktualizować ceny.",
-      }));
+        btn1: { text: "Ok" },
+      });
       showModal();
     }
   }, [modalInputValue, currentPrice]);
