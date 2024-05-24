@@ -2,11 +2,13 @@ import { appwriteConfig, avatars, databases } from "@/lib/appwrite";
 import { parsedEnv } from "@/lib/zod/env";
 import { ID, Query } from "react-native-appwrite";
 import { Platform } from "react-native";
+import { jwtDecode, type JwtPayload } from "jwt-decode";
 import type { User } from "@/types/user";
 import type {
   GoogleSignin as GoogleSigninType,
   User as GoogleUser,
 } from "@react-native-google-signin/google-signin";
+import type { CredentialResponse } from "@react-oauth/google";
 
 // Use GoogleSignInButton only on native platforms
 let GoogleSignin: typeof GoogleSigninType;
@@ -31,6 +33,37 @@ export async function signInWithGoogle() {
       const userInfo = await GoogleSignin.signIn();
 
       await createGoogleUserInAppwrite(userInfo.user);
+
+      return userInfo;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+}
+
+type JwtUser = JwtPayload & {
+  email: string;
+  email_verified: string;
+  family_name: string;
+  given_name: string;
+  name: string;
+  picture: string;
+};
+
+export async function signInWithGoogleWeb(credentialResponse: CredentialResponse) {
+  if (credentialResponse.credential) {
+    try {
+      const decodedUser: JwtUser = jwtDecode(credentialResponse.credential);
+      const userInfo = {
+        id: decodedUser.sub!,
+        email: decodedUser.email,
+        familyName: decodedUser.family_name,
+        givenName: decodedUser.given_name,
+        name: decodedUser.name,
+        photo: decodedUser.picture,
+      };
+
+      await createGoogleUserInAppwrite(userInfo);
 
       return userInfo;
     } catch (error: any) {
