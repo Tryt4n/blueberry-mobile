@@ -109,12 +109,12 @@ async function createGoogleUserInAppwrite(user: GoogleUser["user"]) {
   }
 }
 
-export async function getGoogleCurrentUser(user: GoogleUser["user"]) {
+export async function getGoogleCurrentUser(userId: GoogleUser["user"]["id"]) {
   try {
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.equal("accountId", user.id)]
+      [Query.equal("accountId", userId)]
     );
 
     if (!currentUser) throw Error("Failed to get current user");

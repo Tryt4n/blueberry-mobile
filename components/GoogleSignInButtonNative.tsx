@@ -35,7 +35,7 @@ export default function GoogleSignInButtonNative({
       const session = await signInWithGoogle();
 
       if (session) {
-        const result = await getGoogleCurrentUser(session.user);
+        const result = await getGoogleCurrentUser(session.user.id);
 
         if (result) {
           setUser(result);
