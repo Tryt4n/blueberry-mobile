@@ -36,6 +36,7 @@
     "react-native-appwrite": "^0.2.2",
     "react-native-bouncy-checkbox": "^4.0.0",
     "react-native-calendars": "^1.1304.1",
+    "react-native-crypto-js": "^1.0.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-paper": "^5.12.3",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
+    "@types/react-native-crypto-js": "^1.0.3",
     "appwrite": "^13.0.2",
     "react-test-renderer": "18.2.0",
     "tailwindcss": "^3.3.2",
