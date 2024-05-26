@@ -7,13 +7,10 @@ import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { signOut as AppwriteAuthLogout } from "@/api/auth/appwrite";
-import { signOutWithGoogle as GoogleLogoutNative } from "@/api/auth/google";
-import { googleLogout as GoogleLogoutWeb } from "@react-oauth/google";
 import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
-  const { isLoggedIn, setIsLoggedIn, setUser, authProvider, setAuthProvider, platform } =
-    useGlobalContext();
+  const { isLoggedIn, setIsLoggedIn, setUser } = useGlobalContext();
   const { setModalData, showModal } = useModalContext();
   const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
     useOrdersContext();
@@ -25,11 +22,7 @@ export default function LogOutPage() {
     setIsSubmitting(true);
 
     try {
-      authProvider === "google"
-        ? platform === "web"
-          ? GoogleLogoutWeb()
-          : GoogleLogoutNative()
-        : await AppwriteAuthLogout();
+      await AppwriteAuthLogout();
 
       // Reset all app states
       setUser(null);
@@ -40,9 +33,6 @@ export default function LogOutPage() {
       setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
       setIsBannerVisible(false);
       setModalData({ title: "true" });
-
-      // Reset provider
-      setAuthProvider("appwrite");
 
       router.replace("/signIn");
     } catch (error) {
