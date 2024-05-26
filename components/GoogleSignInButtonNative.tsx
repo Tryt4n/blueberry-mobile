@@ -4,7 +4,8 @@ import React, { useEffect } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
-import { configureGoogleSignIn, getGoogleCurrentUser, signInWithGoogle } from "@/api/auth/google";
+import { configureGoogleSignInNative, signInWithGoogleNative } from "@/api/auth/google";
+import { getCurrentUser } from "@/api/auth/appwrite";
 import type { GoogleSigninButton as GoogleSigninButtonType } from "@react-native-google-signin/google-signin";
 
 // Use GoogleSignInButton only on native platforms
@@ -21,26 +22,25 @@ export default function GoogleSignInButtonNative({
   setIsSubmitting,
   ...props
 }: GoogleSignInButtonProps) {
-  const { setUser, setIsLoggedIn, setAuthProvider } = useGlobalContext();
+  const { setUser, setIsLoggedIn } = useGlobalContext();
   const { setModalData, showModal } = useModalContext();
 
   useEffect(() => {
-    configureGoogleSignIn();
+    configureGoogleSignInNative();
   }, []);
 
   async function handleGoogleSignIn() {
     setIsSubmitting(true);
 
     try {
-      const session = await signInWithGoogle();
+      const session = await signInWithGoogleNative();
 
       if (session) {
-        const result = await getGoogleCurrentUser(session.user.id);
+        const result = await getCurrentUser();
 
         if (result) {
           setUser(result);
           setIsLoggedIn(true);
-          setAuthProvider("google");
 
           router.replace("/");
         } else {
