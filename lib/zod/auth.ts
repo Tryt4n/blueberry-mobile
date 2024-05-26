@@ -1,4 +1,3 @@
-import type { User } from "@/types/user";
 import { z } from "zod";
 
 // Error Messages
