@@ -1,9 +1,9 @@
-import { appwriteConfig, avatars, databases } from "@/lib/appwrite";
+import { account, appwriteConfig, avatars, databases } from "@/lib/appwrite";
 import { parsedEnv } from "@/lib/zod/env";
 import { ID, Query } from "react-native-appwrite";
 import { Platform } from "react-native";
 import { jwtDecode, type JwtPayload } from "jwt-decode";
-import type { User } from "@/types/user";
+import { decryptData, encryptData, generateRandomPassword } from "@/helpers/encryption";
 import type {
   GoogleSignin as GoogleSigninType,
   User as GoogleUser,
@@ -16,7 +16,7 @@ if (Platform.OS !== "web") {
   ({ GoogleSignin } = require("@react-native-google-signin/google-signin"));
 }
 
-export function configureGoogleSignIn() {
+export function configureGoogleSignInNative() {
   if (GoogleSignin) {
     GoogleSignin.configure({
       //@ts-expect-error - missing type for androidClientId
@@ -25,14 +25,19 @@ export function configureGoogleSignIn() {
   }
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogleNative() {
   if (GoogleSignin) {
     try {
       await GoogleSignin.hasPlayServices();
 
       const userInfo = await GoogleSignin.signIn();
 
-      await createGoogleUserInAppwrite(userInfo.user);
+      const user = await createGoogleUserInAppwrite(userInfo.user);
+      const decryptedPassword = decryptData(
+        user.secretPassword,
+        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY
+      );
+      await account.createEmailSession(user.email, decryptedPassword);
 
       return userInfo;
     } catch (error: any) {
@@ -63,7 +68,12 @@ export async function signInWithGoogleWeb(credentialResponse: CredentialResponse
         photo: decodedUser.picture,
       };
 
-      await createGoogleUserInAppwrite(userInfo);
+      const user = await createGoogleUserInAppwrite(userInfo);
+      const decryptedPassword = decryptData(
+        user.secretPassword,
+        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY
+      );
+      await account.createEmailSession(user.email, decryptedPassword);
 
       return userInfo;
     } catch (error: any) {
@@ -87,9 +97,13 @@ async function createGoogleUserInAppwrite(user: GoogleUser["user"]) {
       [Query.equal("email", user.email)]
     );
 
-    if (isUserAlreadyCreated.documents.length > 0) return;
+    if (isUserAlreadyCreated.documents.length > 0) return isUserAlreadyCreated.documents[0];
 
     const avatarUrl = user.photo ? avatars.getImage(user.photo) : avatars.getInitials(user.name!);
+
+    const password = generateRandomPassword();
+    const encryptedPassword = encryptData(password, parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY);
+    await account.create(user.id, user.email, password, user.name!);
 
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -100,29 +114,12 @@ async function createGoogleUserInAppwrite(user: GoogleUser["user"]) {
         email: user.email,
         username: user.name,
         avatar: avatarUrl,
+        secretPassword: encryptedPassword,
       }
     );
 
     return newUser;
   } catch (error: any) {
     throw new Error(error);
-  }
-}
-
-export async function getGoogleCurrentUser(userId: GoogleUser["user"]["id"]) {
-  try {
-    const currentUser = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
-      [Query.equal("accountId", userId)]
-    );
-
-    if (!currentUser) throw Error("Failed to get current user");
-
-    return currentUser.documents[0] as User;
-  } catch (error: any) {
-    if (error.message !== "User (role: guests) missing scope (account)") {
-      console.error(error);
-    }
   }
 }
