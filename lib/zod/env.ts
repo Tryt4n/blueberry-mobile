@@ -12,6 +12,7 @@ const envSchema = z.object({
   EXPO_PUBLIC_APPWRITE_CURRENT_PRICE_COLLECTION_ID: z.string().min(1),
   EXPO_PUBLIC_APPWRITE_AVATARS_STORAGE_ID: z.string().min(1),
   EXPO_PUBLIC_ANDROID_CLIENT_ID: z.string().min(1),
+  EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY: z.string().min(1),
 });
 
 export const parsedEnv = envSchema.parse(process.env);
