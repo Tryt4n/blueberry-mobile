@@ -107,6 +107,7 @@ export async function editOrder(
     quantity: number;
     completed: boolean;
     additionalInfo: string | null;
+    issued: Order["issued"];
   }
 ) {
   const customErrors: Record<string, string[]> = {
@@ -138,6 +139,7 @@ export async function editOrder(
           quantity: updatedOrderData.quantity,
           additionalInfo: updatedOrderData.additionalInfo,
           completed: updatedOrderData.completed,
+          issued: updatedOrderData.issued,
         }
       );
 
