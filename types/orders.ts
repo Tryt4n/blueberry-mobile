@@ -15,6 +15,7 @@ export type Order = {
   readonly user: User;
   readonly buyer: Buyer;
   readonly currentPrice: CurrentPrice;
+  readonly issued: boolean;
 };
 
 export type OrdersDataType = {
