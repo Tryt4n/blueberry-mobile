@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { useState } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import OrderCardIssuedCheckbox from "./OrderCardIssuedCheckbox";
 import OrderCardCompleteCheckbox from "./OrderCardCompleteCheckbox";
 import OrderCardOptions from "./OrderCardOptions";
 import type { Order } from "@/types/orders";
@@ -17,6 +18,8 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
   const { user } = useGlobalContext();
   const [order, setOrder] = useState(orderData);
 
+  const userHasAccess = user?.role === "admin" || user?.role === "moderator";
+
   return (
     <>
       {user && (
@@ -25,10 +28,22 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
             order.completed ? " opacity-50" : ""
           }${additionalStyles ? ` ${additionalStyles}` : ""}`}
         >
-          <OrderCardCompleteCheckbox
-            order={order}
-            setOrder={setOrder}
-          />
+          <View
+            style={tw`flex-row ${
+              order.completed || !userHasAccess ? "justify-end" : "justify-between"
+            }`}
+          >
+            {userHasAccess && !order.completed && (
+              <OrderCardIssuedCheckbox
+                order={order}
+                setOrder={setOrder}
+              />
+            )}
+            <OrderCardCompleteCheckbox
+              order={order}
+              setOrder={setOrder}
+            />
+          </View>
 
           <Text style={tw`text-xl text-center font-poppinsRegular`}>
             Ilość: <Text style={tw`font-poppinsSemiBold`}>{order.quantity}kg</Text>
