@@ -115,6 +115,7 @@ export default function OrderBottomSheet() {
               quantity: orderData.quantity,
               completed: editedOrder.completed,
               additionalInfo: orderData.additionalInfo.trim(),
+              issued: editedOrder.issued,
             })
           : await createOrder(
               user.$id,
