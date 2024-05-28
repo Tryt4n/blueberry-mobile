@@ -9,6 +9,7 @@ type CustomButtonProps = {
   textStyles?: string;
   loading?: boolean;
   loadingColor?: string;
+  loadingSpinnerSize?: "small" | "large";
 } & Omit<ComponentPropsWithoutRef<typeof TouchableOpacity>, "className">;
 
 export default function CustomButton({
@@ -17,6 +18,7 @@ export default function CustomButton({
   textStyles,
   loading,
   loadingColor = "white",
+  loadingSpinnerSize = "large",
   ...props
 }: CustomButtonProps) {
   const { platform } = useGlobalContext();
@@ -40,7 +42,7 @@ export default function CustomButton({
       ) : (
         <ActivityIndicator
           style={tw`p-3 text-base`}
-          size="large"
+          size={loadingSpinnerSize}
           color={loadingColor}
         />
       )}
