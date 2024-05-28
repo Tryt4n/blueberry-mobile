@@ -1,5 +1,5 @@
 import { Alert, Platform } from "react-native";
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "@/api/auth/appwrite";
 import type { User } from "../types/user";
 
@@ -11,6 +11,7 @@ type GlobalContextValues = {
   isLoading: boolean;
   platform: typeof Platform.OS | undefined;
   showAlert: (title: string, message: string) => void;
+  refetchUser: () => Promise<void>;
 };
 
 export const GlobalContext = createContext<GlobalContextValues | null>(null);
@@ -29,23 +30,23 @@ export default function GlobalContextProvider({ children }: { children: React.Re
     }
   }
 
+  const getAndSetUser = useCallback(async () => {
+    try {
+      const user = await getCurrentUser();
+
+      if (user) {
+        setIsLoggedIn(true);
+        setUser(user);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    getCurrentUser()
-      .then((res) => {
-        if (res) {
-          setIsLoggedIn(true);
-          setUser(res);
-        } else {
-          setIsLoggedIn(false);
-          setUser(null);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    getAndSetUser();
   }, []);
 
   const contextValues: GlobalContextValues = {
@@ -53,6 +54,7 @@ export default function GlobalContextProvider({ children }: { children: React.Re
     setIsLoggedIn,
     user,
     setUser,
+    refetchUser: getAndSetUser,
     isLoading,
     platform,
     showAlert,
