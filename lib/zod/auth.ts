@@ -21,33 +21,38 @@ const invalid_password_too_long_error = "Hasło może składać się z maksymaln
 const invalid_password_confirmation_error = "Hasła nie są identyczne.";
 
 // Schemas
+export const EmailSchema = z.string().min(1, required_email_error).email(invalid_email_error);
+
+export const UsernameSchema = z
+  .string()
+  .min(1, required_username_error)
+  .min(3, invalid_username_too_short_error)
+  .max(50, invalid_username_too_long_error)
+  .refine(
+    (username) => /^[a-zA-Z0-9\u00C0-\u017F\s-]+$/g.test(username),
+    invalid_username_special_chars_error
+  )
+  .refine(
+    (username) => /^(?!.*-{2,})[^-]*-?[^-]*$/.test(username) && !/[-]\s|\s[-]/.test(username),
+    invalid_username_space_dash_error
+  )
+  .refine(
+    (username) =>
+      !/-/.test(username) || /([a-zA-Z\u00C0-\u017F]{3,}-[a-zA-Z\u00C0-\u017F]{3,})/.test(username),
+    invalid_username_incorrect_use_of_dash_character_error
+  );
+
+export const PasswordSchema = z
+  .string()
+  .min(1, required_password_error)
+  .min(8, invalid_password_too_short_error)
+  .max(50, invalid_password_too_long_error);
+
 export const SignUpSchema = z
   .object({
-    email: z.string().min(1, required_email_error).email(invalid_email_error),
-    username: z
-      .string()
-      .min(1, required_username_error)
-      .min(3, invalid_username_too_short_error)
-      .max(50, invalid_username_too_long_error)
-      .refine(
-        (username) => /^[a-zA-Z0-9\u00C0-\u017F\s-]+$/g.test(username),
-        invalid_username_special_chars_error
-      )
-      .refine(
-        (username) => /^(?!.*-{2,})[^-]*-?[^-]*$/.test(username) && !/[-]\s|\s[-]/.test(username),
-        invalid_username_space_dash_error
-      )
-      .refine(
-        (username) =>
-          !/-/.test(username) ||
-          /([a-zA-Z\u00C0-\u017F]{3,}-[a-zA-Z\u00C0-\u017F]{3,})/.test(username),
-        invalid_username_incorrect_use_of_dash_character_error
-      ),
-    password: z
-      .string()
-      .min(1, required_password_error)
-      .min(8, invalid_password_too_short_error)
-      .max(50, invalid_password_too_long_error),
+    email: EmailSchema,
+    username: UsernameSchema,
+    password: PasswordSchema,
     passwordConfirmation: z.string(),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
