@@ -24,18 +24,16 @@ export default function Modal() {
   const { visible, closeModal, modalData } = useModalContext();
   const { title, subtitle, btn1, btn2, input, calendar, children, onDismiss } = modalData;
 
+  function closeModalWithOnDismiss() {
+    closeModal();
+    onDismiss && onDismiss();
+  }
+
   return (
     <Portal>
       <ReactNativePaperModal
         visible={visible}
-        onDismiss={
-          onDismiss
-            ? () => {
-                closeModal();
-                onDismiss();
-              }
-            : closeModal
-        }
+        onDismiss={closeModalWithOnDismiss}
         contentContainerStyle={{
           backgroundColor: "white",
           padding: 24,
@@ -58,7 +56,7 @@ export default function Modal() {
           {btn1 && (
             <ModalButton
               btn={btn1}
-              closeModalFn={closeModal}
+              closeModalFn={closeModalWithOnDismiss}
             />
           )}
 
