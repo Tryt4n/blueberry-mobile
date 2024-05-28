@@ -9,12 +9,13 @@ import ErrorsList from "./ErrorsList";
 type FormFieldProps = {
   title: string;
   handleChangeText: (e: string) => void;
+  titleStyles?: string;
   otherStyles?: string;
   errors?: string[] | null;
 } & ComponentProps<typeof TextInput>;
 
 function InnerFormField(
-  { title, handleChangeText, otherStyles, errors, ...props }: FormFieldProps,
+  { title, handleChangeText, otherStyles, titleStyles, errors, ...props }: FormFieldProps,
   ref: ForwardedRef<TextInput>
 ) {
   const { platform } = useGlobalContext();
@@ -23,7 +24,9 @@ function InnerFormField(
 
   return (
     <View style={tw`relative mb-4${otherStyles ? ` ${otherStyles}` : ""}`}>
-      <Text style={tw`pb-1 text-base font-medium`}>{title}</Text>
+      <Text style={tw`pb-1 text-base font-medium${titleStyles ? ` ${titleStyles}` : ""}`}>
+        {title}
+      </Text>
 
       <View
         style={tw.style(
@@ -76,7 +79,7 @@ function ShowPasswordBtn({
 }: { visible: boolean } & ComponentProps<typeof TouchableOpacity>) {
   return (
     <TouchableOpacity
-      style={tw`absolute right-0 p-4`}
+      style={tw`absolute right-0 p-4 rounded-r-2xl`}
       {...props}
     >
       <Ionicons
