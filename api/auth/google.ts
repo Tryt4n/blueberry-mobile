@@ -20,7 +20,10 @@ export function configureGoogleSignInNative() {
   if (GoogleSignin) {
     GoogleSignin.configure({
       //@ts-expect-error - missing type for androidClientId
-      androidClientId: parsedEnv.EXPO_PUBLIC_ANDROID_CLIENT_ID,
+      androidClientId:
+        process.env.NODE_ENV === "production"
+          ? process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID!
+          : parsedEnv.EXPO_PUBLIC_ANDROID_CLIENT_ID,
     });
   }
 }
