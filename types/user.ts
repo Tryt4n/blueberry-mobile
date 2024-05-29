@@ -10,7 +10,6 @@ export type User = {
   readonly email: string;
   readonly username: string;
   readonly role: UserRole;
-  readonly customAvatar: string | null;
 };
 
 type UserRole = "user" | "admin" | "seller" | "moderator";
