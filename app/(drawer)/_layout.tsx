@@ -11,6 +11,7 @@ import {
 import { Redirect, router, usePathname } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { avatarImages } from "@/constants/avatars";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -102,7 +103,11 @@ function CustomDrawerContent(props: ComponentProps<typeof DrawerItemList>) {
             }}
           >
             <Image
-              source={{ uri: user.avatar }}
+              source={
+                !isNaN(Number(user.avatar))
+                  ? avatarImages[Number(user.avatar) - 1]
+                  : { uri: user.avatar }
+              }
               style={tw`w-24 h-24 rounded-full items-center flex justify-center`}
             />
             <Text style={tw`pt-2 text-xl font-poppinsBold text-center`}>{user.username}</Text>
