@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import React, { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import tw from "@/lib/twrnc";
 import { editUserEmail, editUserUsername, editUserPassword } from "@/api/appwrite/users";
@@ -26,6 +27,7 @@ export default function SettingsEditSection({
   setIsSubmitting,
 }: SettingsEditSectionProps) {
   const { user, refetchUser } = useGlobalContext();
+  const { ordersData } = useOrdersContext();
   const { showModal, setModalData } = useModalContext();
 
   const [modalInputValue, setModalInputValue] = useState("");
@@ -122,6 +124,8 @@ export default function SettingsEditSection({
         });
         resetStates();
         refetchUser();
+        // Refetch the orders data only if the type is "username" because the username is used in the orders data
+        type === "username" && ordersData?.refetchData();
       }
     } catch (error) {
       // If there was an error then show a modal with an error message

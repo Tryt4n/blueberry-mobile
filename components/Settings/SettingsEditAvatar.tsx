@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { editUserAvatar } from "@/api/appwrite/users";
 import { avatarImages } from "@/constants/avatars";
@@ -10,6 +11,7 @@ import Toast from "react-native-toast-message";
 
 export default function SettingsEditAvatar() {
   const { user, refetchUser, showAlert } = useGlobalContext();
+  const { ordersData } = useOrdersContext();
   const { setModalData, showModal } = useModalContext();
   const [avatar, setAvatar] = useState(user?.customAvatar ? user.customAvatar : user?.avatar || "");
 
@@ -48,6 +50,7 @@ export default function SettingsEditAvatar() {
     try {
       editUserAvatar(user.$id, avatar).then(() => {
         refetchUser();
+        ordersData?.refetchData();
         Toast.show({
           type: "success",
           text1: "Avatar został zmieniony.",
