@@ -14,6 +14,7 @@ import OrderCardUserAvatar from "./OrderCardUserAvatar";
 import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
 import type { FontAwesome } from "@expo/vector-icons";
+import { avatarImages } from "@/constants/avatars";
 
 type OrderCardOptionsProps = {
   order: Order;
@@ -168,7 +169,11 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
       <View style={tw`mt-8`}>
         {userHasAccess && (
           <OrderCardUserAvatar
-            source={{ uri: order.user.avatar }}
+            source={
+              !isNaN(Number(order.user.avatar))
+                ? avatarImages[Number(order.user.avatar) - 1]
+                : { uri: order.user.avatar }
+            }
             username={order.user.username}
           />
         )}
