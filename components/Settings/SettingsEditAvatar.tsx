@@ -6,39 +6,32 @@ import { useModalContext } from "@/hooks/useModalContext";
 import { editUserAvatar } from "@/api/appwrite/users";
 import { avatarImages } from "@/constants/avatars";
 import tw from "@/lib/twrnc";
-import { Feather } from "@expo/vector-icons";
+import SettingsChangeAvatarModal from "./SettingsChangeAvatarModal";
 import Toast from "react-native-toast-message";
+import { Feather } from "@expo/vector-icons";
 
 export default function SettingsEditAvatar() {
   const { user, refetchUser, showAlert } = useGlobalContext();
   const { ordersData } = useOrdersContext();
-  const { setModalData, showModal } = useModalContext();
-  const [avatar, setAvatar] = useState(user?.customAvatar ? user.customAvatar : user?.avatar || "");
+  const { visible: modalVisible, setModalData, showModal, closeModal } = useModalContext();
+
+  const [avatar, setAvatar] = useState(user?.avatar || "");
+  const [isCustomAvatar, setIsCustomAvatar] = useState(false);
 
   function openAvatarEditModal() {
     if (!user) return;
 
     setModalData({
       title: "Zmień swój avatar",
-      onDismiss: () => setAvatar(`${user.customAvatar ? user.customAvatar : user.avatar}`),
+      onDismiss: () => setAvatar(`${user.avatar}`),
       btn1: { text: "Anuluj", color: "default" },
       btn2: { text: "Zmień", color: "primary" },
       children: (
-        <View style={tw`my-4 flex-row max-w-[700px] flex-wrap justify-center gap-2`}>
-          {avatarImages.map((imgAvatar, index) => (
-            <TouchableOpacity
-              key={imgAvatar}
-              style={tw`${avatar === (index + 1).toString() ? "opacity-25" : ""}`}
-              disabled={avatar === (index + 1).toString()}
-              onPress={() => setAvatar((index + 1).toString())}
-            >
-              <Image
-                style={tw`w-16 h-16 rounded-full`}
-                source={imgAvatar}
-              />
-            </TouchableOpacity>
-          ))}
-        </View>
+        <SettingsChangeAvatarModal
+          avatar={avatar}
+          setAvatar={setAvatar}
+          setIsCustomAvatar={setIsCustomAvatar}
+        />
       ),
     });
     showModal();
@@ -70,26 +63,23 @@ export default function SettingsEditAvatar() {
       ...prevData,
       btn2: { ...prevData.btn2, onPress: changeUserAvatar },
       children: (
-        <View style={tw`my-4 flex-row max-w-[700px] flex-wrap justify-center gap-2`}>
-          {avatarImages.map((imgAvatar, index) => (
-            <TouchableOpacity
-              key={imgAvatar}
-              style={tw`${avatar === (index + 1).toString() ? "opacity-25" : ""}`}
-              disabled={avatar === (index + 1).toString()}
-              onPress={() => setAvatar((index + 1).toString())}
-            >
-              <Image
-                style={tw`w-16 h-16 rounded-full`}
-                source={imgAvatar}
-              />
-            </TouchableOpacity>
-          ))}
-        </View>
+        <SettingsChangeAvatarModal
+          avatar={avatar}
+          setAvatar={setAvatar}
+          setIsCustomAvatar={setIsCustomAvatar}
+        />
       ),
     }));
   }, [avatar]);
 
-  // TODO: Add custom avatar upload (edit function thats create a new account with initials avatar as custom avatar)
+  // Call changeUserAvatar function when custom avatar is selected, close the modal and reset the state
+  useEffect(() => {
+    if (modalVisible && isCustomAvatar) {
+      closeModal();
+      setIsCustomAvatar(false);
+      changeUserAvatar();
+    }
+  }, [avatar]);
 
   return (
     <View style={tw`flex-row items-center justify-between gap-4`}>
@@ -100,11 +90,9 @@ export default function SettingsEditAvatar() {
       >
         <Image
           source={
-            user?.avatar
-              ? !isNaN(Number(user.avatar))
-                ? avatarImages[Number(user.avatar) - 1]
-                : { uri: user.avatar }
-              : { uri: user?.customAvatar }
+            !isNaN(Number(user?.avatar))
+              ? avatarImages[Number(user?.avatar) - 1]
+              : { uri: user?.avatar }
           }
           style={tw`w-16 h-16 relative rounded-full before:`}
         />
