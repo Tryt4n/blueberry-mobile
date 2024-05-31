@@ -20,10 +20,8 @@ export function configureGoogleSignInNative() {
   if (GoogleSignin) {
     GoogleSignin.configure({
       //@ts-expect-error - missing type for androidClientId
-      androidClientId:
-        process.env.NODE_ENV === "production"
-          ? process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID!
-          : parsedEnv.EXPO_PUBLIC_ANDROID_CLIENT_ID,
+      androidClientId: parsedEnv.EXPO_PUBLIC_ANDROID_CLIENT_ID, //! For mobile
+      // androidClientId: process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID!, //! For netlify deploy
     });
   }
 }
@@ -38,7 +36,8 @@ export async function signInWithGoogleNative() {
       const user = await createGoogleUserInAppwrite(userInfo.user);
       const decryptedPassword = decryptData(
         user.secretPassword,
-        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY
+        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY //! For mobile
+        // process.env.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY! //! For netlify deploy
       );
       await account.createEmailSession(user.email, decryptedPassword);
 
@@ -74,7 +73,8 @@ export async function signInWithGoogleWeb(credentialResponse: CredentialResponse
       const user = await createGoogleUserInAppwrite(userInfo);
       const decryptedPassword = decryptData(
         user.secretPassword,
-        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY
+        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY //! For mobile
+        // process.env.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY! //! For netlify deploy
       );
       await account.createEmailSession(user.email, decryptedPassword);
 
@@ -105,7 +105,8 @@ async function createGoogleUserInAppwrite(user: GoogleUser["user"]) {
     const avatarUrl = user.photo ? avatars.getImage(user.photo) : avatars.getInitials(user.name!);
 
     const password = generateRandomPassword();
-    const encryptedPassword = encryptData(password, parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY);
+    const encryptedPassword = encryptData(password, parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY); //! For mobile
+    // const encryptedPassword = encryptData(password, process.env.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY!); //! For netlify deploy
     await account.create(user.id, user.email, password, user.name!);
 
     const newUser = await databases.createDocument(
