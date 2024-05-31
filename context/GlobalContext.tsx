@@ -1,7 +1,7 @@
 import { Alert, Platform } from "react-native";
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "@/api/auth/appwrite";
-import type { User } from "../types/user";
+import type { User } from "@/types/user";
 
 type GlobalContextValues = {
   isLoggedIn: boolean;
