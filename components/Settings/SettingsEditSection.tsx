@@ -86,8 +86,6 @@ export default function SettingsEditSection({
       return;
     }
 
-    setIsSubmitting(true);
-
     // If type is not "username" then check if the password confirmation input value is empty, if so then show an error
     if (
       type !== "username" &&
@@ -101,6 +99,8 @@ export default function SettingsEditSection({
     }
 
     try {
+      setIsSubmitting(true);
+
       // Call the appropriate function based on the type
       const editErrors =
         type === "email" // If type is "email" then call editUserEmail function
