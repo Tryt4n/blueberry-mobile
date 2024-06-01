@@ -24,7 +24,7 @@ export default function SettingsChangeAvatarModal({
 
   // Open Image Picker
   const pickImage = async () => {
-    let result;
+    let result: ImagePicker.ImagePickerResult | DocumentPicker.DocumentPickerResult;
 
     if (Platform.OS === "web") {
       result = await ImagePicker.launchImageLibraryAsync({
