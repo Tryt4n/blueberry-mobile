@@ -1,10 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { editUserAvatar } from "@/api/appwrite/users";
 import { avatarImages } from "@/constants/avatars";
+import { colors } from "@/helpers/colors";
 import tw from "@/lib/twrnc";
 import SettingsChangeAvatarModal from "./SettingsChangeAvatarModal";
 import Toast from "react-native-toast-message";
@@ -17,6 +18,7 @@ export default function SettingsEditAvatar() {
 
   const [avatar, setAvatar] = useState(user?.avatar || "");
   const [isCustomAvatar, setIsCustomAvatar] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function openAvatarEditModal() {
     if (!user) return;
@@ -37,13 +39,17 @@ export default function SettingsEditAvatar() {
     showModal();
   }
 
-  function changeUserAvatar() {
+  // Change the user's avatar
+  const changeUserAvatar = useCallback(async () => {
+    // If the user is not fetched or the avatar is empty do nothing
     if (!user || avatar === "") return;
 
+    setIsSubmitting(true);
     try {
-      editUserAvatar(user.$id, avatar).then(() => {
-        refetchUser();
-        ordersData?.refetchData();
+      // Edit the user's avatar
+      await editUserAvatar(user.$id, avatar).then(() => {
+        refetchUser(); // Refetch the user data
+        ordersData?.refetchData(); // Refetch the orders data
         Toast.show({
           type: "success",
           text1: "Avatar został zmieniony.",
@@ -53,9 +59,12 @@ export default function SettingsEditAvatar() {
       });
     } catch (error) {
       showAlert("Błąd", "Nie udało się zaktualizować avatara. Spróbuj ponownie.");
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  }, [user, avatar]);
 
+  // Set/update the modal data when the user is fetched and the avatar is set
   useEffect(() => {
     if (!user) return;
 
@@ -79,31 +88,40 @@ export default function SettingsEditAvatar() {
       setIsCustomAvatar(false);
       changeUserAvatar();
     }
-  }, [avatar]);
+  }, [avatar, isCustomAvatar, modalVisible]);
 
   return (
     <View style={tw`flex-row items-center justify-between gap-4`}>
       <Text style={tw`font-poppinsSemiBold`}>Avatar</Text>
       <TouchableOpacity
-        style={tw`relative`}
+        style={tw`relative w-16 h-16 rounded-full items-center justify-center`}
         onPress={openAvatarEditModal}
       >
-        <Image
-          source={
-            !isNaN(Number(user?.avatar))
-              ? avatarImages[Number(user?.avatar) - 1]
-              : { uri: user?.avatar }
-          }
-          style={tw`w-16 h-16 relative rounded-full before:`}
-        />
-
-        <View style={tw`absolute -right-2 -top-2 p-1.5 rounded-full bg-primary`}>
-          <Feather
-            name="edit-3"
-            size={16}
-            color="white"
+        {isSubmitting ? (
+          <ActivityIndicator
+            size={"small"}
+            color={colors.primary}
           />
-        </View>
+        ) : (
+          <>
+            <Image
+              source={
+                !isNaN(Number(user?.avatar))
+                  ? avatarImages[Number(user?.avatar) - 1]
+                  : { uri: user?.avatar }
+              }
+              style={tw`w-full h-full relative rounded-full`}
+            />
+
+            <View style={tw`absolute -right-2 -top-2 p-1.5 rounded-full bg-primary`}>
+              <Feather
+                name="edit-3"
+                size={16}
+                color="white"
+              />
+            </View>
+          </>
+        )}
       </TouchableOpacity>
     </View>
   );
