@@ -1,10 +1,11 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Platform } from "react-native";
 import { getCustomAvatar, uploadCustomAvatar } from "@/api/appwrite/avatars";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { avatarImages } from "@/constants/avatars";
 import { colors } from "@/helpers/colors";
 import tw from "@/lib/twrnc";
 import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
 import SettingsAvatarButton from "./SettingsAvatarButton";
 import { FontAwesome6 } from "@expo/vector-icons";
 
@@ -19,24 +20,38 @@ export default function SettingsChangeAvatarModal({
   setAvatar,
   setIsCustomAvatar,
 }: SettingsChangeAvatarModalProps) {
-  const { user } = useGlobalContext();
+  const { user, showAlert } = useGlobalContext();
 
   // Open Image Picker
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    let result;
+
+    if (Platform.OS === "web") {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        allowsMultipleSelection: false,
+      });
+    } else {
+      result = await DocumentPicker.getDocumentAsync({
+        type: "image/*",
+        multiple: false,
+      });
+    }
 
     // If the user cancels the image picker do nothing
     if (result.canceled) return;
 
-    const avatarImage = await uploadCustomAvatar(result.assets[0]); // Upload the custom avatar to the appwrite storage
-    const customAvatar = await getCustomAvatar(avatarImage.$id); // Get the custom avatar from the appwrite storage
-    setAvatar(customAvatar.href); // Set the custom avatar as the user's avatar
-    setIsCustomAvatar(true); // Set the custom avatar state to true
+    try {
+      const avatarImage = await uploadCustomAvatar(result.assets[0]); // Upload the custom avatar to the appwrite storage
+      const customAvatar = await getCustomAvatar(avatarImage.$id); // Get the custom avatar from the appwrite storage
+      setAvatar(customAvatar.href); // Set the custom avatar as the user's avatar
+      setIsCustomAvatar(true); // Set the custom avatar state to true
+    } catch (error: any) {
+      showAlert("Błąd", error);
+    }
   };
 
   return (
