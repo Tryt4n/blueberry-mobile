@@ -4,9 +4,9 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import tw from "@/lib/twrnc";
 import { Divider } from "react-native-paper";
 import SettingsEditSection from "@/components/Settings/SettingsEditSection";
-import type { EditSettingsOptions } from "@/types/editSettingsOptions";
 import SettingsEditAvatar from "@/components/Settings/SettingsEditAvatar";
 import SettingsChangeTheme from "@/components/Settings/SettingsChangeTheme";
+import type { EditSettingsOptions } from "@/types/editSettingsOptions";
 
 export default function Settings() {
   const { user } = useGlobalContext();
