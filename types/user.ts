@@ -7,6 +7,7 @@ export type User = {
   readonly $updatedAt: string;
   readonly accountId: string;
   readonly avatar: string;
+  readonly customAvatar?: string;
   readonly email: string;
   readonly username: string;
   readonly role: UserRole;
