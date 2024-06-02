@@ -65,6 +65,7 @@ export async function uploadCustomAvatar(customAvatar: ImagePickerAsset | Docume
       ID.unique(),
       file
     );
+
     return avatarImage;
   } catch (error) {
     throw new Error("Nie udało się przesłać pliku. Spróbuj ponownie.");
@@ -78,5 +79,13 @@ export async function getCustomAvatar(avatarId: string) {
     return avatar;
   } catch (error) {
     throw new Error("Nie udało się pobrać pliku. Spróbuj ponownie.");
+  }
+}
+
+export async function deleteCustomAvatar(avatarId: string) {
+  try {
+    await storage.deleteFile(appwriteConfig.avatarsStorageId, avatarId);
+  } catch (error) {
+    throw new Error("Nie udało się usunąć pliku.");
   }
 }
