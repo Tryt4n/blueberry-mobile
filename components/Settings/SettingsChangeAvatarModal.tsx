@@ -1,4 +1,5 @@
 import { View, TouchableOpacity, Platform } from "react-native";
+import { useCallback } from "react";
 import { getCustomAvatar, uploadCustomAvatar } from "@/api/appwrite/avatars";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { avatarImages } from "@/constants/avatars";
@@ -13,17 +14,19 @@ type SettingsChangeAvatarModalProps = {
   avatar: string;
   setAvatar: (value: string) => void;
   setIsCustomAvatar: (value: boolean) => void;
+  setIsCustomAvatarId: (value: string) => void;
 };
 
 export default function SettingsChangeAvatarModal({
   avatar,
   setAvatar,
   setIsCustomAvatar,
+  setIsCustomAvatarId,
 }: SettingsChangeAvatarModalProps) {
   const { user, showAlert } = useGlobalContext();
 
   // Open Image Picker
-  const pickImage = async () => {
+  const pickImage = useCallback(async () => {
     let result: ImagePicker.ImagePickerResult | DocumentPicker.DocumentPickerResult;
 
     if (Platform.OS === "web") {
@@ -47,12 +50,13 @@ export default function SettingsChangeAvatarModal({
     try {
       const avatarImage = await uploadCustomAvatar(result.assets[0]); // Upload the custom avatar to the appwrite storage
       const customAvatar = await getCustomAvatar(avatarImage.$id); // Get the custom avatar from the appwrite storage
+      setIsCustomAvatarId(avatarImage.$id); // Set the custom avatar id to new custom avatar id
       setAvatar(customAvatar.href); // Set the custom avatar as the user's avatar
       setIsCustomAvatar(true); // Set the custom avatar state to true
     } catch (error: any) {
       showAlert("Błąd", error);
     }
-  };
+  }, [setAvatar, setIsCustomAvatar, setIsCustomAvatarId]);
 
   return (
     <View style={tw`my-4 flex-row max-w-[700px] flex-wrap justify-center gap-2`}>
