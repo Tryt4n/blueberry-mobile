@@ -16,7 +16,7 @@ export async function getListOfUsers() {
   }
 }
 
-export async function editUserEmail(userId: User["$id"], email: string, password: string) {
+export async function editUserEmail(userId: User["$id"], email: User["email"], password: string) {
   let errors: string[] = [];
 
   try {
@@ -56,7 +56,7 @@ export async function editUserEmail(userId: User["$id"], email: string, password
   }
 }
 
-export async function editUserUsername(userId: User["$id"], username: string) {
+export async function editUserUsername(userId: User["$id"], username: User["username"]) {
   let errors: string[] = [];
 
   try {
@@ -114,7 +114,7 @@ export async function editUserPassword(newPassword: string, oldPassword: string)
   }
 }
 
-export async function editUserAvatar(userId: User["$id"], avatar: string) {
+export async function editUserAvatar(userId: User["$id"], avatar: string, customAvatarId?: string) {
   try {
     await databases.updateDocument(
       appwriteConfig.databaseId,
@@ -122,6 +122,7 @@ export async function editUserAvatar(userId: User["$id"], avatar: string) {
       userId,
       {
         avatar,
+        customAvatar: customAvatarId ? customAvatarId : null,
       }
     );
   } catch (error: any) {
