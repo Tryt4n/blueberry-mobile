@@ -4,6 +4,7 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { editUserAvatar } from "@/api/appwrite/users";
+import { deleteCustomAvatar } from "@/api/appwrite/avatars";
 import { avatarImages } from "@/constants/avatars";
 import { colors } from "@/helpers/colors";
 import tw from "@/lib/twrnc";
@@ -18,6 +19,7 @@ export default function SettingsEditAvatar() {
 
   const [avatar, setAvatar] = useState(user?.avatar || "");
   const [isCustomAvatar, setIsCustomAvatar] = useState(false);
+  const [customAvatarId, setCustomAvatarId] = useState(user?.customAvatar);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function openAvatarEditModal() {
@@ -33,6 +35,7 @@ export default function SettingsEditAvatar() {
           avatar={avatar}
           setAvatar={setAvatar}
           setIsCustomAvatar={setIsCustomAvatar}
+          setIsCustomAvatarId={setCustomAvatarId}
         />
       ),
     });
@@ -47,7 +50,9 @@ export default function SettingsEditAvatar() {
     setIsSubmitting(true);
     try {
       // Edit the user's avatar
-      await editUserAvatar(user.$id, avatar).then(() => {
+      await editUserAvatar(user.$id, avatar, customAvatarId).then(async () => {
+        user?.customAvatar && (await deleteCustomAvatar(user.customAvatar)); // Delete the old custom avatar from the appwrite storage
+        customAvatarId && setCustomAvatarId(undefined); // Reset the custom avatar id
         refetchUser(); // Refetch the user data
         ordersData?.refetchData(); // Refetch the orders data
         Toast.show({
@@ -62,7 +67,7 @@ export default function SettingsEditAvatar() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [user, avatar]);
+  }, [user, avatar, customAvatarId]);
 
   // Set/update the modal data when the user is fetched and the avatar is set
   useEffect(() => {
@@ -76,6 +81,7 @@ export default function SettingsEditAvatar() {
           avatar={avatar}
           setAvatar={setAvatar}
           setIsCustomAvatar={setIsCustomAvatar}
+          setIsCustomAvatarId={setCustomAvatarId}
         />
       ),
     }));
