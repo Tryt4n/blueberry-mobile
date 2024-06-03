@@ -7,11 +7,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: "#3B82F6",
-        danger: "#FF3333",
-        placeholder: "#7B7B8B",
-      },
       fontFamily: {
         poppinsThin: ["Poppins-Thin", "sans-serif"],
         poppingExtraLight: ["Poppins-ExtraLight", "sans-serif"],
