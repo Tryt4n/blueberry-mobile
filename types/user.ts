@@ -1,3 +1,5 @@
+import type { Theme } from "./theme";
+
 export type User = {
   readonly $collectionId: string;
   readonly $createdAt: string;
@@ -11,6 +13,7 @@ export type User = {
   readonly email: string;
   readonly username: string;
   readonly role: UserRole;
+  readonly theme?: Theme;
 };
 
 type UserRole = "user" | "admin" | "seller" | "moderator";
