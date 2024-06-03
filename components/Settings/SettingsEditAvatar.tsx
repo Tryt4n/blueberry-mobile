@@ -1,12 +1,12 @@
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { editUserAvatar } from "@/api/appwrite/users";
 import { deleteCustomAvatar } from "@/api/appwrite/avatars";
 import { avatarImages } from "@/constants/avatars";
-import { colors } from "@/helpers/colors";
 import tw from "@/lib/twrnc";
 import SettingsChangeAvatarModal from "./SettingsChangeAvatarModal";
 import Toast from "react-native-toast-message";
@@ -14,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 
 export default function SettingsEditAvatar() {
   const { user, refetchUser, showAlert } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { ordersData } = useOrdersContext();
   const { visible: modalVisible, setModalData, showModal, closeModal } = useModalContext();
 
@@ -56,10 +57,10 @@ export default function SettingsEditAvatar() {
         refetchUser(); // Refetch the user data
         ordersData?.refetchData(); // Refetch the orders data
         Toast.show({
-          type: "success",
+          type: theme === "light" ? "success" : "successDark",
           text1: "Avatar został zmieniony.",
           topOffset: 50,
-          text1Style: { textAlign: "center", fontSize: 16 },
+          text1Style: { textAlign: "center" },
         });
       });
     } catch (error) {
@@ -98,7 +99,7 @@ export default function SettingsEditAvatar() {
 
   return (
     <View style={tw`flex-row items-center justify-between gap-4`}>
-      <Text style={tw`font-poppinsSemiBold`}>Avatar</Text>
+      <Text style={tw`font-poppinsSemiBold text-[${colors.text}]`}>Avatar</Text>
       <TouchableOpacity
         style={tw`relative w-16 h-16 rounded-full items-center justify-center`}
         onPress={openAvatarEditModal}
@@ -119,11 +120,11 @@ export default function SettingsEditAvatar() {
               style={tw`w-full h-full relative rounded-full`}
             />
 
-            <View style={tw`absolute -right-2 -top-2 p-1.5 rounded-full bg-primary`}>
+            <View style={tw`absolute -right-2 -top-2 p-1.5 rounded-full bg-[${colors.primary}]`}>
               <Feather
                 name="edit-3"
                 size={16}
-                color="white"
+                color={theme === "light" ? "white" : colors.text}
               />
             </View>
           </>

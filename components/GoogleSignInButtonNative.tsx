@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React, { useEffect } from "react";
 import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { configureGoogleSignInNative, signInWithGoogleNative } from "@/api/auth/google";
 import { getCurrentUser } from "@/api/auth/appwrite";
@@ -23,6 +24,7 @@ export default function GoogleSignInButtonNative({
   ...props
 }: GoogleSignInButtonProps) {
   const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { theme } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
 
   useEffect(() => {
@@ -60,11 +62,12 @@ export default function GoogleSignInButtonNative({
   }
 
   return (
-    <View style={tw`h-[70px] w-full mb-8`}>
+    <View style={tw`h-[70px] w-full mb-8 bg-transparent`}>
       <GoogleSigninButton
         onPress={handleGoogleSignIn}
         {...props}
         size={GoogleSigninButton.Size.Wide}
+        color={theme === "light" ? GoogleSigninButton.Color.Light : GoogleSigninButton.Color.Dark}
         style={{
           width: "100%",
           height: "100%",

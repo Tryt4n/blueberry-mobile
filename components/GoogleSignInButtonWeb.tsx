@@ -1,6 +1,7 @@
 import { View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { signInWithGoogleWeb } from "@/api/auth/google";
 import { getCurrentUser } from "@/api/auth/appwrite";
@@ -13,6 +14,7 @@ export default function GoogleSignInButtonWeb({
   setIsSubmitting: (value: boolean) => void;
 }) {
   const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { theme } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
   const { width } = useWindowDimensions();
 
@@ -49,7 +51,7 @@ export default function GoogleSignInButtonWeb({
   }
 
   return (
-    <View style={tw`mb-4 items-center`}>
+    <View style={tw`mb-4 items-center bg-transparent`}>
       <GoogleLogin
         onSuccess={(credentialResponse) => handleGoogleWebSignIn(credentialResponse)}
         size="large"
@@ -58,6 +60,7 @@ export default function GoogleSignInButtonWeb({
         shape="pill"
         logo_alignment="center"
         text="continue_with"
+        theme={theme === "dark" ? "filled_blue" : "outline"}
       />
     </View>
   );

@@ -1,6 +1,7 @@
 import { View, Text, type TextInput } from "react-native";
 import { Modal as ReactNativePaperModal, Portal } from "react-native-paper";
 import tw from "@/lib/twrnc";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import ModalButton from "./ModalButton";
 import ModalInput from "./ModalInput";
@@ -21,6 +22,7 @@ export type ModalProps = {
 };
 
 export default function Modal() {
+  const { colors } = useThemeContext();
   const { visible, closeModal, modalData } = useModalContext();
   const { title, subtitle, btn1, btn2, input, calendar, children, onDismiss } = modalData;
 
@@ -35,16 +37,18 @@ export default function Modal() {
         visible={visible}
         onDismiss={closeModalWithOnDismiss}
         contentContainerStyle={{
-          backgroundColor: "white",
+          backgroundColor: colors.bg,
           padding: 24,
           borderRadius: 20,
           maxWidth: "80%",
           alignSelf: "center",
         }}
       >
-        <Text style={tw`font-poppinsBold text-xl mb-2`}>{title}</Text>
+        <Text style={tw`font-poppinsBold text-xl mb-2 text-[${colors.text}]`}>{title}</Text>
 
-        {subtitle && <Text style={tw`font-poppinsMedium text-base`}>{subtitle}</Text>}
+        {subtitle && (
+          <Text style={tw`font-poppinsMedium text-base text-[${colors.text}]`}>{subtitle}</Text>
+        )}
 
         {input && <ModalInput {...input} />}
 

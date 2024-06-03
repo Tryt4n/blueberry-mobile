@@ -1,4 +1,5 @@
 import { TouchableOpacity } from "react-native";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import { Entypo } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
@@ -13,6 +14,8 @@ export default function ChangeQuantityBtn({
   borderlineValue,
   ...props
 }: ChangeQuantityBtnProps) {
+  const { colors } = useThemeContext();
+
   const condition =
     type === "decrease"
       ? borderlineValue <= 0.25
@@ -22,7 +25,7 @@ export default function ChangeQuantityBtn({
 
   return (
     <TouchableOpacity
-      style={tw`h-full px-2 bg-primary justify-center${condition ? " opacity-50" : ""}`}
+      style={tw`h-full px-2 bg-[${colors.primary}] justify-center${condition ? " opacity-50" : ""}`}
       activeOpacity={0.7}
       disabled={condition}
       {...props}
@@ -30,7 +33,7 @@ export default function ChangeQuantityBtn({
       <Entypo
         name={type === "decrease" ? "minus" : "plus"}
         size={32}
-        color="white"
+        color={colors.text}
       />
     </TouchableOpacity>
   );

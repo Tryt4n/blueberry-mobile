@@ -1,9 +1,9 @@
 import { View, Text, type TextInput, type TextInputProps } from "react-native";
 import React, { forwardRef, useEffect, useState, type ForwardedRef } from "react";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import DropDownPicker, { type DropDownPickerProps } from "react-native-dropdown-picker";
 import { Entypo, Ionicons } from "@expo/vector-icons";
-import { colors } from "@/helpers/colors";
 
 type CustomDropDownPickerProps = {
   label: string;
@@ -21,6 +21,7 @@ function InnerCustomDropDownPicker(
   { label, items, setItems, defaultValue, dropDownHeight, ...props }: CustomDropDownPickerProps,
   searchInputRef: ForwardedRef<TextInput>
 ) {
+  const { colors } = useThemeContext();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(defaultValue || null);
   const [isSearchFocused, setSearchFocused] = useState(false);
@@ -35,7 +36,7 @@ function InnerCustomDropDownPicker(
 
   return (
     <View style={tw`my-4`}>
-      <Text style={tw`pb-1 text-base font-medium`}>{label}</Text>
+      <Text style={tw`pb-1 text-base font-medium text-[${colors.text}]`}>{label}</Text>
       <DropDownPicker
         select
         listMode="SCROLLVIEW"
@@ -53,15 +54,20 @@ function InnerCustomDropDownPicker(
         itemSeparator={true}
         itemSeparatorStyle={{
           marginHorizontal: 64,
-          backgroundColor: "#dfdfdf",
+          backgroundColor: colors.border,
         }}
         searchPlaceholder="Szukaj..."
         style={{
           borderWidth: 2,
-          borderColor: open && !isSearchFocused ? colors.primary : "black",
+          borderColor: open && !isSearchFocused ? colors.primary : colors.inputBorder,
+          backgroundColor: "transparent",
         }}
-        textStyle={{ fontFamily: "Poppins-SemiBold", textTransform: "capitalize" }}
-        labelStyle={{ fontSize: 18, fontFamily: "Poppins-SemiBold" }}
+        textStyle={{
+          fontFamily: "Poppins-SemiBold",
+          textTransform: "capitalize",
+          color: colors.text,
+        }}
+        labelStyle={{ fontSize: 18, fontFamily: "Poppins-SemiBold", color: colors.text }}
         customItemLabelStyle={{
           fontSize: 18,
           fontFamily: "Poppins-SemiBold",
@@ -87,7 +93,7 @@ function InnerCustomDropDownPicker(
           <Entypo
             name="check"
             size={24}
-            color={colors.primary}
+            color="#3B82F6"
           />
         )}
         placeholderStyle={{
@@ -113,10 +119,14 @@ function InnerCustomDropDownPicker(
           fontFamily: "Poppins-SemiBold",
           fontSize: 16,
           borderWidth: 2,
-          borderColor: isSearchFocused ? colors.primary : "black",
+          color: colors.text,
+          // @ts-ignore - `caretColor` is not recognized for <TextInput/>
+          caretColor: colors.primary,
+          borderColor: isSearchFocused ? colors.primary : colors.inputBorder,
         }}
+        searchPlaceholderTextColor={colors.placeholder}
         dropDownContainerStyle={{
-          borderColor: open && !isSearchFocused ? colors.primary : "black",
+          borderColor: open && !isSearchFocused ? colors.primary : colors.inputBorder,
           borderTopWidth: 1,
           borderWidth: 2,
           shadowColor: "black",
@@ -125,14 +135,18 @@ function InnerCustomDropDownPicker(
           elevation: 10,
           shadowOffset: { width: 0, height: 0 },
           maxHeight: dropDownHeight,
+          backgroundColor: colors.bg,
         }}
         selectedItemLabelStyle={{
           fontFamily: "Poppins-Bold",
           fontSize: 16,
           transform: [{ translateX: 16 }],
-          color: colors.primary,
+          color: "#3B82F6",
         }}
         listItemContainerStyle={{ height: 40 }}
+        modalContentContainerStyle={{
+          backgroundColor: colors.bg,
+        }}
         {...props}
       />
     </View>

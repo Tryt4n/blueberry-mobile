@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import CustomButton from "../CustomButton";
 import type { ComponentProps } from "react";
@@ -12,6 +13,8 @@ export default function SettingsActionButtons({
   actionBtnProps,
   cancelBtnProps,
 }: SettingsActionButtonsProps) {
+  const { colors } = useThemeContext();
+
   return (
     <View style={tw`gap-y-2`}>
       <CustomButton
@@ -22,7 +25,7 @@ export default function SettingsActionButtons({
       />
       <CustomButton
         text="Anuluj"
-        containerStyles="bg-danger"
+        containerStyles={`bg-[${colors.danger}]`}
         textStyles="text-sm p-3"
         {...cancelBtnProps}
       />

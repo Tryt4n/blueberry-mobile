@@ -1,13 +1,15 @@
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl, useWindowDimensions } from "react-native";
 import { useState } from "react";
-import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
 import OrderCard from "./OrderCard";
 import Toast from "react-native-toast-message";
 
 export default function OrdersList() {
   const { user, platform } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { currentPrice, ordersData, setIsBannerVisible } = useOrdersContext();
   const [refreshing, setRefreshing] = useState(false);
   const { width } = useWindowDimensions();
@@ -19,9 +21,9 @@ export default function OrdersList() {
     ordersData && (await ordersData.refetchData());
 
     Toast.show({
-      type: "info",
+      type: theme === "light" ? "info" : "infoDark",
       text1: "Zaktualizowano zamówienia",
-      text1Style: { textAlign: "center", fontSize: 16 },
+      text1Style: { textAlign: "center" },
     });
 
     setRefreshing(false);
@@ -46,6 +48,7 @@ export default function OrdersList() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={refetchOrders}
+              colors={[colors.primary]}
             />
           }
           estimatedItemSize={10}

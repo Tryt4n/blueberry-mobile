@@ -1,17 +1,18 @@
 import { View, Text, useWindowDimensions } from "react-native";
 import { Banner, type BannerProps } from "react-native-paper";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useCallback, useMemo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
+import tw from "@/lib/twrnc";
 import OrdersSearchBannerDates from "./OrdersSearchBannerDates";
 import OrdersSearchBannerUser from "./OrdersSearchBannerUser";
 import Toast from "react-native-toast-message";
 
 export default function OrdersSearchBanner() {
   const { user } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
   const { isBannerVisible, setIsBannerVisible, ordersSearchParams, ordersData } =
     useOrdersContext();
@@ -62,11 +63,10 @@ export default function OrdersSearchBanner() {
 
       // Show a success message
       Toast.show({
-        type: "info",
+        type: theme === "light" ? "info" : "infoDark",
         text1: "Zamówienia zostały zaktualizowane",
         text2: "o wybrane parametry.",
-        text1Style: { textAlign: "left", fontSize: 16 },
-        text2Style: { textAlign: "left", fontSize: 14 },
+        text2Style: { fontSize: 14 },
       });
     }
   }, [ordersSearchParams, ordersData, setIsBannerVisible]);
@@ -76,12 +76,17 @@ export default function OrdersSearchBanner() {
     {
       label: "Schowaj",
       onPress: () => setIsBannerVisible(false),
-      labelStyle: { color: "black", fontFamily: "Poppins-SemiBold", fontSize: 16 },
+      labelStyle: { color: colors.text, fontFamily: "Poppins-SemiBold", fontSize: 16 },
     },
     {
       label: "Wyszukaj",
       onPress: getNewOrders,
-      labelStyle: { color: colors.primary, fontFamily: "Poppins-SemiBold", fontSize: 16 },
+      // labelStyle: { color: colors.primary, fontFamily: "Poppins-SemiBold", fontSize: 16 },
+      labelStyle: {
+        color: theme === "dark" ? "#3B82F6" : colors.primary,
+        fontFamily: "Poppins-SemiBold",
+        fontSize: 16,
+      },
     },
   ];
 
@@ -90,9 +95,12 @@ export default function OrdersSearchBanner() {
       visible={isBannerVisible}
       actions={bannerActions}
       elevation={3}
-      style={tw`my-4 bg-white rounded-2xl w-full max-w-[700px] mx-auto`}
+      style={tw`my-4 bg-[${colors.bg}] rounded-2xl w-full max-w-[700px] mx-auto`}
     >
-      <Text style={[tw`font-poppinsBold`, { fontSize: 24 }]}>Wyszukaj zamówienia</Text>
+      <Text style={[tw`font-poppinsBold text-[${colors.text}]`, { fontSize: 24 }]}>
+        Wyszukaj zamówienia
+      </Text>
+
       <View style={{ width: containerWidth }}>
         <OrdersSearchBannerDates containerWidth={containerWidth} />
 

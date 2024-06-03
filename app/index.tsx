@@ -1,16 +1,15 @@
 import { Redirect } from "expo-router";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
 
-  if (isLoading) return <LoadingSpinner color={colors.primary} />;
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <>
-      <LoadingSpinner color={colors.primary} />
+      <LoadingSpinner />
 
       {isLoggedIn ? <Redirect href="/orders" /> : <Redirect href="/signIn" />}
 

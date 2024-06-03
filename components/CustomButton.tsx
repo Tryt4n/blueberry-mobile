@@ -1,6 +1,7 @@
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import React, { type ComponentPropsWithoutRef } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 
 type CustomButtonProps = {
@@ -17,15 +18,16 @@ export default function CustomButton({
   containerStyles,
   textStyles,
   loading,
-  loadingColor = "white",
+  loadingColor,
   loadingSpinnerSize = "large",
   ...props
 }: CustomButtonProps) {
   const { platform } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
 
   return (
     <TouchableOpacity
-      style={tw`bg-primary rounded-xl justify-center items-center${
+      style={tw`bg-[${colors.primary}] rounded-xl justify-center items-center${
         platform === "web" && props.disabled ? " opacity-70 cursor-not-allowed" : ""
       }${containerStyles ? ` ${containerStyles}` : ""}`}
       {...props}
@@ -33,9 +35,11 @@ export default function CustomButton({
     >
       {!loading ? (
         <Text
-          style={tw`text-white font-poppinsSemiBold text-base p-4${
-            textStyles ? ` ${textStyles}` : ""
-          }`}
+          style={[
+            tw`font-poppinsSemiBold text-base p-4 text-white ${textStyles ? ` ${textStyles}` : ""}${
+              theme === "dark" ? ` text-[${colors.text}]` : ""
+            }`,
+          ]}
         >
           {text}
         </Text>
@@ -43,7 +47,7 @@ export default function CustomButton({
         <ActivityIndicator
           style={tw`p-3 text-base`}
           size={loadingSpinnerSize}
-          color={loadingColor}
+          color={loadingColor ? loadingColor : theme === "light" ? "white" : colors.text}
         />
       )}
     </TouchableOpacity>

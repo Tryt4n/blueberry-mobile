@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useModalContext } from "@/hooks/useModalContext";
+import { avatarImages } from "@/constants/avatars";
+import tw from "@/lib/twrnc";
 import { changeOrderPrice as changeOrderPriceAppwrite } from "@/api/appwrite/orders";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { pl } from "date-fns/locale/pl";
@@ -14,7 +14,8 @@ import OrderCardUserAvatar from "./OrderCardUserAvatar";
 import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
 import type { FontAwesome } from "@expo/vector-icons";
-import { avatarImages } from "@/constants/avatars";
+import { useThemeContext } from "@/hooks/useThemeContext";
+import type { Colors } from "@/context/ThemeContext";
 
 type OrderCardOptionsProps = {
   order: Order;
@@ -23,12 +24,13 @@ type OrderCardOptionsProps = {
 
 export type OrderOption = {
   text: string;
-  icon: { name: Extract<keyof typeof FontAwesome.glyphMap, string>; color: keyof typeof colors };
+  icon: { name: Extract<keyof typeof FontAwesome.glyphMap, string>; color: Colors };
   onSelect: () => void;
 };
 
 export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsProps) {
   const { user, showAlert } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { setEditedOrder, deleteOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
   const { setModalData, showModal } = useModalContext();
@@ -131,10 +133,9 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
           currentPrice: { ...prevOrder.currentPrice, price: Number(modalInputValue) },
         }));
         Toast.show({
-          type: "success",
+          type: theme === "light" ? "success" : "successDark",
           text1: `Zmieniono cenę zamówienia na ${modalInputValue} zł`,
-          text1Style: { textAlign: "left", fontSize: 16 },
-          text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
+          text2Style: { fontWeight: "bold" },
         });
       } catch (error) {
         // If there was an error, show alert
@@ -177,7 +178,7 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
             username={order.user.username}
           />
         )}
-        <Text style={tw`font-poppinsLight text-xs`}>
+        <Text style={tw`font-poppinsLight text-xs text-[${colors.text}]`}>
           {formatDistanceToNow(order.$createdAt, {
             addSuffix: true,
             locale: pl,

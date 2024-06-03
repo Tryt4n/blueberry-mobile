@@ -1,7 +1,8 @@
 import { View, Text } from "react-native";
 import { useState } from "react";
-import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
+import tw from "@/lib/twrnc";
 import OrderCardIssuedCheckbox from "./OrderCardIssuedCheckbox";
 import OrderCardCompleteCheckbox from "./OrderCardCompleteCheckbox";
 import OrderCardOptions from "./OrderCardOptions";
@@ -16,6 +17,7 @@ type OrderCardProps = {
 
 export default function OrderCard({ order: orderData, price, additionalStyles }: OrderCardProps) {
   const { user } = useGlobalContext();
+  const { colors } = useThemeContext();
   const [order, setOrder] = useState(orderData);
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
@@ -24,7 +26,7 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
     <>
       {user && (
         <View
-          style={tw`w-full mb-4 p-4 rounded-xl bg-white shadow-md shadow-black${
+          style={tw`w-full mb-4 p-4 rounded-xl bg-[${colors.bg}] shadow-md shadow-black${
             order.completed ? " opacity-50" : ""
           }${additionalStyles ? ` ${additionalStyles}` : ""}`}
         >
@@ -45,15 +47,15 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
             />
           </View>
 
-          <Text style={tw`text-xl text-center font-poppinsRegular`}>
+          <Text style={tw`text-xl text-center font-poppinsRegular text-[${colors.text}]`}>
             Ilość: <Text style={tw`font-poppinsSemiBold`}>{order.quantity}kg</Text>
           </Text>
 
-          <Text style={tw`py-2 text-lg font-poppinsRegular`}>
+          <Text style={tw`py-2 text-lg font-poppinsRegular text-[${colors.text}]`}>
             Dla: <Text style={tw`font-poppinsSemiBold capitalize`}>{order.buyer.buyerName}</Text>
           </Text>
 
-          <Text style={tw`pb-2 text-lg font-poppinsRegular`}>
+          <Text style={tw`pb-2 text-lg font-poppinsRegular text-[${colors.text}]`}>
             Łącznie:&nbsp;
             <Text style={tw`font-poppinsSemiBold`}>
               {order.currentPrice.price * order.quantity} zł
@@ -65,8 +67,12 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
 
           {order.additionalInfo && (
             <View style={tw`pt-2 pb-4`}>
-              <Text style={tw`font-poppinsMedium text-sm`}>Informacje dodatkowe:</Text>
-              <Text style={tw`font-poppinsRegular text-[16px]`}>{order.additionalInfo}</Text>
+              <Text style={tw`font-poppinsMedium text-sm text-[${colors.text}]`}>
+                Informacje dodatkowe:
+              </Text>
+              <Text style={tw`font-poppinsRegular text-[16px] text-[${colors.text}]`}>
+                {order.additionalInfo}
+              </Text>
             </View>
           )}
 

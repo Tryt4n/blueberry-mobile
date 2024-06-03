@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React, { type ComponentProps } from "react";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import BouncyCheckbox from "react-native-bouncy-checkbox/build/dist/BouncyCheckbox";
 import { Entypo } from "@expo/vector-icons";
 
@@ -19,11 +19,13 @@ export default function Checkbox({
   containerStyles,
   ...props
 }: CheckboxProps) {
+  const { theme, colors } = useThemeContext();
+
   return (
     <View style={tw`items-center${containerStyles ? ` ${containerStyles}` : ""}`}>
       {label && (
         <Text
-          style={tw`text-center font-poppinsMedium mb-1`}
+          style={tw`text-center font-poppinsMedium mb-1 text-[${colors.text}]`}
           {...labelProps}
         >
           {label}
@@ -33,14 +35,22 @@ export default function Checkbox({
       <BouncyCheckbox
         size={50}
         fillColor={colors.primary}
-        unFillColor="white"
+        unFillColor="transparent"
         disableText={true}
         isChecked={status}
         iconComponent={
           <Entypo
             name="check"
             size={30}
-            color={status ? "white" : "hsl(0, 0%, 97%)"}
+            color={
+              status
+                ? theme === "light"
+                  ? "white"
+                  : colors.textAccent
+                : theme === "light"
+                ? "hsl(0, 0%, 97%)"
+                : colors.text
+            }
           />
         }
         innerIconStyle={{ borderWidth: status ? 0 : 2 }}

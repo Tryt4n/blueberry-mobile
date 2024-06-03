@@ -1,6 +1,7 @@
 import { createContext, useCallback, useState } from "react";
 import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import Toast from "react-native-toast-message";
 import type { Order, OrdersDataType, OrdersSearchParams } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
@@ -25,6 +26,7 @@ export const OrdersContext = createContext<OrderContextType | null>(null);
 
 export default function OrderContextProvider({ children }: { children: React.ReactNode }) {
   const { showAlert } = useGlobalContext();
+  const { theme } = useThemeContext();
 
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
@@ -50,16 +52,10 @@ export default function OrderContextProvider({ children }: { children: React.Rea
         });
 
         Toast.show({
-          type: "success",
+          type: theme === "light" ? "success" : "successDark",
           text1: "Zamówienie zostało pomyślnie",
           text2: "usunięte.",
-          text1Style: { textAlign: "left", fontSize: 16 },
-          text2Style: {
-            textAlign: "left",
-            fontSize: 16,
-            fontWeight: "bold",
-            color: "black",
-          },
+          text2Style: { fontWeight: "bold" },
         });
       } catch (error) {
         showAlert("Błąd", "Nie udało się usunąć zamówienia.");

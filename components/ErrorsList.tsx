@@ -1,8 +1,10 @@
 import { View, Text } from "react-native";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 
 export default function ErrorsList({ errors }: { errors: string[] }) {
+  const { colors } = useThemeContext();
+
   return (
     <View style={tw`mt-2 mx-2`}>
       {errors.map((error, index) => (

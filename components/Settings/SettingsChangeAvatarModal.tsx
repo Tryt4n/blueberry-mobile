@@ -2,8 +2,8 @@ import { View, TouchableOpacity, Platform } from "react-native";
 import { useCallback } from "react";
 import { getCustomAvatar, uploadCustomAvatar } from "@/api/appwrite/avatars";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { avatarImages } from "@/constants/avatars";
-import { colors } from "@/helpers/colors";
 import tw from "@/lib/twrnc";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -24,6 +24,7 @@ export default function SettingsChangeAvatarModal({
   setIsCustomAvatarId,
 }: SettingsChangeAvatarModalProps) {
   const { user, showAlert } = useGlobalContext();
+  const { colors } = useThemeContext();
 
   // Open Image Picker
   const pickImage = useCallback(async () => {
@@ -78,7 +79,7 @@ export default function SettingsChangeAvatarModal({
       )}
 
       <TouchableOpacity
-        style={tw`w-16 h-16 border-2 border-primary rounded-full items-center justify-center`}
+        style={tw`w-16 h-16 border-2 border-[${colors.primary}] rounded-full items-center justify-center`}
         onPress={pickImage}
       >
         <FontAwesome6

@@ -1,5 +1,6 @@
 import { Text } from "react-native";
 import { useEffect, useState, type ComponentProps } from "react";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import { CustomDropDownPicker } from "../CustomDropDownPicker";
 import type { User } from "@/types/user";
@@ -9,6 +10,7 @@ type UsersDropDownPickerProps = {
 } & Omit<ComponentProps<typeof CustomDropDownPicker>, "items" | "setItems" | "label">;
 
 export function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProps) {
+  const { colors } = useThemeContext();
   const [items, setItems] = useState<Record<"label" | "value", string>[]>([]);
 
   useEffect(() => {
@@ -24,7 +26,9 @@ export function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProp
       addCustomItem={false}
       setItems={setItems}
       ListEmptyComponent={() => (
-        <Text style={tw`font-poppinsSemiBold text-base text-center`}>Brak wyników</Text>
+        <Text style={tw`font-poppinsSemiBold text-base text-center text-[${colors.text}]`}>
+          Brak wyników
+        </Text>
       )}
       {...props}
     />

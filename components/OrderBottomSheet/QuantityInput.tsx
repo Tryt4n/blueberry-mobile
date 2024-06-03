@@ -1,7 +1,7 @@
 import { View, Text, TextInput } from "react-native";
 import React, { forwardRef, useRef, type ComponentProps, type ForwardedRef } from "react";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import ChangeQuantityBtn from "./ChangeQuantityBtn";
 
 type QuantityInputProps = {
@@ -15,6 +15,7 @@ function InnerQuantityInput(
   { value, setValue, label, containerStyles, ...props }: QuantityInputProps,
   ref: ForwardedRef<TextInput>
 ) {
+  const { colors } = useThemeContext();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function handleTextChange(e: string) {
@@ -74,10 +75,14 @@ function InnerQuantityInput(
 
   return (
     <View className={containerStyles}>
-      {label && <Text style={tw`pb-1 text-base font-medium text-center`}>{label}</Text>}
+      {label && (
+        <Text style={tw`pb-1 text-base font-medium text-center text-[${colors.text}]`}>
+          {label}
+        </Text>
+      )}
 
       <View
-        style={tw`flex flex-row justify-center items-center mx-auto border border-gray-500 rounded-xl overflow-hidden h-16`}
+        style={tw`h-16 mx-auto flex flex-row justify-center items-center border rounded-xl overflow-hidden border-[${colors.inputBorder}]`}
       >
         <ChangeQuantityBtn
           type="decrease"
@@ -88,7 +93,7 @@ function InnerQuantityInput(
         />
 
         <TextInput
-          style={tw`w-20 h-full text-xl text-center justify-center font-poppinsSemiBold`}
+          style={tw`w-20 h-full text-xl text-center justify-center font-poppinsSemiBold text-[${colors.text}]`}
           {...props}
           ref={ref}
           cursorColor={colors.primary}

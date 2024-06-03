@@ -1,13 +1,14 @@
 import { View, Text, Dimensions, type TextInput } from "react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import tw from "@/lib/twrnc";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
 import ActionSheet, { ScrollView } from "react-native-actions-sheet";
+import tw from "@/lib/twrnc";
 import Toast from "react-native-toast-message";
 import { QuantityInput } from "./QuantityInput";
 import { BuyersDropDownPicker } from "./BuyersDropDownPicker";
@@ -18,6 +19,7 @@ import type { Buyer } from "@/types/buyers";
 
 export default function OrderBottomSheet() {
   const { user, platform, showAlert } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { bottomSheetModalRef, handleCloseBottomSheet } = useBottomSheetContext();
   const [quantity, setQuantity] = useState(1);
   const orderDataInitialState = {
@@ -139,9 +141,8 @@ export default function OrderBottomSheet() {
           ordersData && ordersData.refetchData();
           buyersRefetchData();
           Toast.show({
-            type: "success",
+            type: theme === "light" ? "success" : "successDark",
             text1: `Zamówienie zostało ${editedOrder ? "edytowane" : "utworzone"}.`,
-            text1Style: { textAlign: "left", fontSize: 16 },
           });
         }
       } catch (error) {
@@ -205,12 +206,12 @@ export default function OrderBottomSheet() {
       useBottomSafeAreaPadding={true}
       gestureEnabled={true}
       defaultOverlayOpacity={0.5}
-      indicatorStyle={tw`bg-primary my-4`}
-      containerStyle={tw`w-full max-w-[700px] px-4`}
+      indicatorStyle={tw`bg-[${colors.primary}] my-4`}
+      containerStyle={tw`w-full max-w-[700px] px-4 bg-[${colors.bg}]`}
     >
       <ScrollView>
         <View style={tw`min-h-[${dropdownHeight + 160}px]`}>
-          <Text style={tw`font-poppinsSemiBold text-lg mb-4 text-center`}>
+          <Text style={tw`font-poppinsSemiBold text-lg mb-4 text-center text-[${colors.text}]`}>
             {`${editedOrder ? "Edytuj " : "Dodaj nowe"} zamówienie`}
           </Text>
 

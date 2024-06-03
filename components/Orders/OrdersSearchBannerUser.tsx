@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
+import tw from "@/lib/twrnc";
 import { getListOfUsers } from "@/api/appwrite/users";
 import { UsersDropDownPicker } from "./UsersDropDownPicker";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -13,6 +13,7 @@ import type { User } from "@/types/user";
 
 export default function OrdersSearchBannerUser() {
   const { user } = useGlobalContext();
+  const { colors } = useThemeContext();
   const { ordersSearchParams, setOrdersSearchParams } = useOrdersContext();
   const { showModal, setModalData } = useModalContext();
 
@@ -91,7 +92,7 @@ export default function OrdersSearchBannerUser() {
       <TouchableOpacity
         onPress={openSelectUserModal}
         style={tw`mt-6 p-2 self-end${
-          ordersSearchParams.userId ? "" : " border-2 rounded-full border-primary"
+          ordersSearchParams.userId ? "" : ` border-2 rounded-full border-[${colors.primary}]`
         }`}
       >
         <Entypo
@@ -103,10 +104,12 @@ export default function OrdersSearchBannerUser() {
 
       {ordersSearchParams.userId && fetchedListOfUsers && fetchedListOfUsers.data && (
         <>
-          <Text style={tw`font-poppinsRegular`}>Wyszukiwany użytkownik:&nbsp;</Text>
+          <Text style={tw`font-poppinsRegular text-[${colors.text}]`}>
+            Wyszukiwany użytkownik:&nbsp;
+          </Text>
 
           <View style={tw`mt-2 flex flex-row items-center gap-x-2`}>
-            <Text style={tw`font-poppinsMedium`}>
+            <Text style={tw`font-poppinsMedium text-[${colors.text}]`}>
               {
                 fetchedListOfUsers.data.find((user) => user.$id === ordersSearchParams.userId)
                   ?.username

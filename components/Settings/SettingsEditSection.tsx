@@ -1,6 +1,7 @@
 import { View } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import tw from "@/lib/twrnc";
@@ -27,6 +28,7 @@ export default function SettingsEditSection({
   setIsSubmitting,
 }: SettingsEditSectionProps) {
   const { user, refetchUser } = useGlobalContext();
+  const { theme } = useThemeContext();
   const { ordersData } = useOrdersContext();
   const { showModal, setModalData } = useModalContext();
 
@@ -71,7 +73,7 @@ export default function SettingsEditSection({
   }
 
   // Function to edit user data
-  async function editUserData() {
+  const editUserData = useCallback(async () => {
     if (!user) return;
 
     // Reset all errors
@@ -117,10 +119,10 @@ export default function SettingsEditSection({
       // Else show a success message, reset the states and update the user data
       else {
         Toast.show({
-          type: "success",
+          type: theme === "light" ? "success" : "successDark",
           text1: "Dane zostały zmienione.",
           topOffset: 50,
-          text1Style: { textAlign: "center", fontSize: 16 },
+          text1Style: { textAlign: "center" },
         });
         resetStates();
         refetchUser();
@@ -139,7 +141,19 @@ export default function SettingsEditSection({
     } finally {
       setIsSubmitting(false);
     }
-  }
+  }, [
+    user,
+    type,
+    modalInputValue,
+    passwordConfirmationInputValue,
+    setIsSubmitting,
+    setErrors,
+    setModalData,
+    showModal,
+    resetStates,
+    refetchUser,
+    ordersData,
+  ]);
 
   function openUserDataEdit() {
     setInputVisible(type);

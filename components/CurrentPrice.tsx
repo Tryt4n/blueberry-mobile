@@ -1,17 +1,18 @@
 import { View, Text, ActivityIndicator } from "react-native";
 import { useCallback, useEffect, useState } from "react";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { updatePrice as appwriteUpdatePrice, getCurrentPrice } from "@/api/appwrite/currentPrice";
+import tw from "@/lib/twrnc";
 import Toast from "react-native-toast-message";
 import CustomButton from "./CustomButton";
 
 export default function CurrentPrice() {
   const { user, showAlert } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { showModal, setModalData } = useModalContext();
   const { currentPrice, setCurrentPrice } = useOrdersContext();
 
@@ -76,9 +77,8 @@ export default function CurrentPrice() {
 
       // else show success toast and refetch price
       Toast.show({
-        type: "success",
+        type: theme === "light" ? "success" : "successDark",
         text1: "Cena została zaktualizowana.",
-        text1Style: { textAlign: "left", fontSize: 16 },
       });
       refetchPrice();
     } catch (error: any) {
@@ -112,7 +112,7 @@ export default function CurrentPrice() {
 
   return (
     <View style={tw`flex-row items-center gap-x-4`}>
-      <Text style={tw`font-poppinsRegular text-base`}>
+      <Text style={tw`font-poppinsRegular text-base text-[${colors.text}]`}>
         Cena:&nbsp;
         {isPriceLoading ? (
           <ActivityIndicator

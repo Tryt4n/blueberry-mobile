@@ -1,7 +1,7 @@
-import { Calendar } from "react-native-calendars";
-import { LocaleConfig } from "react-native-calendars";
+import { Calendar, LocaleConfig } from "react-native-calendars";
 import { FontAwesome } from "@expo/vector-icons";
-import { colors } from "@/helpers/colors";
+import { useThemeContext } from "@/hooks/useThemeContext";
+import { colors as customColors } from "@/helpers/colors";
 import type { ComponentProps } from "react";
 
 export default function ModalCalendar({ ...props }: ComponentProps<typeof Calendar>) {
@@ -40,6 +40,8 @@ export default function ModalCalendar({ ...props }: ComponentProps<typeof Calend
   };
   LocaleConfig.defaultLocale = "pl";
 
+  const { theme, colors } = useThemeContext();
+
   return (
     <Calendar
       {...props}
@@ -47,11 +49,22 @@ export default function ModalCalendar({ ...props }: ComponentProps<typeof Calend
       monthFormat="MMMM yyyy"
       enableSwipeMonths={true}
       renderArrow={(direction) => <Arrow direction={direction} />}
+      theme={{
+        calendarBackground: colors.bg,
+        textSectionTitleColor: theme === "dark" ? "#C1BCB4" : "#b6c1cd",
+        todayTextColor: theme === "dark" ? customColors.primaryLight : colors.primary,
+        dayTextColor: theme === "dark" ? "#C5D2DC" : "#2D4150",
+        textDisabledColor: theme === "dark" ? "#2D4150" : "#D9E1E8",
+        monthTextColor: theme === "dark" ? "#AEC3D2" : "#2D4150",
+        indicatorColor: "blue",
+      }}
     />
   );
 }
 
 function Arrow({ direction }: { direction: "left" | "right" }) {
+  const { colors } = useThemeContext();
+
   return (
     <FontAwesome
       name={direction === "left" ? "caret-left" : "caret-right"}

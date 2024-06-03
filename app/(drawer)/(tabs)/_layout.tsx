@@ -1,15 +1,18 @@
 import { Tabs } from "expo-router";
-import React from "react";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import TabIcon from "@/components/TabIcon";
 
 export default function TabsLayout() {
+  const { colors } = useThemeContext();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: { height: 84 },
+        tabBarStyle: { height: 84, backgroundColor: colors.bg, borderTopColor: colors.border },
       }}
+      sceneContainerStyle={{ backgroundColor: colors.bgAccent }}
     >
       <Tabs.Screen
         name="orders"

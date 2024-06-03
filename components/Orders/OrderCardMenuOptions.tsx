@@ -1,11 +1,12 @@
 import { View, Text } from "react-native";
 import { Menu, MenuOption, MenuOptions, MenuTrigger, renderers } from "react-native-popup-menu";
-import { colors } from "@/helpers/colors";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import type { OrderOption } from "./OrderCardOptions";
 
 export default function OrderCardMenuOptions({ options }: { options: OrderOption[] }) {
+  const { colors } = useThemeContext();
   const { SlideInMenu } = renderers;
 
   return (
@@ -20,7 +21,7 @@ export default function OrderCardMenuOptions({ options }: { options: OrderOption
 
       <MenuOptions
         customStyles={{
-          optionsContainer: tw`py-8 px-4 rounded-2xl shadow-2xl`,
+          optionsContainer: tw`py-8 px-4 rounded-2xl shadow-2xl bg-[${colors.bg}]`,
         }}
       >
         {options.map((option) => (
@@ -34,7 +35,9 @@ export default function OrderCardMenuOptions({ options }: { options: OrderOption
                 size={24}
                 color={colors[option.icon.color]}
               />
-              <Text style={tw`font-poppinsSemiBold text-base`}>{option.text}</Text>
+              <Text style={tw`font-poppinsSemiBold text-base text-[${colors.text}]`}>
+                {option.text}
+              </Text>
             </View>
           </MenuOption>
         ))}

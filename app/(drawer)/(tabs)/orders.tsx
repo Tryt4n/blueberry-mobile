@@ -1,11 +1,11 @@
 import { View, Text, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { getOrders, getOrdersBySearchParams } from "@/api/appwrite/orders";
+import tw from "@/lib/twrnc";
 import OrdersList from "@/components/Orders/OrdersList";
 import OrdersHeader from "@/components/Orders/OrdersHeader";
 import CustomButton from "@/components/CustomButton";
@@ -13,6 +13,7 @@ import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
 
 export default function TabOrders() {
   const { user } = useGlobalContext();
+  const { colors } = useThemeContext();
   const { ordersData, setOrdersData, ordersSearchParams, setOrdersSearchParams, isBannerVisible } =
     useOrdersContext();
   const [isOrdersSearchParamsReset, setIsOrdersSearchParamsReset] = useState(false);
@@ -78,6 +79,7 @@ export default function TabOrders() {
         <>
           <View style={tw`h-full`}>
             <OrdersHeader />
+
             {ordersData.isLoading ? (
               <ActivityIndicator
                 size="large"
@@ -90,7 +92,9 @@ export default function TabOrders() {
                   <OrdersList />
                 ) : (
                   <>
-                    <Text style={tw`text-center font-poppinsRegular text-lg`}>{`Brak zamówień${
+                    <Text
+                      style={tw`text-center font-poppinsRegular text-lg text-[${colors.text}]`}
+                    >{`Brak zamówień${
                       isOrdersSearchParamsReset ? " o określonych parametrach wyszukiwania." : ""
                     }`}</Text>
 
@@ -103,8 +107,8 @@ export default function TabOrders() {
                       isOrdersSearchParamsReset && (
                         <CustomButton
                           text="Resetuj parametry wyszukiwania"
-                          onPress={() => ordersData.refetchData()}
-                          containerStyles="mt-4"
+                          onPress={async () => await ordersData.refetchData()}
+                          containerStyles="mt-4 max-w-[400px] mx-auto"
                         />
                       )}
                   </>

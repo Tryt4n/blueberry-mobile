@@ -1,13 +1,15 @@
 import { View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
+import tw from "@/lib/twrnc";
+import { format, parseISO } from "date-fns";
 import { DateInput } from "../DateInput";
 
 export default function OrdersSearchBannerDates({ containerWidth }: { containerWidth: number }) {
   const { ordersSearchParams, setOrdersSearchParams } = useOrdersContext();
+  const { colors } = useThemeContext();
   const { showModal, setModalData } = useModalContext();
 
   const [startDate, setStartDate] = useState<string | undefined>();
@@ -98,19 +100,24 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
     }));
   }, [startDate, endDate]);
 
+  const formatDate = (date: string) => {
+    const parsedDate = parseISO(date);
+    return format(parsedDate, "dd-MM-yyyy");
+  };
+
   return (
     <View style={tw`flex flex-row justify-between mt-4`}>
       <DateInput
         containerProps={{ style: { width: inputWidth } }}
         label="Od:"
-        text={ordersSearchParams.startDate || "Początek"}
+        text={ordersSearchParams.startDate ? formatDate(ordersSearchParams.startDate) : "Początek"}
         onPress={() => openSelectDateModal("start")}
       />
 
       <DateInput
         containerProps={{ style: { width: inputWidth } }}
         label="Do:"
-        text={ordersSearchParams.endDate || "Koniec"}
+        text={ordersSearchParams.endDate ? formatDate(ordersSearchParams.endDate) : "Koniec"}
         onPress={() => openSelectDateModal("end")}
       />
     </View>

@@ -1,16 +1,17 @@
 import { View, Text, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
-import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { signOut as AppwriteAuthLogout } from "@/api/auth/appwrite";
+import tw from "@/lib/twrnc";
 import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
   const { isLoggedIn, setIsLoggedIn, setUser } = useGlobalContext();
+  const { theme, colors } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
   const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
     useOrdersContext();
@@ -56,14 +57,17 @@ export default function LogOutPage() {
       }}
     >
       <View>
-        <Text style={tw`font-poppinsSemiBold text-2xl text-center mb-4`}>Wylogować się?</Text>
+        <Text style={tw`font-poppinsSemiBold text-2xl text-center mb-4 text-[${colors.text}]`}>
+          Wylogować się?
+        </Text>
+
         <View style={tw`flex flex-row justify-between gap-4`}>
           <CustomButton
             text="Tak"
             onPress={logOut}
             disabled={isSubmitting}
-            containerStyles="bg-transparent border-2 border-primary px-8 h-16"
-            textStyles="text-black"
+            containerStyles={`bg-transparent border-2 border-[${colors.primary}] px-8 h-16`}
+            textStyles={`text-[${colors.primary}]`}
             loading={isSubmitting}
             loadingColor={colors.primary}
           />

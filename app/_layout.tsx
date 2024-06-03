@@ -9,11 +9,13 @@ import { MenuProvider } from "react-native-popup-menu";
 import { PaperProvider } from "react-native-paper";
 import tw from "@/lib/twrnc";
 import GlobalContextProvider from "../context/GlobalContext";
+import ThemeContextProvider from "@/context/ThemeContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
 import OrderContextProvider from "@/context/OrdersContext";
-import Toast from "react-native-toast-message";
 import ModalContextProvider from "@/context/ModalContext";
 import Modal from "@/components/Modal/Modal";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "@/lib/toast";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,37 +56,39 @@ export default function RootLayout() {
     <Wrapper>
       <GestureHandlerRootView style={tw`flex-1 overflow-hidden`}>
         <GlobalContextProvider>
-          <OrderContextProvider>
-            <BottomSheetTabsContextProvider>
-              <MenuProvider>
-                <PaperProvider theme={{ dark: false }}>
-                  <ModalContextProvider>
-                    <StatusBar />
+          <ThemeContextProvider>
+            <OrderContextProvider>
+              <BottomSheetTabsContextProvider>
+                <MenuProvider>
+                  <PaperProvider theme={{ dark: false }}>
+                    <ModalContextProvider>
+                      <StatusBar />
 
-                    <Stack>
-                      <Stack.Screen
-                        name="index"
-                        options={{ headerShown: false }}
-                      />
+                      <Stack>
+                        <Stack.Screen
+                          name="index"
+                          options={{ headerShown: false }}
+                        />
 
-                      <Stack.Screen
-                        name="(auth)"
-                        options={{ headerShown: false }}
-                      />
+                        <Stack.Screen
+                          name="(auth)"
+                          options={{ headerShown: false }}
+                        />
 
-                      <Stack.Screen
-                        name="(drawer)"
-                        options={{ headerShown: false }}
-                      />
-                    </Stack>
+                        <Stack.Screen
+                          name="(drawer)"
+                          options={{ headerShown: false }}
+                        />
+                      </Stack>
 
-                    <Toast />
-                    <Modal />
-                  </ModalContextProvider>
-                </PaperProvider>
-              </MenuProvider>
-            </BottomSheetTabsContextProvider>
-          </OrderContextProvider>
+                      <Toast config={toastConfig} />
+                      <Modal />
+                    </ModalContextProvider>
+                  </PaperProvider>
+                </MenuProvider>
+              </BottomSheetTabsContextProvider>
+            </OrderContextProvider>
+          </ThemeContextProvider>
         </GlobalContextProvider>
       </GestureHandlerRootView>
     </Wrapper>

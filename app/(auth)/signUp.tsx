@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
 import { createUser } from "@/api/auth/appwrite";
@@ -8,11 +9,12 @@ import AuthLayout from "@/layout/AuthLayout";
 import Toast from "react-native-toast-message";
 import { FormField } from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
-import { type TextInput } from "react-native";
+import type { TextInput } from "react-native";
 import type { ErrorKeys } from "@/types/Errors";
 
 export default function SignUpPage() {
   const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { theme } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
 
   const [signInForm, setSignInForm] = useState({
@@ -77,10 +79,10 @@ export default function SignUpPage() {
         setUser(result.user);
         setIsLoggedIn(true);
         Toast.show({
-          type: "success",
+          type: theme === "light" ? "success" : "successDark",
           text1: "Pomyślnie utworzono konto.",
           topOffset: 50,
-          text1Style: { textAlign: "center", fontSize: 16 },
+          text1Style: { textAlign: "center" },
         });
 
         router.replace("/");

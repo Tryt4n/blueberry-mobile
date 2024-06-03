@@ -1,40 +1,51 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
+import { colors as customColors } from "@/helpers/colors";
 import tw from "@/lib/twrnc";
-import { colors } from "@/helpers/colors";
 import { Switch } from "react-native-paper";
 
 export default function SettingsChangeTheme() {
   const { platform } = useGlobalContext();
-
-  const [isDarkMode, setIsDarkMode] = useState(false); // Create theme context and move this state to it
+  const { colors, theme, changeUserTheme } = useThemeContext();
 
   return (
     <View>
-      <Text style={tw`font-poppinsSemiBold`}>Tryb</Text>
+      <Text style={tw`font-poppinsSemiBold text-[${colors.text}]`}>Motyw</Text>
       <View style={tw`flex-row justify-center items-center gap-2`}>
         <TouchableOpacity
-          onPress={() => setIsDarkMode(false)}
-          disabled={!isDarkMode}
+          onPress={() => changeUserTheme("light")}
+          disabled={theme === "light"}
         >
-          <Text style={tw`font-poppinsMedium ${!isDarkMode ? "text-primary" : ""}`}>Jasny</Text>
+          <Text
+            style={tw`font-poppinsMedium text-[${colors.text}] ${
+              theme === "light" ? `text-[${colors.primary}]` : ""
+            }`}
+          >
+            Jasny
+          </Text>
         </TouchableOpacity>
 
         <Switch
+          style={platform === "web" ? tw`h-10 w-20` : undefined}
           color={colors.primary}
           thumbColor={colors.primary}
           trackColor={{ false: "rgba(59, 130, 246, 0.5)", true: "rgba(59, 130, 246, 0.5)" }}
-          value={isDarkMode}
-          onValueChange={() => setIsDarkMode(!isDarkMode)}
-          style={platform === "web" ? tw`h-10 w-20` : undefined}
+          onValueChange={() => changeUserTheme(theme === "light" ? "dark" : "light")}
+          value={theme === "dark"}
         />
 
         <TouchableOpacity
-          onPress={() => setIsDarkMode(true)}
-          disabled={isDarkMode}
+          onPress={() => changeUserTheme("dark")}
+          disabled={theme === "dark"}
         >
-          <Text style={tw`font-poppinsMedium ${isDarkMode ? "text-primary" : ""}`}>Ciemny</Text>
+          <Text
+            style={tw`font-poppinsMedium text-[${colors.text}] ${
+              theme === "dark" ? `text-[${customColors.primaryLight}]` : ""
+            }`}
+          >
+            Ciemny
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

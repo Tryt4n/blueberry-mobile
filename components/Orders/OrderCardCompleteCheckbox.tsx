@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { editOrder } from "@/api/appwrite/orders";
 import Checkbox from "../Checkbox";
 import Toast from "react-native-toast-message";
@@ -15,6 +16,7 @@ export default function OrderCardCompleteCheckbox({
   setOrder,
 }: OrderCardCompleteCheckboxProps) {
   const { user, showAlert } = useGlobalContext();
+  const { theme } = useThemeContext();
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
 
@@ -42,11 +44,10 @@ export default function OrderCardCompleteCheckbox({
 
         // Show a success message to the user
         Toast.show({
-          type: "success",
+          type: theme === "light" ? "success" : "successDark",
           text1: "Zmieniono status zamówienia na",
           text2: `${order.completed === false ? "ukończone" : "nieukończone"}.`,
-          text1Style: { textAlign: "left", fontSize: 16 },
-          text2Style: { textAlign: "left", fontSize: 16, fontWeight: "bold", color: "black" },
+          text2Style: { fontWeight: "bold" },
         });
       } catch (error) {
         // Show an alert to the user if the operation failed
