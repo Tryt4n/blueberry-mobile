@@ -129,3 +129,18 @@ export async function editUserAvatar(userId: User["$id"], avatar: string, custom
     throw new Error(error);
   }
 }
+
+export async function editUserTheme(userId: User["$id"], theme: User["theme"]) {
+  try {
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId,
+      {
+        theme,
+      }
+    );
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
