@@ -1,9 +1,24 @@
-const { theme } = require("../tailwind.config.js");
-
-const tailwindColors = theme.extend.colors;
-
 export const colors = {
-  primary: tailwindColors.primary,
-  danger: tailwindColors.danger,
-  placeholder: tailwindColors.placeholder,
+  primaryLight: "#3B82F6",
+  primaryDark: "#0844a6",
+  dangerLight: "#FF3333",
+  dangerDark: "#dd3939",
+  placeholderLight: "#7B7B8B",
+  placeholderDark: "#5c5a53",
+  inputBorderLight: "#000",
+  inputBorderDark: "#8c8273",
+  bgLight: "#FFF",
+  bgDark: "#181a1b",
+  bgAccentLight: "#f2f2f2",
+  bgAccentDark: "#1f2223",
+  textLight: "#000",
+  textDark: "#E8E6E3",
+  textAccentLight: "#000",
+  textAccentDark: "#D6D2CD",
+  menuIconLight: "#1C1C1EAD",
+  menuIconDark: "#D6D2CDAD",
+  tabIconLight: "#8E8E8F",
+  tabIconDark: "#A1998D",
+  borderLight: "#D8D8D8",
+  borderDark: "#3B4042",
 } as const;
