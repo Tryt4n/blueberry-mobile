@@ -1,7 +1,7 @@
 import { useColorScheme } from "react-native";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { editUserTheme } from "@/api/appwrite/users";
-import { colors as customColors } from "@/helpers/colors";
+import { colors as customColors } from "@/constants/colors";
 import { createContext, useEffect, useState } from "react";
 import type { Theme } from "@/types/theme";
 
@@ -16,7 +16,8 @@ export type Colors =
   | "menuIcon"
   | "tabIcon"
   | "border"
-  | "inputBorder";
+  | "inputBorder"
+  | "green";
 
 type ThemeContextValues = {
   theme: Theme;
@@ -58,6 +59,7 @@ export default function ThemeContextProvider({ children }: { children: React.Rea
     menuIcon: theme === "light" ? customColors.menuIconLight : customColors.menuIconDark,
     tabIcon: theme === "light" ? customColors.tabIconLight : customColors.tabIconDark,
     border: theme === "light" ? customColors.borderLight : customColors.borderDark,
+    green: theme === "light" ? customColors.greenLight : customColors.greenDark,
   };
 
   const contextValues: ThemeContextValues = {
