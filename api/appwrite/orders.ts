@@ -1,56 +1,11 @@
 import { appwriteConfig, databases } from "@/lib/appwrite";
 import { ID, Query } from "react-native-appwrite";
-import { getOrCreatePrice, updatePrice } from "./currentPrice";
+import { getOrCreatePrice } from "./currentPrice";
 import { OrderSchema } from "@/lib/zod/order";
 import type { User } from "@/types/user";
 import type { Order } from "@/types/orders";
 import type { Buyer } from "@/types/buyers";
 import type { CurrentPrice } from "@/types/currentPrice";
-
-export async function getOrders(userId?: User["$id"]) {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayString = today.toISOString();
-
-    let ordersFilters = [Query.greaterThanEqual("$updatedAt", todayString)];
-    let uncompletedOrdersFilters = [Query.equal("completed", false)];
-    if (userId) {
-      const userFilter = Query.equal("user", userId);
-      ordersFilters.push(userFilter);
-      uncompletedOrdersFilters.push(userFilter);
-    }
-
-    const [orders, uncompletedOrders] = await Promise.all([
-      databases.listDocuments(
-        appwriteConfig.databaseId,
-        appwriteConfig.ordersCollectionId,
-        ordersFilters
-      ),
-      databases.listDocuments(
-        appwriteConfig.databaseId,
-        appwriteConfig.ordersCollectionId,
-        uncompletedOrdersFilters
-      ),
-    ]);
-
-    const uncompletedOrdersIds = uncompletedOrders.documents.map((order) => order.$id);
-    const combinedOrders = [
-      ...uncompletedOrders.documents,
-      ...orders.documents.filter((order) => !uncompletedOrdersIds.includes(order.$id)),
-    ];
-
-    const combinedAndSortedOrders = combinedOrders.sort((a, b) => {
-      const dateA = new Date(a.$createdAt);
-      const dateB = new Date(b.$createdAt);
-      return dateB.getTime() - dateA.getTime();
-    });
-
-    return combinedAndSortedOrders as Order[];
-  } catch (error: any) {
-    throw new Error(error);
-  }
-}
 
 export async function createOrder(
   userId: User["$id"],
@@ -183,16 +138,15 @@ export async function changeOrderPrice(orderId: Order["$id"], newPrice: string) 
   }
 }
 
-export async function getOrdersBySearchParams(
-  startDate: string,
-  endDate: string,
-  userId?: User["$id"]
-) {
+export async function getOrders(startDate: string, endDate: string, userId?: User["$id"]) {
   try {
     // Add time to endDate to include the whole day instead of just the midnight
     endDate = endDate + "T23:59:59.999Z";
 
-    let ordersFilters = [Query.between("$createdAt", startDate, endDate)];
+    let ordersFilters = [
+      Query.between("$createdAt", startDate, endDate),
+      Query.orderDesc("$createdAt"),
+    ];
 
     if (userId) {
       ordersFilters.push(Query.equal("user", userId));
