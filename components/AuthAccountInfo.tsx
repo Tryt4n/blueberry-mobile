@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import { Link } from "expo-router";
 import { useThemeContext } from "@/hooks/useThemeContext";
-import { colors as customColors } from "@/helpers/colors";
+import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
 
 export default function AuthAccountInfo({ href }: { href: "/signIn" | "/signUp" }) {

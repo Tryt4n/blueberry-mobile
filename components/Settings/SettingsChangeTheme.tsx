@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
-import { colors as customColors } from "@/helpers/colors";
+import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
 import { Switch } from "react-native-paper";
 

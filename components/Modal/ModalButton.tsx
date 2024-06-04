@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity } from "react-native";
 import { useThemeContext } from "@/hooks/useThemeContext";
-import { colors as customColors } from "@/helpers/colors";
+import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
 
 type ModalButtonProps = {
