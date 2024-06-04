@@ -210,8 +210,12 @@ export default function SettingsEditSection({
             }
 
             {
-              // Hide the password confirmation input field if the type is "username"
-              type !== "username" && (
+              // Hide the password confirmation input field if the type is "username" or if the user has a secret password
+              !(
+                type === "username" ||
+                // @ts-ignore - secretPassword is not in the User type but it's in the user object
+                (type === "email" && user.secretPassword && user.secretPassword !== "")
+              ) && (
                 <FormField
                   title="Potwierdź zmianę hasłem:"
                   placeholder={type === "password" ? "Wprowadź aktualne hasło" : "Wprowadź hasło"}
