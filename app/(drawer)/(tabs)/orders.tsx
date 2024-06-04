@@ -1,77 +1,48 @@
 import { View, Text, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { getOrders, getOrdersBySearchParams } from "@/api/appwrite/orders";
+import { getOrders } from "@/api/appwrite/orders";
 import tw from "@/lib/twrnc";
 import OrdersList from "@/components/Orders/OrdersList";
 import OrdersHeader from "@/components/Orders/OrdersHeader";
-import CustomButton from "@/components/CustomButton";
 import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
 
 export default function TabOrders() {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
-  const { ordersData, setOrdersData, ordersSearchParams, setOrdersSearchParams, isBannerVisible } =
-    useOrdersContext();
-  const [isOrdersSearchParamsReset, setIsOrdersSearchParamsReset] = useState(false);
+  const { ordersData, setOrdersData, ordersSearchParams } = useOrdersContext();
 
   const errorMessage = {
     title: "Błąd",
     message: "Nie udało się pobrać zamówień. Spróbuj odświeżyć stronę.",
   };
 
-  const appwriteOrdersData =
-    // If search params are provided, fetch orders by search params
-    ordersSearchParams?.startDate && ordersSearchParams?.endDate
-      ? useAppwrite(
-          getOrdersBySearchParams,
-          [
-            ordersSearchParams.startDate,
-            ordersSearchParams.endDate,
-            // If user is not admin or moderator, fetch orders only for the logged in user
-            user && user.role !== "admin" && user.role !== "moderator"
-              ? user.$id
-              : ordersSearchParams.userId
-              ? ordersSearchParams.userId
-              : undefined,
-          ],
-          errorMessage
-        )
-      : // else fetch all orders
-        useAppwrite(
-          getOrders,
-          // If user is not admin or moderator, fetch orders only for the logged in user
-          user && user.role !== "admin" && user.role !== "moderator" ? [user.$id] : [],
-          errorMessage
-        );
+  const appwriteOrdersData = useAppwrite(
+    getOrders,
+    [
+      ordersSearchParams.startDate,
+      ordersSearchParams.endDate,
+      user && user.role !== "admin" && user.role !== "moderator"
+        ? user.$id
+        : ordersSearchParams.userId
+        ? ordersSearchParams.userId
+        : undefined,
+    ],
+    errorMessage
+  );
 
+  // Refetch orders data when search params change
   useEffect(() => {
-    // Fetch orders and set the data to the context state if the data is loaded successfully
+    appwriteOrdersData.refetchData();
+  }, [ordersSearchParams]);
+
+  // Set orders data to the context state if the data is loaded successfully
+  useEffect(() => {
     setOrdersData(appwriteOrdersData);
   }, [appwriteOrdersData.isLoading, ordersSearchParams]);
-
-  useEffect(() => {
-    if (ordersData?.isLoading) {
-      return setIsOrdersSearchParamsReset(false);
-    }
-
-    // Reset search parameters if there are no orders with the searched parameters
-    if (
-      !ordersData?.isLoading &&
-      ordersData &&
-      ordersData.data &&
-      ordersData.data.length === 0 &&
-      ordersSearchParams.startDate &&
-      ordersSearchParams.endDate &&
-      !isBannerVisible // This condition prevents the `ordersSearchParams` from being reset before the user presses the search button
-    ) {
-      setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
-      setIsOrdersSearchParamsReset(true);
-    }
-  }, [ordersData, ordersSearchParams]);
 
   return (
     <View style={tw`h-full w-[90%] mx-auto`}>
@@ -91,27 +62,9 @@ export default function TabOrders() {
                 {ordersData.data && ordersData.data.length > 0 ? (
                   <OrdersList />
                 ) : (
-                  <>
-                    <Text
-                      style={tw`text-center font-poppinsRegular text-lg text-[${colors.text}]`}
-                    >{`Brak zamówień${
-                      isOrdersSearchParamsReset ? " o określonych parametrach wyszukiwania." : ""
-                    }`}</Text>
-
-                    {ordersData &&
-                      ordersData.data &&
-                      ordersData.data.length === 0 &&
-                      !ordersSearchParams.startDate &&
-                      !ordersSearchParams.endDate &&
-                      !isBannerVisible &&
-                      isOrdersSearchParamsReset && (
-                        <CustomButton
-                          text="Resetuj parametry wyszukiwania"
-                          onPress={async () => await ordersData.refetchData()}
-                          containerStyles="mt-4 max-w-[400px] mx-auto"
-                        />
-                      )}
-                  </>
+                  <Text style={tw`text-center font-poppinsRegular text-lg text-[${colors.text}]`}>
+                    Brak zamówień
+                  </Text>
                 )}
               </>
             )}
