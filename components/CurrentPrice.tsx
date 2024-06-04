@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
@@ -8,18 +8,25 @@ import { useAppwrite } from "@/hooks/useAppwrite";
 import { updatePrice as appwriteUpdatePrice, getCurrentPrice } from "@/api/appwrite/currentPrice";
 import tw from "@/lib/twrnc";
 import Toast from "react-native-toast-message";
+import PriceLoadingText from "./Settings/PriceLoadingText";
 import CustomButton from "./CustomButton";
 
 export default function CurrentPrice() {
   const { user, showAlert } = useGlobalContext();
   const { theme, colors } = useThemeContext();
   const { showModal, setModalData } = useModalContext();
-  const { currentPrice, setCurrentPrice } = useOrdersContext();
+  const { currentPrice, setCurrentPrice, ordersData } = useOrdersContext();
 
   // Create local state for modal input value
   const [modalInputValue, setModalInputValue] = useState(currentPrice?.price.toString() || "");
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
+
+  // Calculate total price for all visible orders
+  const total = ordersData?.data?.reduce(
+    (acc, curr) => acc + curr.currentPrice.price * curr.quantity,
+    0
+  );
 
   // Fetch current price
   const {
@@ -111,27 +118,29 @@ export default function CurrentPrice() {
   }, [fetchedCurrentPrice]);
 
   return (
-    <View style={tw`flex-row items-center gap-x-4`}>
-      <Text style={tw`font-poppinsRegular text-base text-[${colors.text}]`}>
-        Cena:&nbsp;
-        {isPriceLoading ? (
-          <ActivityIndicator
-            size="small"
-            color={colors.primary}
-          />
-        ) : (
-          <Text style={tw`font-poppinsMedium text-xl`}>{currentPrice?.price} zł</Text>
-        )}
-      </Text>
-
-      {userHasAccess && (
-        <CustomButton
-          text="Zmień cenę"
-          textStyles="text-xs p-3"
-          onPress={openModal}
-          disabled={currentPrice === null || isPriceLoading}
+    <View style={tw`flex-row justify-between items-center gap-x-4`}>
+      <View style={tw`flex-row items-center gap-x-4`}>
+        <PriceLoadingText
+          text="Cena:"
+          value={currentPrice?.price.toString() || ""}
+          isLoading={isPriceLoading}
         />
-      )}
+
+        {userHasAccess && (
+          <CustomButton
+            text="Zmień cenę"
+            textStyles="text-xs p-3"
+            onPress={openModal}
+            disabled={currentPrice === null || isPriceLoading}
+          />
+        )}
+      </View>
+
+      <PriceLoadingText
+        text="Łącznie:"
+        value={total?.toString() || ""}
+        isLoading={ordersData?.isLoading}
+      />
     </View>
   );
 }
