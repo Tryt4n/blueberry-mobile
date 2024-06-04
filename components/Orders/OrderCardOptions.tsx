@@ -1,20 +1,21 @@
 import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useModalContext } from "@/hooks/useModalContext";
-import { avatarImages } from "@/constants/avatars";
-import tw from "@/lib/twrnc";
 import { changeOrderPrice as changeOrderPriceAppwrite } from "@/api/appwrite/orders";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { avatarImages } from "@/constants/avatars";
+import { formatDate } from "@/helpers/dates";
+import { isBefore, subDays, formatDistanceToNow } from "date-fns";
 import { pl } from "date-fns/locale/pl";
+import tw from "@/lib/twrnc";
 import OrderCardMenuOptions from "./OrderCardMenuOptions";
 import OrderCardUserAvatar from "./OrderCardUserAvatar";
 import Toast from "react-native-toast-message";
 import type { Order } from "@/types/orders";
 import type { FontAwesome } from "@expo/vector-icons";
-import { useThemeContext } from "@/hooks/useThemeContext";
 import type { Colors } from "@/context/ThemeContext";
 
 type OrderCardOptionsProps = {
@@ -179,10 +180,12 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
           />
         )}
         <Text style={tw`font-poppinsLight text-xs text-[${colors.text}]`}>
-          {formatDistanceToNow(order.$createdAt, {
-            addSuffix: true,
-            locale: pl,
-          })}
+          {isBefore(new Date(order.$createdAt), subDays(new Date(), 1))
+            ? formatDate(order.$createdAt, "dd.MM.yyyy")
+            : formatDistanceToNow(new Date(order.$createdAt), {
+                addSuffix: true,
+                locale: pl,
+              })}
         </Text>
       </View>
     </View>
