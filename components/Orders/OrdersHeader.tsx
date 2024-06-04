@@ -8,12 +8,13 @@ import AddButton from "../AddButton";
 import CurrentPrice from "../CurrentPrice";
 import OpenSearchBannerBtn from "./OpenSearchBannerBtn";
 import OrdersSearchBanner from "./OrdersSearchBanner";
+import OrdersDateNavigation from "./OrdersDateNavigation";
 
 export default function OrdersHeader() {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
-  const { ordersData } = useOrdersContext();
+  const { ordersData, isBannerVisible } = useOrdersContext();
 
   return (
     <>
@@ -34,6 +35,8 @@ export default function OrdersHeader() {
       <OpenSearchBannerBtn />
 
       <OrdersSearchBanner />
+
+      {!isBannerVisible && <OrdersDateNavigation />}
     </>
   );
 }
