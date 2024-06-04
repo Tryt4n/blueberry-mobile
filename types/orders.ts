@@ -25,7 +25,7 @@ export type OrdersDataType = {
 };
 
 export type OrdersSearchParams = {
-  startDate: string | undefined;
-  endDate: string | undefined;
+  startDate: string;
+  endDate: string;
   userId: User["$id"] | undefined;
 };
