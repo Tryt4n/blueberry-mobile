@@ -2,6 +2,8 @@ import { createContext, useCallback, useState } from "react";
 import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import { format } from "date-fns";
+import { pl } from "date-fns/locale/pl";
 import Toast from "react-native-toast-message";
 import type { Order, OrdersDataType, OrdersSearchParams } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
@@ -20,6 +22,7 @@ type OrderContextType = {
   setOrdersSearchParams: (
     value: ((prevState: OrdersSearchParams) => OrdersSearchParams) | OrdersSearchParams
   ) => void;
+  today: string;
 };
 
 export const OrdersContext = createContext<OrderContextType | null>(null);
@@ -32,9 +35,11 @@ export default function OrderContextProvider({ children }: { children: React.Rea
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
   const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
+  const today = new Date();
+  const formattedTodayDate = format(today, "yyyy-MM-dd", { locale: pl });
   const [ordersSearchParams, setOrdersSearchParams] = useState<OrdersSearchParams>({
-    startDate: undefined,
-    endDate: undefined,
+    startDate: formattedTodayDate,
+    endDate: formattedTodayDate,
     userId: undefined,
   });
 
@@ -76,6 +81,7 @@ export default function OrderContextProvider({ children }: { children: React.Rea
     setIsBannerVisible,
     ordersSearchParams,
     setOrdersSearchParams,
+    today: formattedTodayDate,
   };
 
   return <OrdersContext.Provider value={contextValues}>{children}</OrdersContext.Provider>;

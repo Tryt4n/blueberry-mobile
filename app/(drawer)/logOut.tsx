@@ -11,9 +11,9 @@ import CustomButton from "@/components/CustomButton";
 
 export default function LogOutPage() {
   const { isLoggedIn, setIsLoggedIn, setUser } = useGlobalContext();
-  const { theme, colors } = useThemeContext();
+  const { colors } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
-  const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams } =
+  const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams, today } =
     useOrdersContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,7 +31,7 @@ export default function LogOutPage() {
 
       setOrdersData(null);
       setEditedOrder(null);
-      setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
+      setOrdersSearchParams({ startDate: today, endDate: today, userId: undefined });
       setIsBannerVisible(false);
       setModalData({ title: "true" });
 

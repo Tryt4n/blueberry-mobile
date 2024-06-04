@@ -35,6 +35,7 @@ export default function OrderBottomSheet() {
     setEditedOrder,
     setOrdersSearchParams,
     setIsBannerVisible,
+    today,
   } = useOrdersContext();
   const [orderData, setOrderData] = useState(orderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -136,7 +137,7 @@ export default function OrderBottomSheet() {
           }
         } else {
           setIsBannerVisible(false);
-          setOrdersSearchParams({ startDate: undefined, endDate: undefined, userId: undefined });
+          setOrdersSearchParams({ startDate: today, endDate: today, userId: undefined });
           handleCloseBottomSheet();
           ordersData && ordersData.refetchData();
           buyersRefetchData();

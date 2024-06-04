@@ -3,20 +3,22 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useModalContext } from "@/hooks/useModalContext";
+import { formatDate } from "@/helpers/dates";
 import tw from "@/lib/twrnc";
-import { format, parseISO } from "date-fns";
 import { DateInput } from "../DateInput";
+import type { OrdersSearchParams } from "@/types/orders";
 
 export default function OrdersSearchBannerDates({ containerWidth }: { containerWidth: number }) {
-  const { ordersSearchParams, setOrdersSearchParams } = useOrdersContext();
+  const { ordersSearchParams, setOrdersSearchParams, today: todayDate } = useOrdersContext();
   const { colors } = useThemeContext();
   const { showModal, setModalData } = useModalContext();
 
-  const [startDate, setStartDate] = useState<string | undefined>();
-  const [endDate, setEndDate] = useState<string | undefined>();
+  const [startDate, setStartDate] = useState<OrdersSearchParams["startDate"]>(
+    ordersSearchParams.startDate
+  );
+  const [endDate, setEndDate] = useState<OrdersSearchParams["endDate"]>(ordersSearchParams.endDate);
 
   const inputWidth = (containerWidth - 16) / 2;
-  const todayDate = new Date();
 
   const openSelectDateModal = useCallback(
     (period: "start" | "end") => {
@@ -36,19 +38,19 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
             period === "start" ? setStartDate(day.dateString) : setEndDate(day.dateString);
           },
           markedDates: {
-            [startDate || ordersSearchParams.startDate || ""]: {
+            [startDate]: {
               selected: true,
               selectedColor: colors.primary,
               marked: endDate === startDate,
             },
-            [endDate || ordersSearchParams.endDate || ""]: {
+            [endDate]: {
               selected: true,
               selectedColor: colors.primary,
               marked: endDate === startDate,
             },
           },
           minDate: period === "start" ? "2024-05-01" : startDate,
-          maxDate: period === "start" && endDate ? endDate : todayDate.toISOString().split("T")[0], // today for end date and endDate for start date if it exists or today if not
+          maxDate: period === "start" && endDate ? endDate : todayDate,
         },
       });
       showModal();
@@ -59,9 +61,9 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
   // Reset the startDate or endDate in the modal
   function clearModalDates(period: "start" | "end") {
     if (period === "start") {
-      setStartDate(undefined);
+      setStartDate(ordersSearchParams.startDate);
     } else {
-      setEndDate(undefined);
+      setEndDate(ordersSearchParams.endDate);
     }
   }
 
@@ -85,12 +87,12 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
       calendar: {
         ...prevModalData.calendar,
         markedDates: {
-          [startDate || ordersSearchParams.startDate || ""]: {
+          [startDate]: {
             selected: true,
             selectedColor: colors.primary,
             marked: endDate === startDate,
           },
-          [endDate || ordersSearchParams.endDate || ""]: {
+          [endDate]: {
             selected: true,
             selectedColor: colors.primary,
             marked: endDate === startDate,
@@ -100,24 +102,27 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
     }));
   }, [startDate, endDate]);
 
-  const formatDate = (date: string) => {
-    const parsedDate = parseISO(date);
-    return format(parsedDate, "dd-MM-yyyy");
-  };
-
   return (
     <View style={tw`flex flex-row justify-between mt-4`}>
       <DateInput
         containerProps={{ style: { width: inputWidth } }}
         label="Od:"
-        text={ordersSearchParams.startDate ? formatDate(ordersSearchParams.startDate) : "Początek"}
+        text={
+          ordersSearchParams.startDate
+            ? formatDate(ordersSearchParams.startDate, "dd-MM-yyyy")
+            : "Początek"
+        }
         onPress={() => openSelectDateModal("start")}
       />
 
       <DateInput
         containerProps={{ style: { width: inputWidth } }}
         label="Do:"
-        text={ordersSearchParams.endDate ? formatDate(ordersSearchParams.endDate) : "Koniec"}
+        text={
+          ordersSearchParams.endDate
+            ? formatDate(ordersSearchParams.endDate, "dd-MM-yyyy")
+            : "Koniec"
+        }
         onPress={() => openSelectDateModal("end")}
       />
     </View>
