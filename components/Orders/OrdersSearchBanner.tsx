@@ -5,6 +5,7 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
+import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
 import OrdersSearchBannerDates from "./OrdersSearchBannerDates";
 import OrdersSearchBannerUser from "./OrdersSearchBannerUser";
@@ -81,9 +82,8 @@ export default function OrdersSearchBanner() {
     {
       label: "Wyszukaj",
       onPress: getNewOrders,
-      // labelStyle: { color: colors.primary, fontFamily: "Poppins-SemiBold", fontSize: 16 },
       labelStyle: {
-        color: theme === "dark" ? "#3B82F6" : colors.primary,
+        color: customColors.primaryLight,
         fontFamily: "Poppins-SemiBold",
         fontSize: 16,
       },

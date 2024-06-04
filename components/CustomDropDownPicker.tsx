@@ -1,6 +1,7 @@
 import { View, Text, type TextInput, type TextInputProps } from "react-native";
 import React, { forwardRef, useEffect, useState, type ForwardedRef } from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
 import DropDownPicker, { type DropDownPickerProps } from "react-native-dropdown-picker";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -93,7 +94,7 @@ function InnerCustomDropDownPicker(
           <Entypo
             name="check"
             size={24}
-            color="#3B82F6"
+            color={customColors.primaryLight}
           />
         )}
         placeholderStyle={{
@@ -141,7 +142,7 @@ function InnerCustomDropDownPicker(
           fontFamily: "Poppins-Bold",
           fontSize: 16,
           transform: [{ translateX: 16 }],
-          color: "#3B82F6",
+          color: customColors.primaryLight,
         }}
         listItemContainerStyle={{ height: 40 }}
         modalContentContainerStyle={{

@@ -1,18 +1,19 @@
 import { BaseToast, type BaseToastProps } from "react-native-toast-message";
 import { StyleSheet } from "react-native";
+import { colors } from "@/constants/colors";
 
 export const toastConfig = {
   success: (props: BaseToastProps) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: "#22c55e" }}
-      contentContainerStyle={{ backgroundColor: `white` }}
+      style={{ borderLeftColor: colors.greenLight }}
+      contentContainerStyle={{ backgroundColor: colors.bgLight }}
       text1Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "black" },
+        { textAlign: "left", fontSize: 16, color: colors.textLight },
         props.text1Style,
       ])}
       text2Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "black" },
+        { textAlign: "left", fontSize: 16, color: colors.textLight },
         props.text2Style,
       ])}
     />
@@ -20,28 +21,28 @@ export const toastConfig = {
   successDark: (props: BaseToastProps) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: "#1b9e4b" }}
-      contentContainerStyle={{ backgroundColor: `#1f2223` }}
+      style={{ borderLeftColor: colors.greenDark }}
+      contentContainerStyle={{ backgroundColor: colors.bgAccentDark }}
       text1Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "#E8E6E3" },
+        { textAlign: "left", fontSize: 16, color: colors.textDark },
         props.text1Style,
       ])}
       text2Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "#E8E6E3" },
+        { textAlign: "left", fontSize: 16, color: colors.textDark },
         props.text2Style,
       ])}
     />
   ),
   info: (props: BaseToastProps) => (
     <BaseToast
-      style={{ borderLeftColor: "#3B82F6" }}
-      contentContainerStyle={{ backgroundColor: `white` }}
+      style={{ borderLeftColor: colors.primaryLight }}
+      contentContainerStyle={{ backgroundColor: colors.bgLight }}
       text1Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "black" },
+        { textAlign: "left", fontSize: 16, color: colors.textLight },
         props.text1Style,
       ])}
       text2Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "black" },
+        { textAlign: "left", fontSize: 16, color: colors.textLight },
         props.text2Style,
       ])}
       {...props}
@@ -50,14 +51,14 @@ export const toastConfig = {
   infoDark: (props: BaseToastProps) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: "#0844a6" }}
-      contentContainerStyle={{ backgroundColor: `#1f2223` }}
+      style={{ borderLeftColor: colors.primaryDark }}
+      contentContainerStyle={{ backgroundColor: colors.bgAccentDark }}
       text1Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "#E8E6E3" },
+        { textAlign: "left", fontSize: 16, color: colors.textDark },
         props.text1Style,
       ])}
       text2Style={StyleSheet.flatten([
-        { textAlign: "left", fontSize: 16, color: "#E8E6E3" },
+        { textAlign: "left", fontSize: 16, color: colors.textDark },
         props.text2Style,
       ])}
     />

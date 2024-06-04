@@ -16,7 +16,7 @@ export default function OrderCardIssuedCheckbox({
   setOrder,
 }: OrderCardCompleteCheckboxProps) {
   const { user, showAlert } = useGlobalContext();
-  const { theme } = useThemeContext();
+  const { theme, colors } = useThemeContext();
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
 
@@ -61,7 +61,7 @@ export default function OrderCardIssuedCheckbox({
     <Checkbox
       label="Skompletowane:"
       status={order.issued}
-      fillColor={theme === "light" ? "rgb(34 197 94)" : "#1b9e4b"}
+      fillColor={colors.green}
       disabled={!userHasAccess || order.completed}
       onPress={() => changeCompletedStatus(order)}
     />
