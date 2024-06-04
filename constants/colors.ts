@@ -21,4 +21,6 @@ export const colors = {
   tabIconDark: "#A1998D",
   borderLight: "#D8D8D8",
   borderDark: "#3B4042",
+  greenLight: "#22c55e",
+  greenDark: "#1b9e4b",
 } as const;
