@@ -1,5 +1,5 @@
-import { View, Text, Dimensions, type TextInput } from "react-native";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { View, Text, type TextInput } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -7,8 +7,8 @@ import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
-import ActionSheet, { ScrollView } from "react-native-actions-sheet";
 import tw from "@/lib/twrnc";
+import ActionSheet, { ScrollView } from "react-native-actions-sheet";
 import Toast from "react-native-toast-message";
 import { QuantityInput } from "./QuantityInput";
 import { BuyersDropDownPicker } from "./BuyersDropDownPicker";
@@ -22,21 +22,25 @@ export default function OrderBottomSheet() {
   const { theme, colors } = useThemeContext();
   const { bottomSheetModalRef, handleCloseBottomSheet } = useBottomSheetContext();
   const [quantity, setQuantity] = useState(1);
+  const {
+    currentPrice,
+    ordersData,
+    ordersSearchParams,
+    editedOrder,
+    setEditedOrder,
+    setIsBannerVisible,
+    today,
+  } = useOrdersContext();
   const orderDataInitialState = {
     quantity: quantity,
     buyerName: "",
     additionalInfo: "",
     userId: user && user.$id,
+    deliveryDate:
+      ordersSearchParams.startDate === ordersSearchParams.endDate
+        ? ordersSearchParams.startDate
+        : today,
   };
-  const {
-    currentPrice,
-    ordersData,
-    editedOrder,
-    setEditedOrder,
-    setOrdersSearchParams,
-    setIsBannerVisible,
-    today,
-  } = useOrdersContext();
   const [orderData, setOrderData] = useState(orderDataInitialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -119,13 +123,15 @@ export default function OrderBottomSheet() {
               completed: editedOrder.completed,
               additionalInfo: orderData.additionalInfo.trim(),
               issued: editedOrder.issued,
+              deliveryDate: editedOrder.deliveryDate,
             })
           : await createOrder(
               user.$id,
               buyerId,
               orderData.quantity,
               currentPrice.$id,
-              orderData.additionalInfo.trim()
+              orderData.additionalInfo.trim(),
+              orderData.deliveryDate
             );
 
         // Show error alert if there are any errors, otherwise close bottom sheet and banner, reset search params, show success toast, refetch data for orders and buyers
@@ -137,7 +143,6 @@ export default function OrderBottomSheet() {
           }
         } else {
           setIsBannerVisible(false);
-          setOrdersSearchParams({ startDate: today, endDate: today, userId: undefined });
           handleCloseBottomSheet();
           ordersData && ordersData.refetchData();
           buyersRefetchData();
@@ -170,9 +175,15 @@ export default function OrderBottomSheet() {
     }
   }
 
+  // Update orderData quantity on quantity change
   useEffect(() => {
     setOrderData({ ...orderData, quantity: quantity });
   }, [quantity]);
+
+  // Update orderData deliveryDate on startDate or endDate change
+  useEffect(() => {
+    setOrderData({ ...orderData, deliveryDate: orderDataInitialState.deliveryDate });
+  }, [ordersSearchParams.startDate, ordersSearchParams.endDate, today]);
 
   useEffect(() => {
     if (editedOrder) {
@@ -181,6 +192,7 @@ export default function OrderBottomSheet() {
         buyerName: editedOrder.buyer.buyerName,
         additionalInfo: editedOrder.additionalInfo || "",
         userId: user && user.$id,
+        deliveryDate: editedOrder.deliveryDate,
       });
       setQuantity(editedOrder.quantity);
     } else {
@@ -188,10 +200,6 @@ export default function OrderBottomSheet() {
       setQuantity(1);
     }
   }, [editedOrder]);
-
-  const dropdownHeight = useMemo(() => {
-    return Dimensions.get("window").height * 0.375;
-  }, []);
 
   return (
     <ActionSheet
@@ -211,7 +219,7 @@ export default function OrderBottomSheet() {
       containerStyle={tw`w-full max-w-[700px] px-4 bg-[${colors.bg}]`}
     >
       <ScrollView>
-        <View style={tw`min-h-[${dropdownHeight + 160}px]`}>
+        <View>
           <Text style={tw`font-poppinsSemiBold text-lg mb-4 text-center text-[${colors.text}]`}>
             {`${editedOrder ? "Edytuj " : "Dodaj nowe"} zamówienie`}
           </Text>
@@ -226,7 +234,6 @@ export default function OrderBottomSheet() {
           <BuyersDropDownPicker
             ref={buyerNameRef}
             defaultValue={editedOrder ? editedOrder.buyer.buyerName : undefined}
-            dropDownHeight={dropdownHeight}
             buyers={buyers}
             loading={isLoadingBuyers}
             onChangeValue={(value: ValueType | null) => {
@@ -251,7 +258,7 @@ export default function OrderBottomSheet() {
           text={editedOrder ? "Zapisz zmiany" : "Utwórz zamówienie"}
           onPress={handleOrder}
           loading={isSubmitting}
-          containerStyles="mb-8 z-0"
+          containerStyles="mb-8 z-0 h-[56px]"
         />
       </ScrollView>
     </ActionSheet>

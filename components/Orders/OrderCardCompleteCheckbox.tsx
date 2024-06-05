@@ -34,6 +34,7 @@ export default function OrderCardCompleteCheckbox({
           completed: !order.completed,
           additionalInfo: order.additionalInfo,
           issued: order.issued,
+          deliveryDate: order.deliveryDate,
         };
 
         // Update the order in the local state for immediate feedback to the user
