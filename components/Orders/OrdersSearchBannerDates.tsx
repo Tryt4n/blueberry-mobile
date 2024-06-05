@@ -8,8 +8,8 @@ import tw from "@/lib/twrnc";
 import { DateInput } from "../DateInput";
 import type { OrdersSearchParams } from "@/types/orders";
 
-export default function OrdersSearchBannerDates({ containerWidth }: { containerWidth: number }) {
-  const { ordersSearchParams, setOrdersSearchParams, today: todayDate } = useOrdersContext();
+export default function OrdersSearchBannerDates() {
+  const { ordersSearchParams, setOrdersSearchParams } = useOrdersContext();
   const { colors } = useThemeContext();
   const { showModal, setModalData } = useModalContext();
 
@@ -17,8 +17,6 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
     ordersSearchParams.startDate
   );
   const [endDate, setEndDate] = useState<OrdersSearchParams["endDate"]>(ordersSearchParams.endDate);
-
-  const inputWidth = (containerWidth - 16) / 2;
 
   const openSelectDateModal = useCallback(
     (period: "start" | "end") => {
@@ -50,7 +48,6 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
             },
           },
           minDate: period === "start" ? "2024-05-01" : startDate,
-          maxDate: period === "start" && endDate ? endDate : todayDate,
         },
       });
       showModal();
@@ -103,9 +100,8 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
   }, [startDate, endDate]);
 
   return (
-    <View style={tw`flex flex-row justify-between mt-4`}>
+    <View style={tw`flex flex-row justify-between mt-4 gap-x-2`}>
       <DateInput
-        containerProps={{ style: { width: inputWidth } }}
         label="Od:"
         text={
           ordersSearchParams.startDate
@@ -116,7 +112,6 @@ export default function OrdersSearchBannerDates({ containerWidth }: { containerW
       />
 
       <DateInput
-        containerProps={{ style: { width: inputWidth } }}
         label="Do:"
         text={
           ordersSearchParams.endDate
