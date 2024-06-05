@@ -20,7 +20,7 @@ type OrderCardProps = {
 export default function OrderCard({ order: orderData, price, additionalStyles }: OrderCardProps) {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
-  const { ordersSearchParams } = useOrdersContext();
+  const { ordersSearchParams, today } = useOrdersContext();
   const [order, setOrder] = useState(orderData);
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
@@ -88,10 +88,12 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
             </View>
           )}
 
-          <OrderCardOptions
-            order={order}
-            setOrder={setOrder}
-          />
+          {(ordersSearchParams.startDate >= today || userHasAccess) && (
+            <OrderCardOptions
+              order={order}
+              setOrder={setOrder}
+            />
+          )}
         </View>
       )}
     </>
