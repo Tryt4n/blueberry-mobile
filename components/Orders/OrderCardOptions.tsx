@@ -5,7 +5,7 @@ import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useModalContext } from "@/hooks/useModalContext";
-import { changeOrderPrice as changeOrderPriceAppwrite } from "@/api/appwrite/orders";
+import { changeOrderPrice as changeOrderPriceAppwrite, editOrder } from "@/api/appwrite/orders";
 import { avatarImages } from "@/constants/avatars";
 import { formatDate } from "@/helpers/dates";
 import { isBefore, subDays, formatDistanceToNow } from "date-fns";
@@ -32,9 +32,9 @@ export type OrderOption = {
 export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsProps) {
   const { user, showAlert } = useGlobalContext();
   const { theme, colors } = useThemeContext();
-  const { setEditedOrder, deleteOrder } = useOrdersContext();
+  const { ordersData, today, setEditedOrder, deleteOrder } = useOrdersContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
-  const { setModalData, showModal } = useModalContext();
+  const { setModalData, showModal, closeModal } = useModalContext();
 
   const [modalInputValue, setModalInputValue] = useState(order.currentPrice.price.toString() || "");
 
@@ -102,6 +102,56 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
     [setModalData, showModal, setEditedOrder, modalInputValue, setModalInputValue]
   );
 
+  const openCalendarModal = useCallback(() => {
+    setModalData({
+      title: "Zmień datę dostawy zamówienia",
+      btn1: {
+        text: "Anuluj",
+        color: "danger",
+      },
+      calendar: {
+        minDate: !userHasAccess ? today : undefined, // If the user has access, allow to select any date otherwise only today or future dates
+        markedDates: {
+          [order.deliveryDate]: {
+            selected: true,
+            selectedColor: colors.primary,
+          },
+        },
+        onDayPress: (day) => editOrderDate(day.dateString),
+      },
+    });
+    showModal();
+  }, [order.deliveryDate, today, userHasAccess, showModal]);
+
+  const editOrderDate = useCallback(async (deliveryDate: string) => {
+    try {
+      closeModal();
+      const { order: changedOrder } = await editOrder(order.$id, {
+        userId: order.user.$id,
+        buyerId: order.buyer.$id,
+        quantity: order.quantity,
+        completed: order.completed,
+        additionalInfo: order.additionalInfo,
+        issued: order.issued,
+        deliveryDate: deliveryDate,
+      });
+
+      if (changedOrder) {
+        await ordersData?.refetchData();
+        Toast.show({
+          type: theme === "light" ? "success" : "successDark",
+          text1: "Zmieniono datę dostawy",
+          text2: `zamówienia na ${formatDate(deliveryDate, "dd.MM.yyyy")}`,
+          text2Style: { fontWeight: "bold" },
+        });
+      } else {
+        throw new Error("Nie udało się zmienić daty dostawy zamówienia.");
+      }
+    } catch (error: any) {
+      showAlert("Błąd", error);
+    }
+  }, []);
+
   const orderOptions: OrderOption[] = [
     {
       text: "Edytuj",
@@ -112,6 +162,11 @@ export default function OrderCardOptions({ order, setOrder }: OrderCardOptionsPr
       text: "Usuń",
       icon: { name: "trash", color: "danger" },
       onSelect: () => openDeleteModalConfirmation(order.$id, order.user.$id),
+    },
+    {
+      text: "Zmień datę dostawy",
+      icon: { name: "calendar", color: "primary" },
+      onSelect: () => openCalendarModal(),
     },
   ];
 
