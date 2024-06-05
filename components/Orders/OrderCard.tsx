@@ -89,10 +89,7 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
           )}
 
           {(ordersSearchParams.startDate >= today || userHasAccess) && (
-            <OrderCardOptions
-              order={order}
-              setOrder={setOrder}
-            />
+            <OrderCardOptions order={order} />
           )}
         </View>
       )}
