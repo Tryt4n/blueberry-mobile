@@ -1,10 +1,6 @@
-import { createContext, useCallback, useState } from "react";
-import { deleteOrder as deleteOrderAppwrite } from "@/api/appwrite/orders";
-import { useGlobalContext } from "@/hooks/useGlobalContext";
-import { useThemeContext } from "@/hooks/useThemeContext";
+import { createContext, useState } from "react";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale/pl";
-import Toast from "react-native-toast-message";
 import type { Order, OrdersDataType, OrdersSearchParams } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
 
@@ -15,7 +11,6 @@ type OrderContextType = {
   setOrdersData: (obj: OrdersDataType | null) => void;
   editedOrder: Order | null;
   setEditedOrder: (order: Order | null) => void;
-  deleteOrder: (orderId: Order["$id"]) => Promise<void>;
   isBannerVisible: boolean;
   setIsBannerVisible: (value: boolean) => void;
   ordersSearchParams: OrdersSearchParams;
@@ -28,9 +23,6 @@ type OrderContextType = {
 export const OrdersContext = createContext<OrderContextType | null>(null);
 
 export default function OrderContextProvider({ children }: { children: React.ReactNode }) {
-  const { showAlert } = useGlobalContext();
-  const { theme } = useThemeContext();
-
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
   const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
@@ -43,32 +35,6 @@ export default function OrderContextProvider({ children }: { children: React.Rea
     userId: undefined,
   });
 
-  const deleteOrder = useCallback(
-    async (orderId: Order["$id"]) => {
-      try {
-        await deleteOrderAppwrite(orderId);
-
-        setOrdersData((prevData) => {
-          if (!prevData) return null;
-          return {
-            ...prevData,
-            data: prevData?.data?.filter((order) => order.$id !== orderId),
-          };
-        });
-
-        Toast.show({
-          type: theme === "light" ? "success" : "successDark",
-          text1: "Zamówienie zostało pomyślnie",
-          text2: "usunięte.",
-          text2Style: { fontWeight: "bold" },
-        });
-      } catch (error) {
-        showAlert("Błąd", "Nie udało się usunąć zamówienia.");
-      }
-    },
-    [deleteOrderAppwrite]
-  );
-
   const contextValues: OrderContextType = {
     currentPrice,
     setCurrentPrice,
@@ -76,7 +42,6 @@ export default function OrderContextProvider({ children }: { children: React.Rea
     setOrdersData,
     editedOrder,
     setEditedOrder,
-    deleteOrder,
     isBannerVisible,
     setIsBannerVisible,
     ordersSearchParams,
