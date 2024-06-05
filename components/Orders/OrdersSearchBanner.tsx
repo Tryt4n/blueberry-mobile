@@ -38,7 +38,7 @@ export default function OrdersSearchBanner() {
       </Text>
 
       <View style={{ width: containerWidth }}>
-        <OrdersSearchBannerDates containerWidth={containerWidth} />
+        <OrdersSearchBannerDates />
 
         {(user?.role === "admin" || user?.role === "moderator") && <OrdersSearchBannerUser />}
       </View>
