@@ -118,7 +118,7 @@ export default function CurrentPrice() {
   }, [fetchedCurrentPrice]);
 
   return (
-    <View style={tw`flex-row justify-between items-center gap-x-4`}>
+    <View style={tw`flex-row justify-between items-center gap-x-4 flex-wrap gap-y-2`}>
       <View style={tw`flex-row items-center gap-x-4`}>
         <PriceLoadingText
           text="Cena:"
