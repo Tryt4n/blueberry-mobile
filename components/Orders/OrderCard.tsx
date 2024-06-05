@@ -2,6 +2,8 @@ import { View, Text } from "react-native";
 import { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
+import { formatDate } from "@/helpers/dates";
 import tw from "@/lib/twrnc";
 import OrderCardIssuedCheckbox from "./OrderCardIssuedCheckbox";
 import OrderCardCompleteCheckbox from "./OrderCardCompleteCheckbox";
@@ -18,6 +20,7 @@ type OrderCardProps = {
 export default function OrderCard({ order: orderData, price, additionalStyles }: OrderCardProps) {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
+  const { ordersSearchParams } = useOrdersContext();
   const [order, setOrder] = useState(orderData);
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
@@ -64,6 +67,15 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
               <Text style={tw`text-sm`}>&nbsp;(po {order.currentPrice.price} zł)</Text>
             )}
           </Text>
+
+          {ordersSearchParams.startDate !== ordersSearchParams.endDate && (
+            <Text style={tw`text-sm font-poppinsRegular text-[${colors.text}]`}>
+              Na:&nbsp;
+              <Text style={tw`text-base font-poppinsMedium`}>
+                {formatDate(order.deliveryDate, "dd.MM.yyyy - EEEE")}
+              </Text>
+            </Text>
+          )}
 
           {order.additionalInfo && (
             <View style={tw`pt-2 pb-4`}>
