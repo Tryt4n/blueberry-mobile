@@ -37,7 +37,9 @@ function InnerCustomDropDownPicker(
 
   return (
     <View style={tw`my-4`}>
-      <Text style={tw`pb-1 text-base font-medium text-[${colors.text}]`}>{label}</Text>
+      <Text style={tw`pb-1 font-poppinsSemiBold text-base font-medium text-[${colors.text}]`}>
+        {label}
+      </Text>
       <DropDownPicker
         select
         listMode="SCROLLVIEW"
