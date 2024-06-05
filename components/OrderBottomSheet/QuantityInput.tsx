@@ -76,7 +76,9 @@ function InnerQuantityInput(
   return (
     <View className={containerStyles}>
       {label && (
-        <Text style={tw`pb-1 text-base font-medium text-center text-[${colors.text}]`}>
+        <Text
+          style={tw`pb-1 font-poppinsMedium text-base font-medium text-center text-[${colors.text}]`}
+        >
           {label}
         </Text>
       )}
