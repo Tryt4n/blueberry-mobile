@@ -7,19 +7,26 @@ type DateInputProps = {
   label: string;
   text: string;
   onPress: () => void;
+  containerStyles?: string;
   containerProps?: ComponentProps<typeof View>;
 };
 
-export function DateInput({ label, text, onPress, containerProps }: DateInputProps) {
+export function DateInput({
+  label,
+  text,
+  onPress,
+  containerStyles,
+  containerProps,
+}: DateInputProps) {
   const { colors } = useThemeContext();
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <View
-      style={tw`pt-4`}
+      style={tw`flex-1${containerStyles ? ` ${containerStyles}` : ""}`}
       {...containerProps}
     >
-      <Text style={tw`font-poppinsRegular text-base font-medium pb-1 text-[${colors.text}]`}>
+      <Text style={tw`font-poppinsSemiBold text-base font-medium pb-1 text-[${colors.text}]`}>
         {label}
       </Text>
 
