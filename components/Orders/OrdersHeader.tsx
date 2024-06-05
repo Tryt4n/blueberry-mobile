@@ -14,7 +14,7 @@ export default function OrdersHeader() {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
-  const { ordersData, isBannerVisible } = useOrdersContext();
+  const { ordersData, ordersSearchParams, isBannerVisible, today } = useOrdersContext();
 
   return (
     <>
@@ -23,11 +23,19 @@ export default function OrdersHeader() {
           {user?.role === "admin" || user?.role === "moderator" ? "Zamówienia" : "Twoje zamówienia"}
         </Text>
 
-        <AddButton
-          disabled={ordersData?.isLoading}
-          onPress={handleOpenBottomSheet}
-          aria-label="Dodaj nowe zamówienie"
-        />
+        {
+          // Display the AddButton component if the selected date is today or later, or if the user is an admin or moderator
+          // ordersSearchParams.startDate >= today && (
+          (ordersSearchParams.startDate >= today ||
+            user?.role === "admin" ||
+            user?.role === "moderator") && (
+            <AddButton
+              disabled={ordersData?.isLoading}
+              onPress={handleOpenBottomSheet}
+              aria-label="Dodaj nowe zamówienie"
+            />
+          )
+        }
       </View>
 
       <CurrentPrice />
