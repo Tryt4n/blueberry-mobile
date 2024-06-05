@@ -26,7 +26,7 @@ function InnerFormField(
   return (
     <View style={tw`relative mb-4${otherStyles ? ` ${otherStyles}` : ""}`}>
       <Text
-        style={tw`pb-1 text-base font-medium text-[${colors.text}]${
+        style={tw`pb-1 font-poppinsSemiBold text-base font-medium text-[${colors.text}]${
           titleStyles ? ` ${titleStyles}` : ""
         }`}
       >
@@ -47,7 +47,6 @@ function InnerFormField(
             tw`flex-1 font-poppinsSemiBold text-base text-[${colors.textAccent}]`,
             platform === "web"
               ? {
-                  // @ts-ignore - `caretColor` is not recognized for <TextInput/>
                   outline: "none",
                   caretColor: colors.primary,
                 }
