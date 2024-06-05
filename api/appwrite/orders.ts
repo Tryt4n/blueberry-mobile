@@ -10,9 +10,10 @@ import type { CurrentPrice } from "@/types/currentPrice";
 export async function createOrder(
   userId: User["$id"],
   buyerId: Buyer["$id"],
-  quantity: number,
+  quantity: Order["quantity"],
   currentPriceId: CurrentPrice["$id"],
-  additionalInfo?: string
+  additionalInfo: Order["additionalInfo"],
+  deliveryDate: Order["deliveryDate"]
 ) {
   const customErrors: Record<string, string[]> = {
     userId: [],
@@ -40,10 +41,11 @@ export async function createOrder(
         ID.unique(),
         {
           user: userId,
-          quantity: quantity,
+          quantity,
           additionalInfo: additionalInfo ? additionalInfo : null,
           buyer: buyerId,
           currentPrice: currentPriceId,
+          deliveryDate,
         }
       );
 
@@ -59,10 +61,11 @@ export async function editOrder(
   updatedOrderData: {
     userId: User["$id"];
     buyerId: Buyer["$id"];
-    quantity: number;
-    completed: boolean;
-    additionalInfo: string | null;
+    quantity: Order["quantity"];
+    completed: Order["completed"];
+    additionalInfo: Order["additionalInfo"];
     issued: Order["issued"];
+    deliveryDate: Order["deliveryDate"];
   }
 ) {
   const customErrors: Record<string, string[]> = {
@@ -95,6 +98,7 @@ export async function editOrder(
           additionalInfo: updatedOrderData.additionalInfo,
           completed: updatedOrderData.completed,
           issued: updatedOrderData.issued,
+          deliveryDate: updatedOrderData.deliveryDate,
         }
       );
 
@@ -144,7 +148,7 @@ export async function getOrders(startDate: string, endDate: string, userId?: Use
     endDate = endDate + "T23:59:59.999Z";
 
     let ordersFilters = [
-      Query.between("$createdAt", startDate, endDate),
+      Query.between("deliveryDate", startDate, endDate),
       Query.orderDesc("$createdAt"),
     ];
 
