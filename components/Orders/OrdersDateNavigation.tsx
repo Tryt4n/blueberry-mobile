@@ -1,41 +1,20 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { useCallback } from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
+import { useDayChange } from "@/hooks/OrderHooks/useDayChange";
 import { formatDate } from "@/helpers/dates";
-import { format } from "date-fns";
 import tw from "@/lib/twrnc";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function OrdersDateNavigation() {
   const { colors } = useThemeContext();
-  const { ordersData, ordersSearchParams, setOrdersSearchParams, setIsBannerVisible } =
-    useOrdersContext();
+  const { ordersData, ordersSearchParams, setIsBannerVisible } = useOrdersContext();
+  const handleDayChange = useDayChange();
 
   const formattedDate =
     ordersSearchParams.startDate === ordersSearchParams.endDate
       ? formatDate(ordersSearchParams.startDate, "dd.MM.yyyy - EEEE")
       : `${formatDate(ordersSearchParams.startDate)} - ${formatDate(ordersSearchParams.endDate)}`;
-
-  const handleDayChange = useCallback(
-    (direction: "prev" | "next") => {
-      const dayToChange = new Date(
-        direction === "prev" ? ordersSearchParams.startDate : ordersSearchParams.endDate
-      );
-
-      const changedDay = format(
-        dayToChange.setDate(dayToChange.getDate() + (direction === "prev" ? -1 : 1)),
-        "yyyy-MM-dd"
-      );
-
-      setOrdersSearchParams((prevState) => ({
-        ...prevState,
-        startDate: changedDay,
-        endDate: changedDay,
-      }));
-    },
-    [ordersSearchParams, ordersData]
-  );
 
   return (
     <View
