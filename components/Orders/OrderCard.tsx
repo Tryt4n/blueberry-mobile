@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { useState } from "react";
+import { memo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -17,11 +17,10 @@ type OrderCardProps = {
   additionalStyles?: string;
 };
 
-export default function OrderCard({ order: orderData, price, additionalStyles }: OrderCardProps) {
+function OrderCard({ order, price, additionalStyles }: OrderCardProps) {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
-  const { ordersSearchParams, today } = useOrdersContext();
-  const [order, setOrder] = useState(orderData);
+  const { ordersSearchParams } = useOrdersContext();
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
 
@@ -38,16 +37,8 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
               order.completed || !userHasAccess ? "justify-end" : "justify-between"
             }`}
           >
-            {userHasAccess && !order.completed && (
-              <OrderCardIssuedCheckbox
-                order={order}
-                setOrder={setOrder}
-              />
-            )}
-            <OrderCardCompleteCheckbox
-              order={order}
-              setOrder={setOrder}
-            />
+            {userHasAccess && !order.completed && <OrderCardIssuedCheckbox order={order} />}
+            <OrderCardCompleteCheckbox order={order} />
           </View>
 
           <Text style={tw`text-xl text-center font-poppinsRegular text-[${colors.text}]`}>
@@ -77,7 +68,7 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
             </Text>
           )}
 
-          {order.additionalInfo && (
+          {order.additionalInfo ? (
             <View style={tw`pt-2 pb-4`}>
               <Text style={tw`font-poppinsMedium text-sm text-[${colors.text}]`}>
                 Informacje dodatkowe:
@@ -86,13 +77,13 @@ export default function OrderCard({ order: orderData, price, additionalStyles }:
                 {order.additionalInfo}
               </Text>
             </View>
-          )}
+          ) : null}
 
-          {(ordersSearchParams.startDate >= today || userHasAccess) && (
-            <OrderCardOptions order={order} />
-          )}
+          <OrderCardOptions order={order} />
         </View>
       )}
     </>
   );
 }
+
+export default memo(OrderCard);
