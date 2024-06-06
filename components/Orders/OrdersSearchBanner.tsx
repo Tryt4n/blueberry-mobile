@@ -1,6 +1,6 @@
 import { View, Text, useWindowDimensions } from "react-native";
 import { Banner } from "react-native-paper";
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
@@ -8,7 +8,7 @@ import tw from "@/lib/twrnc";
 import OrdersSearchBannerDates from "./OrdersSearchBannerDates";
 import OrdersSearchBannerUser from "./OrdersSearchBannerUser";
 
-export default function OrdersSearchBanner() {
+function OrdersSearchBanner() {
   const { user } = useGlobalContext();
   const { colors } = useThemeContext();
   const { isBannerVisible, setIsBannerVisible } = useOrdersContext();
@@ -45,3 +45,5 @@ export default function OrdersSearchBanner() {
     </Banner>
   );
 }
+
+export default memo(OrdersSearchBanner);

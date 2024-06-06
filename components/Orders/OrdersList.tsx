@@ -1,24 +1,24 @@
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl, useWindowDimensions } from "react-native";
-import { useState } from "react";
+import { useCallback, useState, memo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import OrderCard from "./OrderCard";
 import Toast from "react-native-toast-message";
 
-export default function OrdersList() {
+function OrdersList() {
   const { user, platform } = useGlobalContext();
   const { theme, colors } = useThemeContext();
   const { currentPrice, ordersData, setIsBannerVisible } = useOrdersContext();
-  const [refreshing, setRefreshing] = useState(false);
   const { width } = useWindowDimensions();
+  const [refreshing, setRefreshing] = useState(false);
 
-  async function refetchOrders() {
+  const refetchOrders = useCallback(async () => {
     setRefreshing(true);
     setIsBannerVisible(false);
 
-    ordersData && (await ordersData.refetchData());
+    await ordersData?.refetchData();
 
     Toast.show({
       type: theme === "light" ? "info" : "infoDark",
@@ -27,7 +27,7 @@ export default function OrdersList() {
     });
 
     setRefreshing(false);
-  }
+  }, [ordersData]);
 
   return (
     <>
@@ -57,3 +57,5 @@ export default function OrdersList() {
     </>
   );
 }
+
+export default memo(OrdersList);

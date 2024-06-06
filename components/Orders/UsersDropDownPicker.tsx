@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { useEffect, useState, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps, memo } from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import { CustomDropDownPicker } from "../CustomDropDownPicker";
@@ -9,7 +9,7 @@ type UsersDropDownPickerProps = {
   users?: User[];
 } & Omit<ComponentProps<typeof CustomDropDownPicker>, "items" | "setItems" | "label">;
 
-export function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProps) {
+function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProps) {
   const { colors } = useThemeContext();
   const [items, setItems] = useState<Record<"label" | "value", string>[]>([]);
 
@@ -34,3 +34,5 @@ export function UsersDropDownPicker({ users, ...props }: UsersDropDownPickerProp
     />
   );
 }
+
+export default memo(UsersDropDownPicker);

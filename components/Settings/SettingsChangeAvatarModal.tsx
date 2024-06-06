@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, Platform } from "react-native";
-import { useCallback } from "react";
+import { useCallback, memo } from "react";
 import { getCustomAvatar, uploadCustomAvatar } from "@/api/appwrite/avatars";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
@@ -17,7 +17,7 @@ type SettingsChangeAvatarModalProps = {
   setIsCustomAvatarId: (value: string) => void;
 };
 
-export default function SettingsChangeAvatarModal({
+function SettingsChangeAvatarModal({
   avatar,
   setAvatar,
   setIsCustomAvatar,
@@ -91,3 +91,5 @@ export default function SettingsChangeAvatarModal({
     </View>
   );
 }
+
+export default memo(SettingsChangeAvatarModal);

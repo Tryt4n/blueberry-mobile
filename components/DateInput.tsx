@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { useState, type ComponentProps } from "react";
+import { useState, memo, type ComponentProps } from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 
@@ -11,13 +11,7 @@ type DateInputProps = {
   containerProps?: ComponentProps<typeof View>;
 };
 
-export function DateInput({
-  label,
-  text,
-  onPress,
-  containerStyles,
-  containerProps,
-}: DateInputProps) {
+function DateInput({ label, text, onPress, containerStyles, containerProps }: DateInputProps) {
   const { colors } = useThemeContext();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -43,3 +37,5 @@ export function DateInput({
     </View>
   );
 }
+
+export default memo(DateInput);

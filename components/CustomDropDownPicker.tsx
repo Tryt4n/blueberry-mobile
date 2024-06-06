@@ -1,5 +1,5 @@
 import { View, Text, type TextInput, type TextInputProps } from "react-native";
-import React, { forwardRef, useEffect, useState, type ForwardedRef } from "react";
+import React, { useEffect, useState, memo, forwardRef, type ForwardedRef } from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
@@ -156,4 +156,4 @@ function InnerCustomDropDownPicker(
   );
 }
 
-export const CustomDropDownPicker = forwardRef(InnerCustomDropDownPicker);
+export const CustomDropDownPicker = memo(forwardRef(InnerCustomDropDownPicker));

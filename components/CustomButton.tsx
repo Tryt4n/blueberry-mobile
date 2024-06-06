@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
-import React, { type ComponentPropsWithoutRef } from "react";
+import React, { type ComponentPropsWithoutRef, memo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
@@ -13,7 +13,7 @@ type CustomButtonProps = {
   loadingSpinnerSize?: "small" | "large";
 } & Omit<ComponentPropsWithoutRef<typeof TouchableOpacity>, "className">;
 
-export default function CustomButton({
+function CustomButton({
   text,
   containerStyles,
   textStyles,
@@ -53,3 +53,5 @@ export default function CustomButton({
     </TouchableOpacity>
   );
 }
+
+export default memo(CustomButton);

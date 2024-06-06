@@ -1,11 +1,12 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
-import { useEditOrder } from "./OrderOptions/useEditOrder";
-import { useDeleteOrder } from "./OrderOptions/useDeleteOrder";
-import { useChangeOrderPrice } from "./OrderOptions/useChangeOrderPrice";
-import { useChangeOrderDate } from "./OrderOptions/useChangeOrderDate";
+import { useOrdersContext } from "@/hooks/useOrdersContext";
+import { useEditOrder } from "@/hooks/OrderHooks/useEditOrder";
+import { useDeleteOrder } from "@/hooks/OrderHooks/useDeleteOrder";
+import { useChangeOrderPrice } from "@/hooks/OrderHooks/useChangeOrderPrice";
+import { useChangeOrderDate } from "@/hooks/OrderHooks/useChangeOrderDate";
 import { avatarImages } from "@/constants/avatars";
 import { formatDate } from "@/helpers/dates";
 import { isBefore, subDays, formatDistanceToNow } from "date-fns";
@@ -23,8 +24,9 @@ export type OrderOption = {
   onSelect: () => void;
 };
 
-export default function OrderCardOptions({ order }: { order: Order }) {
+function OrderCardOptions({ order }: { order: Order }) {
   const { user } = useGlobalContext();
+  const { ordersSearchParams, today } = useOrdersContext();
   const { colors } = useThemeContext();
 
   const [modalInputValue, setModalInputValue] = useState(order.currentPrice.price.toString() || "");
@@ -68,10 +70,10 @@ export default function OrderCardOptions({ order }: { order: Order }) {
   return (
     <View style={tw`flex flex-row-reverse justify-between items-end`}>
       {
-        // Show options only when order is not completed or if order is completed but the user has access
-        ((userHasAccess && order.completed) || !order.completed) && (
-          <OrderCardMenuOptions options={orderOptions} />
-        )
+        // Show options only when order is not completed or if order is completed but delivery date is in the past or if the user has access
+        (order.completed ||
+          (!order.completed && ordersSearchParams.startDate >= today) ||
+          userHasAccess) && <OrderCardMenuOptions options={orderOptions} />
       }
 
       <View style={tw`mt-8`}>
@@ -97,3 +99,5 @@ export default function OrderCardOptions({ order }: { order: Order }) {
     </View>
   );
 }
+
+export default memo(OrderCardOptions);

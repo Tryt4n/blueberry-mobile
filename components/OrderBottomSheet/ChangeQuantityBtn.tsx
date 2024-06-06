@@ -1,19 +1,15 @@
+import { memo, type ComponentProps } from "react";
 import { TouchableOpacity } from "react-native";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import { Entypo } from "@expo/vector-icons";
-import type { ComponentProps } from "react";
 
 type ChangeQuantityBtnProps = {
   type: "increase" | "decrease";
   borderlineValue: number;
 } & ComponentProps<typeof TouchableOpacity>;
 
-export default function ChangeQuantityBtn({
-  type,
-  borderlineValue,
-  ...props
-}: ChangeQuantityBtnProps) {
+function ChangeQuantityBtn({ type, borderlineValue, ...props }: ChangeQuantityBtnProps) {
   const { colors } = useThemeContext();
 
   const condition =
@@ -38,3 +34,5 @@ export default function ChangeQuantityBtn({
     </TouchableOpacity>
   );
 }
+
+export default memo(ChangeQuantityBtn);

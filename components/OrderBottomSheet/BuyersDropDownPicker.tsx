@@ -1,4 +1,11 @@
-import { forwardRef, useEffect, useState, type ComponentProps, type ForwardedRef } from "react";
+import {
+  useEffect,
+  useState,
+  memo,
+  forwardRef,
+  type ComponentProps,
+  type ForwardedRef,
+} from "react";
 import { CustomDropDownPicker } from "../CustomDropDownPicker";
 import type { Buyer } from "@/types/buyers";
 import type { TextInput } from "react-native";
@@ -32,4 +39,4 @@ function InnerBuyersDropDownPicker(
   );
 }
 
-export const BuyersDropDownPicker = forwardRef(InnerBuyersDropDownPicker);
+export const BuyersDropDownPicker = memo(forwardRef(InnerBuyersDropDownPicker));
