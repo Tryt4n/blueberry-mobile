@@ -41,7 +41,11 @@ export function useSelectDate() {
         },
         calendar: {
           onDayPress: (day) => {
-            period === "start" ? setStartDate(day.dateString) : setEndDate(day.dateString);
+            period === "start"
+              ? day.dateString >= endDate
+                ? (setStartDate(day.dateString), setEndDate(day.dateString)) // If the start date is greater than the end date, set both dates to the selected date because the end date cannot be before the start date
+                : setStartDate(day.dateString) // If the start date is less than the end date, set only the start date to the selected date
+              : setEndDate(day.dateString); // Set the end date to the selected date
           },
           markedDates: {
             [startDate]: {
@@ -60,18 +64,8 @@ export function useSelectDate() {
       });
       showModal();
     },
-    // [startDate, endDate, ordersSearchParams, setModalData, showModal]
     [startDate, endDate, ordersSearchParams, setModalData, showModal, clearModalDates]
   );
-
-  // Reset the startDate or endDate in the modal
-  //   function clearModalDates(period: "start" | "end") {
-  //     if (period === "start") {
-  //       setStartDate(ordersSearchParams.startDate);
-  //     } else {
-  //       setEndDate(ordersSearchParams.endDate);
-  //     }
-  //   }
 
   // Save the selected date range
   const saveDateRange = useCallback(() => {
