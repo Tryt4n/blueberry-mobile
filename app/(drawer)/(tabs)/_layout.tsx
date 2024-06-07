@@ -1,9 +1,13 @@
 import { Tabs } from "expo-router";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import TabIcon from "@/components/TabIcon";
 
 export default function TabsLayout() {
+  const { user } = useGlobalContext();
   const { colors } = useThemeContext();
+
+  const userHasAccess = user?.role === "admin" || user?.role === "moderator";
 
   return (
     <Tabs
@@ -41,6 +45,7 @@ export default function TabsLayout() {
               focused={focused}
             />
           ),
+          tabBarItemStyle: userHasAccess ? { display: "flex" } : { display: "none" },
         }}
       />
 
@@ -71,6 +76,7 @@ export default function TabsLayout() {
               focused={focused}
             />
           ),
+          tabBarItemStyle: userHasAccess ? { display: "flex" } : { display: "none" },
         }}
       />
     </Tabs>

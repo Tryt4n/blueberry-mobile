@@ -1,10 +1,21 @@
+import { router } from "expo-router";
 import { View, Text } from "react-native";
-import React from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 
 export default function FertilizersTab() {
+  const { user, isLoading, isLoggedIn } = useGlobalContext();
+
+  const userHasAccess = user?.role === "admin" || user?.role === "moderator";
+
+  if (!isLoading && !userHasAccess) return router.replace("/");
+
   return (
-    <View>
-      <Text>fertilizers</Text>
-    </View>
+    <>
+      {isLoggedIn && userHasAccess && (
+        <View>
+          <Text>FertilizersTab</Text>
+        </View>
+      )}
+    </>
   );
 }
