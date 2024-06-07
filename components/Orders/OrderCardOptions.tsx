@@ -71,9 +71,9 @@ function OrderCardOptions({ order }: { order: Order }) {
     <View style={tw`flex flex-row-reverse justify-between items-end`}>
       {
         // Show options only when order is not completed or if order is completed but delivery date is in the past or if the user has access
-        (order.completed ||
-          (!order.completed && ordersSearchParams.startDate >= today) ||
-          userHasAccess) && <OrderCardMenuOptions options={orderOptions} />
+        ((!order.completed && ordersSearchParams.startDate >= today) || userHasAccess) && (
+          <OrderCardMenuOptions options={orderOptions} />
+        )
       }
 
       <View style={tw`mt-8`}>
