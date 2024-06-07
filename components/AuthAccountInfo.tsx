@@ -15,7 +15,7 @@ export default function AuthAccountInfo({ href }: { href: "/signIn" | "/signUp" 
           href={href}
           style={tw`font-poppinsSemiBold text-lg text-[${customColors.primaryLight}]`}
         >
-          {href === "/signIn" ? "Zaloguj sie " : href === "/signUp" ? "Zarejestruj się " : ""}
+          {href === "/signIn" ? "Zaloguj się " : href === "/signUp" ? "Zarejestruj się " : ""}
         </Link>
       </Text>
     </View>
