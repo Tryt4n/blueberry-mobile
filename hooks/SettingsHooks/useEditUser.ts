@@ -4,6 +4,8 @@ import { useModalContext } from "../useModalContext";
 import { useOrdersContext } from "../useOrdersContext";
 import { useThemeContext } from "../useThemeContext";
 import { editUserEmail, editUserPassword, editUserUsername } from "@/api/appwrite/users";
+import { decryptData } from "@/helpers/encryption";
+import { parsedEnv } from "@/lib/zod/env";
 import Toast from "react-native-toast-message";
 import type { EditSettingsOptions } from "@/types/editSettingsOptions";
 
@@ -11,7 +13,8 @@ export function useEditUser(
   type: EditSettingsOptions,
   setIsSubmitting: (value: boolean) => void,
   inputVisible: EditSettingsOptions | false,
-  setInputVisible: (value: EditSettingsOptions | false) => void
+  setInputVisible: (value: EditSettingsOptions | false) => void,
+  secretPassword?: string
 ) {
   const { user, refetchUser } = useGlobalContext();
   const { theme } = useThemeContext();
@@ -70,10 +73,20 @@ export function useEditUser(
       return;
     }
 
-    // If type is not "username" then check if the password confirmation input value is empty, if so then show an error
+    // If type is "email" and the password confirmation input value is empty then show an error
+    if (type === "email" && (!modalInputValue || modalInputValue === "") && !secretPassword) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: ["Pole wymagane"],
+      }));
+      return;
+    }
+
+    // If type is not "username" and it is not google account then check if the password confirmation input value is empty, if so then show an error
     if (
       type !== "username" &&
-      (!passwordConfirmationInputValue || passwordConfirmationInputValue === "")
+      (!passwordConfirmationInputValue || passwordConfirmationInputValue === "") &&
+      !secretPassword
     ) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -82,17 +95,28 @@ export function useEditUser(
       return;
     }
 
+    let password: string = passwordConfirmationInputValue;
+    if (secretPassword) {
+      const decryptedPassword = decryptData(
+        secretPassword,
+        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY //! For mobile
+        // process.env.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY! //! For netlify deploy
+      );
+
+      password = decryptedPassword;
+    }
+
     try {
       setIsSubmitting(true);
 
       // Call the appropriate function based on the type
       const editErrors =
         type === "email" // If type is "email" then call editUserEmail function
-          ? await editUserEmail(user.$id, modalInputValue, passwordConfirmationInputValue)
+          ? await editUserEmail(user.$id, modalInputValue, password)
           : type === "username" // If type is "username" then call editUserUsername function
           ? await editUserUsername(user.$id, modalInputValue)
           : // Otherwise the type has to be "password" so call editUserPassword function
-            await editUserPassword(modalInputValue, passwordConfirmationInputValue);
+            await editUserPassword(modalInputValue, password);
 
       // If there are any errors then show them
       if (editErrors) {
