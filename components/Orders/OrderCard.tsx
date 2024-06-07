@@ -37,8 +37,14 @@ function OrderCard({ order, price, additionalStyles }: OrderCardProps) {
               order.completed || !userHasAccess ? "justify-end" : "justify-between"
             }`}
           >
-            {userHasAccess && !order.completed && <OrderCardIssuedCheckbox order={order} />}
-            <OrderCardCompleteCheckbox order={order} />
+            {
+              // Display only when the order is not completed and the user has access
+              userHasAccess && !order.completed && <OrderCardIssuedCheckbox order={order} />
+            }
+            {
+              // Display only when the order is issued or the user has access
+              (userHasAccess || order.issued) && <OrderCardCompleteCheckbox order={order} />
+            }
           </View>
 
           <Text style={tw`text-xl text-center font-poppinsRegular text-[${colors.text}]`}>
