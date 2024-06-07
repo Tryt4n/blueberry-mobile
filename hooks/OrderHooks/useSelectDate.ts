@@ -102,5 +102,11 @@ export function useSelectDate() {
     }));
   }, [startDate, endDate]);
 
+  // Update modal dates when ordersSearchParams change
+  useEffect(() => {
+    setStartDate(ordersSearchParams.startDate);
+    setEndDate(ordersSearchParams.endDate);
+  }, [ordersSearchParams.startDate, ordersSearchParams.endDate]);
+
   return openSelectDateModal;
 }
