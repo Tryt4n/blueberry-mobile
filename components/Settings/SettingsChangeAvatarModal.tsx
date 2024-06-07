@@ -1,12 +1,11 @@
-import { View, TouchableOpacity, Platform } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { useCallback, memo } from "react";
 import { getCustomAvatar, uploadCustomAvatar } from "@/api/appwrite/avatars";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import useImagePick from "@/hooks/SettingsHooks/useImagePick";
 import { avatarImages } from "@/constants/avatars";
 import tw from "@/lib/twrnc";
-import * as ImagePicker from "expo-image-picker";
-import * as DocumentPicker from "expo-document-picker";
 import SettingsAvatarButton from "./SettingsAvatarButton";
 import { FontAwesome6 } from "@expo/vector-icons";
 
@@ -28,22 +27,7 @@ function SettingsChangeAvatarModal({
 
   // Open Image Picker
   const pickImage = useCallback(async () => {
-    let result: ImagePicker.ImagePickerResult | DocumentPicker.DocumentPickerResult;
-
-    if (Platform.OS === "web") {
-      result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-        allowsMultipleSelection: false,
-      });
-    } else {
-      result = await DocumentPicker.getDocumentAsync({
-        type: "image/*",
-        multiple: false,
-      });
-    }
+    const result = await useImagePick();
 
     // If the user cancels the image picker do nothing
     if (result.canceled) return;
