@@ -34,7 +34,8 @@ export default function SettingsEditSection({
     setModalInputValue,
     setPasswordConfirmationInputValue,
     resetStates,
-  } = useEditUser(type, setIsSubmitting, inputVisible, setInputVisible);
+    // @ts-ignore - secretPassword is not in the User type but it's in the API response
+  } = useEditUser(type, setIsSubmitting, inputVisible, setInputVisible, user.secretPassword);
 
   // Set form label and placeholder based on the type
   let formLabel: string;
@@ -51,7 +52,7 @@ export default function SettingsEditSection({
       break;
 
     case "password":
-      formLabel = inputVisible === type ? "Nowe hasło:" : "Hasło:";
+      formLabel = inputVisible === type ? "Nowe hasło:" : "Hasło";
       formPlaceholder = "Wprowadź nowe hasło";
       break;
   }
