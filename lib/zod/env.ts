@@ -13,6 +13,9 @@ const envSchema = z.object({
   EXPO_PUBLIC_APPWRITE_AVATARS_STORAGE_ID: z.string().min(1),
   EXPO_PUBLIC_ANDROID_CLIENT_ID: z.string().min(1),
   EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY: z.string().min(1),
+  EXPO_PUBLIC_WEATHER_APP_KEY: z.string().min(1),
+  EXPO_PUBLIC_WEATHER_API_KEY: z.string().min(1),
+  EXPO_PUBLIC_WEATHER_STATION_MAC_ADDRESS: z.string().min(1),
 });
 
 export const parsedEnv = envSchema.parse(process.env);
