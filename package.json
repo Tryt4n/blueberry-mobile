@@ -16,6 +16,7 @@
     "@react-navigation/native": "^6.0.2",
     "@react-oauth/google": "^0.12.1",
     "@shopify/flash-list": "1.6.3",
+    "axios": "^1.7.2",
     "date-fns": "^3.6.0",
     "expo": "~50.0.14",
     "expo-dev-client": "~3.3.11",
