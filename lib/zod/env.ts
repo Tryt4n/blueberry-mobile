@@ -16,6 +16,7 @@ const envSchema = z.object({
   EXPO_PUBLIC_WEATHER_APP_KEY: z.string().min(1),
   EXPO_PUBLIC_WEATHER_API_KEY: z.string().min(1),
   EXPO_PUBLIC_WEATHER_STATION_MAC_ADDRESS: z.string().min(1),
+  EXPO_PUBLIC_FORECAST_API_KEY: z.string().min(1),
 });
 
 export const parsedEnv = envSchema.parse(process.env);

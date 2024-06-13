@@ -4,6 +4,7 @@ const weatherConfig = {
   appKey: parsedEnv.EXPO_PUBLIC_WEATHER_APP_KEY,
   apiKey: parsedEnv.EXPO_PUBLIC_WEATHER_API_KEY,
   weatherStationMacAddress: parsedEnv.EXPO_PUBLIC_WEATHER_STATION_MAC_ADDRESS,
+  forecastApiKey: parsedEnv.EXPO_PUBLIC_FORECAST_API_KEY,
   callBack: ["outdoor", "pressure", "rainfall", "wind", "solar_and_uvi"], // outdoor, indoor, pressure, rainfall, wind, solar_and_uvi, battery
   tempUnit: 1, // 1 = Celsius, 2 = Fahrenheit
   pressureUnit: 3, // 3 = hPa, 4 = inHg, 5 = mmHg
