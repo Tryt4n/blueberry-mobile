@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
-import { useAppwrite } from "@/hooks/useAppwrite";
+import { useDataFetch } from "@/hooks/useDataFetch";
 import { getOrders } from "@/api/appwrite/orders";
 import tw from "@/lib/twrnc";
 import OrdersList from "@/components/Orders/OrdersList";
@@ -20,7 +20,7 @@ export default function TabOrders() {
     message: "Nie udało się pobrać zamówień. Spróbuj odświeżyć stronę.",
   };
 
-  const appwriteOrdersData = useAppwrite(
+  const appwriteOrdersData = useDataFetch(
     getOrders,
     [
       ordersSearchParams.startDate,

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
-import { useAppwrite } from "@/hooks/useAppwrite";
+import { useDataFetch } from "@/hooks/useDataFetch";
 import { getListOfUsers } from "@/api/appwrite/users";
 import UsersDropDownPicker from "@/components/Orders/UsersDropDownPicker";
 import type { User } from "@/types/user";
@@ -19,7 +19,7 @@ export function useSelectUser() {
   // Fetch the list of users if the user has access
   const fetchedListOfUsers =
     userHasAccess &&
-    useAppwrite(getListOfUsers, [], {
+    useDataFetch(getListOfUsers, [], {
       title: "Błąd",
       message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
     });

@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { useEffect } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
-import { useAppwrite } from "@/hooks/useAppwrite";
+import { useDataFetch } from "@/hooks/useDataFetch";
 import { useCurrentPrice } from "@/hooks/useCurrentPrice";
 import { getCurrentPrice } from "@/api/appwrite/currentPrice";
 import tw from "@/lib/twrnc";
@@ -26,7 +26,7 @@ export default function CurrentPrice() {
     data: fetchedCurrentPrice,
     isLoading: isPriceLoading,
     refetchData: refetchPrice,
-  } = useAppwrite(getCurrentPrice, [], {
+  } = useDataFetch(getCurrentPrice, [], {
     title: "Błąd",
     message: "Nie udało się pobrać aktualnej ceny.",
   });

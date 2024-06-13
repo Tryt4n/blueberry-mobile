@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "../useGlobalContext";
 import { useThemeContext } from "../useThemeContext";
 import { useOrdersContext } from "../useOrdersContext";
-import { useAppwrite } from "../useAppwrite";
+import { useDataFetch } from "../useDataFetch";
 import { useBottomSheetContext } from "../useBottomSheetContext";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
 import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
@@ -36,7 +36,7 @@ export function useOrder() {
     data: buyers,
     isLoading: isLoadingBuyers,
     refetchData: buyersRefetchData,
-  } = useAppwrite(getAllBuyers, [], {
+  } = useDataFetch(getAllBuyers, [], {
     title: "Błąd",
     message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
   });

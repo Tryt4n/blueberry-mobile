@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
-export function useAppwrite<T>(
+export function useDataFetch<T>(
   fn: (...args: any[]) => Promise<T>,
   args: any[],
   errorMessage?: { title: string; message: string }
