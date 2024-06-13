@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
-import { Divider } from "react-native-paper";
 import SettingsEditSection from "@/components/Settings/SettingsEditSection";
 import SettingsEditAvatar from "@/components/Settings/SettingsEditAvatar";
 import SettingsChangeTheme from "@/components/Settings/SettingsChangeTheme";
+import Divider from "@/components/Divider";
 import type { EditSettingsOptions } from "@/types/editSettingsOptions";
 
 export default function Settings() {
@@ -39,7 +39,7 @@ export default function Settings() {
             {...settingsEditSectionProps}
           />
 
-          <Divider style={[tw`my-6`, { backgroundColor: colors.border }]} />
+          <Divider />
 
           <SettingsEditSection
             type="username"
@@ -50,7 +50,7 @@ export default function Settings() {
             // @ts-ignore - secretPassword is not in the User type but it's in the API response
             !user.secretPassword && (
               <>
-                <Divider style={[tw`my-6`, { backgroundColor: colors.border }]} />
+                <Divider />
 
                 <SettingsEditSection
                   type="password"
@@ -60,11 +60,11 @@ export default function Settings() {
             )
           }
 
-          <Divider style={[tw`my-6`, { backgroundColor: colors.border }]} />
+          <Divider />
 
           <SettingsEditAvatar />
 
-          <Divider style={[tw`my-6`, { backgroundColor: colors.border }]} />
+          <Divider />
 
           <SettingsChangeTheme />
         </View>
