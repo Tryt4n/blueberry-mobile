@@ -1,24 +1,23 @@
 import { View, Text } from "react-native";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { useWeatherContext } from "@/hooks/useWeatherContext";
 import { findExtremeValue } from "@/helpers/weather";
 import { differenceInMinutes } from "date-fns/differenceInMinutes";
 import { formatDate } from "@/helpers/dates";
 import tw from "@/lib/twrnc";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import type { CurrentWeatherValue, HistoryWeatherValue } from "@/types/weather";
 
 export default function MinMaxValues({
   currentValue,
   valuesList,
   type,
 }: {
-  currentValue: {
-    time: string;
-    unit: string;
-    value: string;
-  };
-  valuesList: Record<string, string>;
+  currentValue: CurrentWeatherValue;
+  valuesList: HistoryWeatherValue["list"];
   type: "min" | "max";
 }) {
+  const { colors } = useThemeContext();
   const { today } = useWeatherContext();
   const { extremeValue, extremeValueTime } = findExtremeValue(valuesList, type);
 
@@ -39,16 +38,21 @@ export default function MinMaxValues({
       <View style={tw`flex flex-row items-center`}>
         <MaterialCommunityIcons
           name={type === "max" ? "arrow-collapse-up" : "arrow-collapse-down"}
+          size={16}
+          color={type === "max" ? colors.danger : colors.primary}
+          style={tw`mr-0.5`}
         />
 
-        <Text style={tw`capitalize`}>
-          {type} {displayValue}
-          &nbsp;
-          {currentValue.unit}
+        <Text style={tw`font-poppinsRegular text-[${colors.textAccent}]`}>
+          <Text style={tw`capitalize`}>{type}&nbsp;</Text>
+          <Text style={tw`font-poppinsMedium text-base text-[${colors.text}]`}>{displayValue}</Text>
+          &nbsp;{currentValue.unit}
         </Text>
       </View>
 
-      <Text>{timeDifference <= 15 ? "Teraz" : formatDate(extremeTempDate, "HH:mm")}</Text>
+      <Text style={tw`font-poppinsRegular text-[${colors.textAccent}]`}>
+        {timeDifference <= 15 ? "Teraz" : formatDate(extremeTempDate, "HH:mm")}
+      </Text>
     </View>
   );
 }
