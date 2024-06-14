@@ -6,6 +6,7 @@ import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import { getOrders } from "@/api/appwrite/orders";
 import tw from "@/lib/twrnc";
+import PageLayout from "@/layout/PageLayout";
 import OrdersList from "@/components/Orders/OrdersList";
 import OrdersHeader from "@/components/Orders/OrdersHeader";
 import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
@@ -45,7 +46,7 @@ export default function TabOrders() {
   }, [appwriteOrdersData.isLoading, ordersSearchParams]);
 
   return (
-    <View style={tw`h-full w-[90%] mx-auto`}>
+    <PageLayout>
       {user && ordersData && (
         <>
           <View style={tw`h-full`}>
@@ -73,6 +74,6 @@ export default function TabOrders() {
       )}
 
       <OrderBottomSheet />
-    </View>
+    </PageLayout>
   );
 }
