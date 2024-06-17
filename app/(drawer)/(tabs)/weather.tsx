@@ -21,8 +21,9 @@ import WeatherRainfallSection from "@/components/Weather/WeatherRainfallSection"
 import WeatherWindSection from "@/components/Weather/WeatherWindSection";
 import WeatherPressureSection from "@/components/Weather/WeatherPressureSection";
 import WeatherSolarSection from "@/components/Weather/WeatherSolarSection";
+import WeatherForecast from "@/components/Weather/WeatherForecast/WeatherForecast";
 import Divider from "@/components/Divider";
-import type { CurrentWeather } from "@/types/weather";
+import type { CurrentWeather, ForecastWeather } from "@/types/weather";
 
 export default function TabsWeather() {
   const { colors } = useThemeContext();
@@ -91,6 +92,7 @@ export default function TabsWeather() {
         ) : (
           <>
             <Text style={tw`font-poppinsBold text-3xl text-[${colors.text}]`}>Pogoda</Text>
+
             <Text style={tw`mt-2 font-poppinsLight text-xs text-[${colors.textAccent}]`}>
               Zaktualizowano {elapsedTime} sekund
               {elapsedTime === 1 ? "ę" : elapsedTime >= 2 && elapsedTime <= 4 ? "y" : ""} temu
@@ -143,15 +145,27 @@ export default function TabsWeather() {
 
                 <Divider />
 
-                {weatherForecast && (
-                  <WeatherSolarSection
-                    currentSolar={currentWeather.solar_and_uvi}
-                    historySolar={weatherHistory.solar_and_uvi}
-                    astronomicValues={{
+                <WeatherSolarSection
+                  currentSolar={currentWeather.solar_and_uvi}
+                  historySolar={weatherHistory.solar_and_uvi}
+                  astronomicValues={
+                    weatherForecast && {
                       sunrise: weatherForecast.days[1].sunrise,
                       sunset: weatherForecast.days[1].sunset,
-                    }}
-                  />
+                    }
+                  }
+                />
+
+                {weatherForecast && (
+                  <>
+                    <Divider />
+
+                    <WeatherForecast
+                      forecast={weatherForecast.days as ForecastWeather["days"]}
+                      tempUnit={currentWeather.outdoor.temperature.unit}
+                      windUnit={currentWeather.wind.wind_speed.unit}
+                    />
+                  </>
                 )}
               </>
             ) : (
