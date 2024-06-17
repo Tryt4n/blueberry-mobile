@@ -157,7 +157,20 @@ type ForecastIcon =
   | "partly-cloudy-day"
   | "partly-cloudy-night"
   | "clear-day"
-  | "clear-night";
+  | "clear-night"
+  | "hail"
+  | "rain-snow"
+  | "rain-snow-showers-day"
+  | "rain-snow-showers-night"
+  | "showers-day"
+  | "showers-night"
+  | "sleet"
+  | "snow-showers-day"
+  | "snow-showers-night"
+  | "thunder"
+  | "thunder-rain"
+  | "thunder-showers-day"
+  | "thunder-showers-night";
 
 type ForecastHour = {
   datetime: string;
@@ -184,15 +197,3 @@ type ForecastHour = {
   icon: string; // Can be an empty string when date is in the past
   stations: null;
 };
-
-// Moonphase
-// A decimal value representing the current moon phase between 0 and 1 where 0 represents the new moon, 0.5 represents the full moon. The full cycle can be represented as:
-
-// 0 – new moon
-// 0-0.25 – waxing crescent
-// 0.25 – first quarter
-// 0.25-0.5 – waxing gibbous
-// 0.5 – full moon
-// 0.5-0.75 – waning gibbous
-// 0.75 – last quarter
-// 0.75 -1 – waning crescent
