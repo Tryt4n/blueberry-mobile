@@ -1,5 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
+import { Text, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
+import { usePathname } from "expo-router";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import {
@@ -19,35 +20,64 @@ import WeatherWindSection from "@/components/Weather/WeatherWindSection";
 import WeatherPressureSection from "@/components/Weather/WeatherPressureSection";
 import WeatherSolarSection from "@/components/Weather/WeatherSolarSection";
 import Divider from "@/components/Divider";
-import WeatherChange from "@/components/Weather/WeatherChange";
-import MinMaxValues from "@/components/Weather/MinMaxValues";
+import type { CurrentWeather } from "@/types/weather";
 
 export default function TabsWeather() {
   const { colors } = useThemeContext();
-  // const {
-  //   data: currentWeather,
-  //   isLoading: isLoadingCurrent,
-  //   refetchData: refetchCurrentWeather,
-  // } = useDataFetch(getCurrentWeatherData, []);
-  // const { data: weatherHistory, isLoading: isLoadingHistory } = useDataFetch(
-  //   () => getWeatherDataHistoryByDate("2024-06-13", "2024-06-13"),
-  //   []
-  // );
-  // const { data: weatherForecast, isLoading: isLoadingWeatherForecast } = useDataFetch(
-  //   getForecast,
-  //   []
-  // );
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeather>();
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     refetchCurrentWeather();
-  //     console.log("Refetching weather data");
-  //   }, 60000);
-  //   return () => clearInterval(interval);
-  // }, []);
+  const pathname = usePathname();
 
-  // const isLoading = isLoadingCurrent || isLoadingHistory || isLoadingWeatherForecast;
-  const isLoading = false; //?
+  // Fetch all weather data
+  const {
+    data: currentWeatherData,
+    isLoading: isLoadingCurrent,
+    refetchData: refetchCurrentWeather,
+  } = useDataFetch(getCurrentWeatherData, []);
+  const { data: weatherHistory, isLoading: isLoadingHistory } = useDataFetch(
+    () => getWeatherDataHistoryByDate("2024-06-17", "2024-06-17"),
+    []
+  );
+  const { data: weatherForecast, isLoading: isLoadingWeatherForecast } = useDataFetch(
+    getForecast,
+    []
+  );
+
+  // Refetch current weather data every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchCurrentWeather();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Update the current weather only on the weather page and every minute or on the first load
+    if (currentWeatherData && pathname === "/weather" && (isFirstLoad || elapsedTime >= 60)) {
+      setCurrentWeather(currentWeatherData); // Update the current weather data
+      setLastUpdated(Date.now()); // Reset the elapsed time
+      setIsFirstLoad(false); // Set first load to false after the first data fetch
+    }
+  }, [currentWeatherData, pathname, isFirstLoad, elapsedTime]);
+
+  // Update the elapsed time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - lastUpdated) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
+
+  const isLoading =
+    (isLoadingCurrent || isLoadingHistory || isLoadingWeatherForecast) &&
+    !currentWeather &&
+    !weatherHistory;
+  // const isLoading = false; // Placeholder
 
   return (
     <ScrollView>
@@ -57,6 +87,10 @@ export default function TabsWeather() {
         ) : (
           <>
             <Text style={tw`font-poppinsBold text-3xl text-[${colors.text}]`}>Pogoda</Text>
+            <Text style={tw`mt-2 font-poppinsLight text-xs text-[${colors.textAccent}]`}>
+              Zaktualizowano {elapsedTime} sekund
+              {elapsedTime === 1 ? "ę" : elapsedTime >= 2 && elapsedTime <= 4 ? "y" : ""} temu
+            </Text>
 
             {currentWeather && weatherHistory ? (
               <>
@@ -120,7 +154,7 @@ export default function TabsWeather() {
               <Text
                 style={tw`my-8 font-poppinsSemiBold text-base text-center text-[${colors.textAccent}]`}
               >
-                Nie udało się pobrać aktualnej pogody.
+                {currentWeather && weatherHistory ? "Nie udało się pobrać aktualnej pogody." : ""}
               </Text>
             )}
           </>
