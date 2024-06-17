@@ -17,6 +17,22 @@ export default function WeatherWindCompass({ currentWind }: WeatherWindCompassPr
   const x = radius + radius * Math.cos(angleInRadians); // calculate x position
   const y = radius + radius * Math.sin(angleInRadians); // calculate y position
 
+  function getWindDirection(degrees: number) {
+    const directions = [
+      "Północny",
+      "Północno wschodni",
+      "Wschodni",
+      "Południowo wschodni",
+      "Południowy",
+      "Południowo wschodni",
+      "Zachodni",
+      "Północno zachodni",
+      "Północny",
+    ];
+    const index = Math.round((degrees % 360) / 45);
+    return directions[index];
+  }
+
   return (
     <View
       style={tw`my-10 relative w-48 h-48 bg-transparent border border-[${colors.text}] rounded-full justify-center items-center`}
@@ -85,7 +101,15 @@ export default function WeatherWindCompass({ currentWind }: WeatherWindCompassPr
           {currentWind.wind_direction.unit}
         </Text>
 
-        <Text style={tw`font-poppinsRegular text-lg text-[${colors.textAccent}]`}>Direction</Text>
+        <View style={tw`mt-1 items-center max-w-[75%]`}>
+          <Text style={tw`font-poppinsLight text-xs text-[${colors.textAccent}]`}>Kierunek:</Text>
+          <Text
+            // style={tw`max-w-[75%] text-center font-poppinsRegular text-base text-[${colors.text}]`}
+            style={tw` text-center font-poppinsRegular text-base text-[${colors.text}]`}
+          >
+            {getWindDirection(Number(currentWind.wind_direction.value))}
+          </Text>
+        </View>
       </View>
     </View>
   );
