@@ -6,7 +6,7 @@ import type { CurrentWeather, HistoryWeather } from "@/types/weather";
 type WeatherSolarSectionProps = {
   currentSolar: CurrentWeather["solar_and_uvi"];
   historySolar: HistoryWeather["solar_and_uvi"];
-  astronomicValues: AstronomicValues;
+  astronomicValues?: AstronomicValues;
 };
 
 type AstronomicValues = {
