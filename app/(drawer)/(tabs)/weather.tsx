@@ -2,6 +2,7 @@ import { Text, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { usePathname } from "expo-router";
 import { useThemeContext } from "@/hooks/useThemeContext";
+import { useWeatherContext } from "@/hooks/useWeatherContext";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import {
   getCurrentWeatherData,
@@ -9,6 +10,7 @@ import {
   getWeatherDataHistoryByDate,
 } from "@/api/weatherStation/weather";
 import tw from "@/lib/twrnc";
+import { formatDate } from "@/helpers/dates";
 import currentWeather from "@/weatherPlaceholder/real-time-data-all.json";
 import weatherHistory from "@/weatherPlaceholder/history-time-data-all.json";
 import weatherForecast from "@/weatherPlaceholder/forecast.json";
@@ -24,6 +26,7 @@ import type { CurrentWeather } from "@/types/weather";
 
 export default function TabsWeather() {
   const { colors } = useThemeContext();
+  const { today } = useWeatherContext();
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [currentWeather, setCurrentWeather] = useState<CurrentWeather>();
   const [lastUpdated, setLastUpdated] = useState(Date.now());
@@ -38,7 +41,8 @@ export default function TabsWeather() {
     refetchData: refetchCurrentWeather,
   } = useDataFetch(getCurrentWeatherData, []);
   const { data: weatherHistory, isLoading: isLoadingHistory } = useDataFetch(
-    () => getWeatherDataHistoryByDate("2024-06-17", "2024-06-17"),
+    () =>
+      getWeatherDataHistoryByDate(formatDate(today, "yyyy-MM-dd"), formatDate(today, "yyyy-MM-dd")),
     []
   );
   const { data: weatherForecast, isLoading: isLoadingWeatherForecast } = useDataFetch(
