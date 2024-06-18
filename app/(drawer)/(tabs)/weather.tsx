@@ -78,10 +78,7 @@ export default function TabsWeather() {
     return () => clearInterval(interval);
   }, [lastUpdated]);
 
-  const isLoading =
-    (isLoadingCurrent || isLoadingHistory || isLoadingWeatherForecast) &&
-    !currentWeather &&
-    !weatherHistory;
+  const isLoading = (isLoadingCurrent || isLoadingHistory) && !currentWeather && !weatherHistory;
   // const isLoading = false; // Placeholder
 
   return (
@@ -156,17 +153,15 @@ export default function TabsWeather() {
                   }
                 />
 
-                {weatherForecast && (
-                  <>
-                    <Divider />
+                <Divider />
 
-                    <WeatherForecast
-                      forecast={weatherForecast.days as ForecastWeather["days"]}
-                      tempUnit={currentWeather.outdoor.temperature.unit}
-                      windUnit={currentWeather.wind.wind_speed.unit}
-                    />
-                  </>
-                )}
+                <WeatherForecast
+                  forecast={weatherForecast?.days as ForecastWeather["days"]} // Placeholder
+                  loading={isLoadingWeatherForecast}
+                  // loading={false} // Placeholder
+                  tempUnit={currentWeather?.outdoor.temperature.unit}
+                  windUnit={currentWeather?.wind.wind_speed.unit}
+                />
               </>
             ) : (
               <Text
