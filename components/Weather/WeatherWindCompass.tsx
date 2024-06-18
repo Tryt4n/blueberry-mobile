@@ -103,10 +103,7 @@ export default function WeatherWindCompass({ currentWind }: WeatherWindCompassPr
 
         <View style={tw`mt-1 items-center max-w-[75%]`}>
           <Text style={tw`font-poppinsLight text-xs text-[${colors.textAccent}]`}>Kierunek:</Text>
-          <Text
-            // style={tw`max-w-[75%] text-center font-poppinsRegular text-base text-[${colors.text}]`}
-            style={tw` text-center font-poppinsRegular text-base text-[${colors.text}]`}
-          >
+          <Text style={tw` text-center font-poppinsRegular text-base text-[${colors.text}]`}>
             {getWindDirection(Number(currentWind.wind_direction.value))}
           </Text>
         </View>
