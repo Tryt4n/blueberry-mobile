@@ -15,7 +15,7 @@ export default function WeatherForecastLayout({ heading, children }: WeatherFore
     >
       <ScrollView
         horizontal
-        style={tw`w-full min-h-[260px] flex-row mt-4 py-4`}
+        style={tw`w-full min-h-[260px] flex-row mt-4`}
       >
         {children}
       </ScrollView>
