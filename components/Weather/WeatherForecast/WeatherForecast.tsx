@@ -38,7 +38,7 @@ type ForecastHour = Partial<ForecastWeather["days"][number]["hours"][number]> &
   }[];
 
 function WeatherForecast() {
-  const { weatherForecast, currentWeather } = useWeatherContext();
+  const { weatherForecast } = useWeatherContext();
 
   const shortenedForecast: WeatherShortenedForecast | undefined =
     weatherForecast.data?.days && weatherForecast.data.days.map(mapDays);
@@ -51,18 +51,12 @@ function WeatherForecast() {
         <>
           {shortenedForecast ? (
             <>
-              <WeatherForecastDaily
-                forecast={shortenedForecast}
-                tempUnit={currentWeather.data?.outdoor.temperature.unit || "℃"}
-                windUnit={currentWeather.data?.wind.wind_speed.unit || "km/h"}
-              />
+              <WeatherForecastDaily forecast={shortenedForecast} />
 
               <Divider />
 
               <WeatherForecastHourly
                 forecast={shortenedForecast.slice(0, 3)} // Pass only the first 3 days to avoid rendering too many elements
-                tempUnit={currentWeather.data?.outdoor.temperature.unit || "℃"}
-                windUnit={currentWeather.data?.wind.wind_speed.unit || "km/h"}
               />
             </>
           ) : (
