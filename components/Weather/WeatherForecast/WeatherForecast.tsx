@@ -1,7 +1,9 @@
 import { Text } from "react-native";
 import { memo } from "react";
 import { useWeatherContext } from "@/hooks/useWeatherContext";
+import { useThemeContext } from "@/hooks/useThemeContext";
 import { mapDays } from "@/helpers/weather";
+import tw from "@/lib/twrnc";
 import WeatherForecastDaily from "./WeatherForecastDaily";
 import WeatherForecastHourly from "./WeatherForecastHourly";
 import Divider from "@/components/Divider";
@@ -38,6 +40,7 @@ type ForecastHour = Partial<ForecastWeather["days"][number]["hours"][number]> &
   }[];
 
 function WeatherForecast() {
+  const { colors } = useThemeContext();
   const { weatherForecast } = useWeatherContext();
 
   const shortenedForecast: WeatherShortenedForecast | undefined =
@@ -60,7 +63,11 @@ function WeatherForecast() {
               />
             </>
           ) : (
-            <Text>Nie udało się załadować prognozy pogody</Text>
+            <Text
+              style={tw`font-poppinsSemiBold text-base text-center text-[${colors.textAccent}]`}
+            >
+              Nie udało się załadować prognozy pogody
+            </Text>
           )}
         </>
       )}
