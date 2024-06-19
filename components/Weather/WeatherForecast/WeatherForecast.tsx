@@ -1,18 +1,12 @@
 import { Text } from "react-native";
 import { memo } from "react";
+import { useWeatherContext } from "@/hooks/useWeatherContext";
 import { mapDays } from "@/helpers/weather";
 import WeatherForecastDaily from "./WeatherForecastDaily";
 import WeatherForecastHourly from "./WeatherForecastHourly";
 import Divider from "@/components/Divider";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import type { ForecastWeather } from "@/types/weather";
-
-type WeatherForecastProps = {
-  forecast?: ForecastWeather["days"];
-  loading: boolean;
-  tempUnit?: string;
-  windUnit?: string;
-};
 
 export type WeatherShortenedForecast = {
   datetime: ForecastWeather["days"][number]["datetime"];
@@ -43,12 +37,15 @@ type ForecastHour = Partial<ForecastWeather["days"][number]["hours"][number]> &
     precipprob: ForecastWeather["days"][number]["hours"][number]["precipprob"];
   }[];
 
-function WeatherForecast({ forecast, loading, tempUnit, windUnit }: WeatherForecastProps) {
-  const shortenedForecast: WeatherShortenedForecast | undefined = forecast && forecast.map(mapDays);
+function WeatherForecast() {
+  const { weatherForecast, currentWeather } = useWeatherContext();
+
+  const shortenedForecast: WeatherShortenedForecast | undefined =
+    weatherForecast.data?.days && weatherForecast.data.days.map(mapDays);
 
   return (
     <>
-      {loading ? (
+      {weatherForecast.isLoading ? (
         <LoadingSpinner />
       ) : (
         <>
@@ -56,16 +53,16 @@ function WeatherForecast({ forecast, loading, tempUnit, windUnit }: WeatherForec
             <>
               <WeatherForecastDaily
                 forecast={shortenedForecast}
-                tempUnit={tempUnit || "℃"}
-                windUnit={windUnit || "km/h"}
+                tempUnit={currentWeather.data?.outdoor.temperature.unit || "℃"}
+                windUnit={currentWeather.data?.wind.wind_speed.unit || "km/h"}
               />
 
               <Divider />
 
               <WeatherForecastHourly
                 forecast={shortenedForecast.slice(0, 3)} // Pass only the first 3 days to avoid rendering too many elements
-                tempUnit={tempUnit || "℃"}
-                windUnit={windUnit || "km/h"}
+                tempUnit={currentWeather.data?.outdoor.temperature.unit || "℃"}
+                windUnit={currentWeather.data?.wind.wind_speed.unit || "km/h"}
               />
             </>
           ) : (
