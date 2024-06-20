@@ -1,13 +1,17 @@
 import { appwriteConfig, databases } from "@/lib/appwrite";
-import { ID } from "react-native-appwrite";
+import { ID, Query } from "react-native-appwrite";
 import { BuyersSchema } from "@/lib/zod/buyers";
 import type { Buyer } from "@/types/buyers";
+import type { User } from "@/types/user";
 
-export async function getAllBuyers() {
+export async function getBuyers(userId?: User["$id"]) {
   try {
+    const filters = userId ? [Query.equal("createdBy", userId)] : [];
+
     const buyers = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.buyersCollectionId
+      appwriteConfig.buyersCollectionId,
+      filters
     );
 
     return buyers.documents as Buyer[];
@@ -16,7 +20,7 @@ export async function getAllBuyers() {
   }
 }
 
-export async function createNewBuyer(buyerName: Buyer["buyerName"]) {
+export async function createNewBuyer(buyerName: Buyer["buyerName"], userId: User["$id"]) {
   let customError: string[] = [];
 
   try {
@@ -37,6 +41,7 @@ export async function createNewBuyer(buyerName: Buyer["buyerName"]) {
       {
         buyerName: buyerName,
         orders: [],
+        createdBy: userId,
       }
     );
 
