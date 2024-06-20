@@ -5,7 +5,8 @@ import { useOrdersContext } from "../useOrdersContext";
 import { useDataFetch } from "../useDataFetch";
 import { useBottomSheetContext } from "../useBottomSheetContext";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
-import { createNewBuyer, getAllBuyers } from "@/api/appwrite/buyers";
+import { createNewBuyer, getBuyers } from "@/api/appwrite/buyers";
+import { getBuyerName } from "@/helpers/users";
 import Toast from "react-native-toast-message";
 import type { Buyer } from "@/types/buyers";
 
@@ -36,10 +37,14 @@ export function useOrder() {
     data: buyers,
     isLoading: isLoadingBuyers,
     refetchData: buyersRefetchData,
-  } = useDataFetch(getAllBuyers, [], {
-    title: "Błąd",
-    message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
-  });
+  } = useDataFetch(
+    getBuyers,
+    user?.role === "admin" || user?.role === "moderator" ? [] : [user?.$id],
+    {
+      title: "Błąd",
+      message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
+    }
+  );
 
   const handleOrder = useCallback(async () => {
     // Check if quantity is provided
@@ -66,7 +71,10 @@ export function useOrder() {
       setIsSubmitting(true);
 
       const trimmedBuyerName = orderData.buyerName.replace(/\s+/g, " ").trim().toLowerCase(); // trim and lowercase buyer name
-      const existingBuyer = buyers.find((buyer) => buyer.buyerName === trimmedBuyerName); // check if buyer already exists
+      const existingBuyer = buyers.find((buyer) => {
+        const buyerName = getBuyerName(buyer, user);
+        return buyerName.toLowerCase() === trimmedBuyerName;
+      });
 
       try {
         let buyerId: Buyer["$id"];
@@ -74,7 +82,8 @@ export function useOrder() {
         // Create new buyer if it doesn't exist
         if (!existingBuyer) {
           const { buyer: newBuyer, error } = await createNewBuyer(
-            orderData.buyerName.toLowerCase()
+            orderData.buyerName.toLowerCase(),
+            user.$id
           );
 
           // Check if new buyer was created successfully and set buyerId to new buyer's id
