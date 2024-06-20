@@ -1,5 +1,12 @@
 import { View, Text, type TextInput, type TextInputProps } from "react-native";
-import React, { useEffect, useState, memo, forwardRef, type ForwardedRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  memo,
+  forwardRef,
+  type ForwardedRef,
+  type ComponentProps,
+} from "react";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { colors as customColors } from "@/constants/colors";
 import tw from "@/lib/twrnc";
@@ -13,6 +20,7 @@ type CustomDropDownPickerProps = {
   defaultValue?: string;
   dropDownHeight?: number;
   searchTextInputProps?: { ref: ForwardedRef<TextInput> } & TextInputProps;
+  closeIconStyle?: ComponentProps<typeof DropDownPicker>["closeIconStyle"] & { tintColor: string };
 } & Omit<
   DropDownPickerProps<string>,
   "items" | "value" | "setValue" | "open" | "setOpen" | "multiple"
@@ -59,6 +67,12 @@ function InnerCustomDropDownPicker(
           marginHorizontal: 64,
           backgroundColor: colors.border,
         }}
+        ListEmptyComponent={() => (
+          <View style={tw`h-full items-center justify-center`}>
+            <Text style={tw`font-poppinsSemiBold text-[${colors.text}]`}>Lista jest pusta</Text>
+          </View>
+        )}
+        closeIconStyle={{ tintColor: colors.text }}
         searchPlaceholder="Szukaj..."
         style={{
           borderWidth: 2,
