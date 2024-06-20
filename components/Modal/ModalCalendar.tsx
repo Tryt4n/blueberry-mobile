@@ -57,6 +57,9 @@ export default function ModalCalendar({ ...props }: ComponentProps<typeof Calend
         textDisabledColor: theme === "dark" ? "#2D4150" : "#D9E1E8",
         monthTextColor: theme === "dark" ? "#AEC3D2" : "#2D4150",
         indicatorColor: "blue",
+        textDayFontFamily: "Poppins-Regular",
+        textMonthFontFamily: "Poppins-Regular",
+        textDayHeaderFontFamily: "Poppins-SemiBold",
       }}
     />
   );
