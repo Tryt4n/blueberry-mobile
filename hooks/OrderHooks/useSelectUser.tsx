@@ -4,7 +4,7 @@ import { useModalContext } from "@/hooks/useModalContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import { getListOfUsers } from "@/api/appwrite/users";
-import UsersDropDownPicker from "@/components/Orders/UsersDropDownPicker";
+import UsersDropDownPicker from "@/components/OrderBottomSheet/UsersDropDownPicker";
 import type { User } from "@/types/user";
 
 export function useSelectUser() {
