@@ -1,9 +1,11 @@
 import { View, Text, type TextInput } from "react-native";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useBottomSheetContext } from "@/hooks/useBottomSheetContext";
 import { useOrder } from "@/hooks/OrderHooks/useOrder";
+import { getBuyerName } from "@/helpers/users";
 import tw from "@/lib/twrnc";
 import ActionSheet, { ScrollView } from "react-native-actions-sheet";
 import { QuantityInput } from "./QuantityInput";
@@ -13,6 +15,7 @@ import CustomButton from "../CustomButton";
 import type { ValueType } from "react-native-dropdown-picker";
 
 export default function OrderBottomSheet() {
+  const { user } = useGlobalContext();
   const { colors } = useThemeContext();
   const { bottomSheetModalRef, handleCloseBottomSheet } = useBottomSheetContext();
   const { editedOrder, setEditedOrder } = useOrdersContext();
@@ -30,6 +33,15 @@ export default function OrderBottomSheet() {
     buyers,
     isLoadingBuyers,
   } = useOrder();
+
+  const processedBuyers = useMemo(() => {
+    if (!user || !buyers) return;
+
+    return buyers.map((buyer) => ({
+      ...buyer,
+      buyerName: getBuyerName(buyer, user),
+    }));
+  }, [buyers, user]);
 
   return (
     <ActionSheet
@@ -63,8 +75,8 @@ export default function OrderBottomSheet() {
 
           <BuyersDropDownPicker
             ref={buyerNameRef}
-            defaultValue={editedOrder ? editedOrder.buyer.buyerName : undefined}
-            buyers={buyers}
+            defaultValue={editedOrder && user ? getBuyerName(editedOrder.buyer, user) : undefined}
+            buyers={processedBuyers}
             loading={isLoadingBuyers}
             onChangeValue={(value: ValueType | null) => {
               if (!value) return;
