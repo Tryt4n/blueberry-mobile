@@ -127,7 +127,6 @@ function InnerCustomDropDownPicker(
           maxLength: 100,
           cursorColor: colors.primary,
           autoCapitalize: "words",
-          // @ts-ignore - `ref` is not recognized for <TextInput/>
           ref: searchInputRef,
           onFocus: () => setSearchFocused(true),
           onBlur: () => setSearchFocused(false),
