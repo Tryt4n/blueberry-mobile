@@ -1,10 +1,14 @@
 import { parsedEnv } from "@/lib/zod/env";
 
 const weatherConfig = {
-  appKey: parsedEnv.EXPO_PUBLIC_WEATHER_APP_KEY,
-  apiKey: parsedEnv.EXPO_PUBLIC_WEATHER_API_KEY,
-  weatherStationMacAddress: parsedEnv.EXPO_PUBLIC_WEATHER_STATION_MAC_ADDRESS,
-  forecastApiKey: parsedEnv.EXPO_PUBLIC_FORECAST_API_KEY,
+  appKey: parsedEnv.EXPO_PUBLIC_WEATHER_APP_KEY, //! For mobile
+  apiKey: parsedEnv.EXPO_PUBLIC_WEATHER_API_KEY, //! For mobile
+  weatherStationMacAddress: parsedEnv.EXPO_PUBLIC_WEATHER_STATION_MAC_ADDRESS, //! For mobile
+  forecastApiKey: parsedEnv.EXPO_PUBLIC_FORECAST_API_KEY, //! For mobile
+  // appKey: process.env.EXPO_PUBLIC_WEATHER_APP_KEY, //! For netlify deploy
+  // apiKey: process.env.EXPO_PUBLIC_WEATHER_API_KEY, //! For netlify deploy
+  // weatherStationMacAddress: process.env.EXPO_PUBLIC_WEATHER_STATION_MAC_ADDRESS, //! For netlify deploy
+  // forecastApiKey: process.env.EXPO_PUBLIC_FORECAST_API_KEY, //! For netlify deploy
   callBack: ["outdoor", "pressure", "rainfall", "wind", "solar_and_uvi"], // outdoor, indoor, pressure, rainfall, wind, solar_and_uvi, battery
   tempUnit: 1, // 1 = Celsius, 2 = Fahrenheit
   pressureUnit: 3, // 3 = hPa, 4 = inHg, 5 = mmHg
