@@ -1,4 +1,5 @@
 import type { Order } from "./orders";
+import type { User } from "./user";
 
 export type Buyer = {
   readonly $collectionId: string;
@@ -9,4 +10,5 @@ export type Buyer = {
   readonly $updatedAt: string;
   readonly buyerName: string;
   readonly orders: Order[];
+  readonly createdBy: User;
 };
