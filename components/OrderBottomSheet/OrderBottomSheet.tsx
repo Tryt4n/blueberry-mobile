@@ -12,7 +12,7 @@ import { QuantityInput } from "./QuantityInput";
 import { BuyersDropDownPicker } from "./BuyersDropDownPicker";
 import { FormField } from "../FormField";
 import CustomButton from "../CustomButton";
-import type { ValueType } from "react-native-dropdown-picker";
+import type { ItemType } from "react-native-dropdown-picker";
 
 export default function OrderBottomSheet() {
   const { user } = useGlobalContext();
@@ -78,9 +78,9 @@ export default function OrderBottomSheet() {
             defaultValue={editedOrder && user ? getBuyerName(editedOrder.buyer, user) : undefined}
             buyers={processedBuyers}
             loading={isLoadingBuyers}
-            onChangeValue={(value: ValueType | null) => {
-              if (!value) return;
-              changeOrderData({ ...orderData, buyerName: value as string });
+            onSelectItem={(item: ItemType<string>) => {
+              if (!item.value || !item.label) return;
+              changeOrderData({ ...orderData, buyerName: item.label });
             }}
           />
 
