@@ -1,3 +1,4 @@
+import type { Buyer } from "./buyers";
 import type { Theme } from "./theme";
 
 export type User = {
@@ -13,6 +14,7 @@ export type User = {
   readonly email: string;
   readonly username: string;
   readonly role: UserRole;
+  readonly buyers: Buyer[];
   readonly theme?: Theme;
 };
 
