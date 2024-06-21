@@ -5,7 +5,6 @@ import { useOrdersContext } from "../useOrdersContext";
 import { useThemeContext } from "../useThemeContext";
 import { editUserEmail, editUserPassword, editUserUsername } from "@/api/appwrite/users";
 import { decryptData } from "@/helpers/encryption";
-import { parsedEnv } from "@/lib/zod/env";
 import Toast from "react-native-toast-message";
 import type { EditSettingsOptions } from "@/types/editSettingsOptions";
 
@@ -99,8 +98,7 @@ export function useEditUser(
     if (secretPassword) {
       const decryptedPassword = decryptData(
         secretPassword,
-        parsedEnv.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY //! For mobile
-        // process.env.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY! //! For netlify deploy
+        process.env.EXPO_PUBLIC_CRYPTO_JS_SECRET_KEY!
       );
 
       password = decryptedPassword;
