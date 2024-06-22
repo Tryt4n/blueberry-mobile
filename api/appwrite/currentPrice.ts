@@ -26,14 +26,16 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
   try {
     const { errors, updatedPrice } = await getOrCreatePrice(price);
 
-    await databases.updateDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.currentPriceCollectionId,
-      oldPriceId,
-      {
-        active: false,
-      }
-    );
+    if (!errors) {
+      await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.currentPriceCollectionId,
+        oldPriceId,
+        {
+          active: false,
+        }
+      );
+    }
 
     return { updatedPrice, errors: errors };
   } catch (error: any) {
