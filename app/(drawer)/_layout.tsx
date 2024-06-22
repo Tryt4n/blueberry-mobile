@@ -9,7 +9,7 @@ import CustomDrawerIcon from "@/components/Drawer/CustomDrawerIcon";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function DrawerLayout() {
-  const { isLoading, isLoggedIn } = useGlobalContext();
+  const { isLoading, isLoggedIn, isUserVerified } = useGlobalContext();
   const { colors } = useThemeContext();
 
   if (isLoading) return <LoadingSpinner />;
@@ -40,6 +40,7 @@ export default function DrawerLayout() {
           options={{
             title: "Główna",
             headerTitleStyle: { display: "none" },
+            drawerItemStyle: isUserVerified ? undefined : { display: "none" },
             drawerLabel: ({ color, focused }) => (
               <CustomDrawerLabel
                 color={color}
@@ -100,6 +101,14 @@ export default function DrawerLayout() {
                 focused={focused}
               />
             ),
+          }}
+        />
+
+        <SideMenu.Screen
+          name="not-active"
+          options={{
+            headerTitleStyle: { display: "none" },
+            drawerItemStyle: { display: "none" },
           }}
         />
       </SideMenu>
