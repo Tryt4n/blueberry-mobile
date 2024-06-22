@@ -3,7 +3,7 @@ import { useGlobalContext } from "../hooks/useGlobalContext";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function App() {
-  const { isLoading, isLoggedIn } = useGlobalContext();
+  const { isLoading, isLoggedIn, isUserVerified } = useGlobalContext();
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -11,9 +11,11 @@ export default function App() {
     <>
       <LoadingSpinner />
 
-      {isLoggedIn ? <Redirect href="/orders" /> : <Redirect href="/signIn" />}
-
-      {!isLoggedIn && <Redirect href="/signIn" />}
+      {!isLoading && isLoggedIn ? (
+        <>{isUserVerified ? <Redirect href="/orders" /> : <Redirect href="/not-active" />}</>
+      ) : (
+        <Redirect href="/signIn" />
+      )}
     </>
   );
 }
