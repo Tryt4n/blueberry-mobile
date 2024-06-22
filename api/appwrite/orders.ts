@@ -123,7 +123,7 @@ export async function deleteOrder(orderId: Order["$id"]) {
 
 export async function changeOrderPrice(orderId: Order["$id"], newPrice: string) {
   try {
-    const { errors, updatedPrice } = await getOrCreatePrice(newPrice);
+    const { errors, updatedPrice } = await getOrCreatePrice(newPrice, false); // false means that the price is not changed to current price but only for the current order
 
     if (errors) {
       return errors;
