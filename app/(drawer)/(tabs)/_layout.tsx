@@ -1,13 +1,15 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import TabIcon from "@/components/TabIcon";
 
 export default function TabsLayout() {
-  const { user } = useGlobalContext();
+  const { user, isLoading, isLoggedIn, isUserVerified } = useGlobalContext();
   const { colors } = useThemeContext();
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
+
+  if (!isLoading && isLoggedIn && !isUserVerified) return <Redirect href="/not-active" />;
 
   return (
     <Tabs
