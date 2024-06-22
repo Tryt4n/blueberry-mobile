@@ -57,11 +57,17 @@ function OrderCard({ order, price, additionalStyles }: OrderCardProps) {
 
           <Text style={tw`pb-2 text-lg font-poppinsRegular text-[${colors.text}]`}>
             Łącznie:&nbsp;
-            <Text style={tw`font-poppinsSemiBold`}>
-              {order.currentPrice.price * order.quantity} zł
-            </Text>
-            {order.currentPrice.price !== price && (
-              <Text style={tw`text-sm`}>&nbsp;(po {order.currentPrice.price} zł)</Text>
+            {order.currentPrice.price === 0 ? (
+              <Text style={tw`font-poppinsSemiBold`}>Gratis</Text>
+            ) : (
+              <>
+                <Text style={tw`font-poppinsSemiBold`}>
+                  {order.currentPrice.price * order.quantity} zł
+                </Text>
+                {order.currentPrice.price !== price && (
+                  <Text style={tw`text-sm`}>&nbsp;(po {order.currentPrice.price} zł)</Text>
+                )}
+              </>
             )}
           </Text>
 
