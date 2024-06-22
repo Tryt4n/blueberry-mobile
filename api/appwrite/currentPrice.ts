@@ -41,7 +41,7 @@ export async function updatePrice(price: string, oldPriceId: CurrentPrice["$id"]
   }
 }
 
-export async function getOrCreatePrice(price: string) {
+export async function getOrCreatePrice(price: string, changePriceToCurrentPrice: boolean = true) {
   const customErrors: string[] = [];
   const formattedPrice = Number(price.toString().replace(",", "."));
 
@@ -69,7 +69,7 @@ export async function getOrCreatePrice(price: string) {
         appwriteConfig.currentPriceCollectionId,
         isPriceAlreadyExists.documents[0].$id,
         {
-          active: true,
+          active: changePriceToCurrentPrice,
         }
       );
       updatedPrice = { $id: fetchedPrice.$id, price: fetchedPrice.price };
@@ -80,7 +80,7 @@ export async function getOrCreatePrice(price: string) {
         ID.unique(),
         {
           price: formattedPrice,
-          active: true,
+          active: changePriceToCurrentPrice,
         }
       );
       updatedPrice = { $id: fetchedPrice.$id, price: fetchedPrice.price };
