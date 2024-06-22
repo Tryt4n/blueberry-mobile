@@ -6,6 +6,8 @@ import type { User } from "@/types/user";
 type GlobalContextValues = {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
+  isUserVerified: boolean | undefined;
+  setIsUserVerified: (value: boolean) => void;
   user: User | null;
   setUser: (value: User | null) => void;
   isLoading: boolean;
@@ -18,6 +20,7 @@ export const GlobalContext = createContext<GlobalContextValues | null>(null);
 
 export default function GlobalContextProvider({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isVerified, setIsVerified] = useState<boolean | undefined>(undefined);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const platform = useMemo(() => Platform.OS, []);
@@ -32,11 +35,12 @@ export default function GlobalContextProvider({ children }: { children: React.Re
 
   const getAndSetUser = useCallback(async () => {
     try {
-      const user = await getCurrentUser();
+      const result = await getCurrentUser();
 
-      if (user) {
+      if (result) {
+        setUser(result.user);
+        setIsVerified(result.isUserVerified);
         setIsLoggedIn(true);
-        setUser(user);
       }
     } catch (error) {
       console.error(error);
@@ -52,6 +56,8 @@ export default function GlobalContextProvider({ children }: { children: React.Re
   const contextValues: GlobalContextValues = {
     isLoggedIn,
     setIsLoggedIn,
+    isUserVerified: isVerified,
+    setIsUserVerified: setIsVerified,
     user,
     setUser,
     refetchUser: getAndSetUser,
