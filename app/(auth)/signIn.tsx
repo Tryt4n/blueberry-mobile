@@ -12,7 +12,7 @@ import { FormField } from "@/components/FormField";
 import type { TextInput } from "react-native-gesture-handler";
 
 export default function SignInPage() {
-  const { setUser, setIsLoggedIn, platform } = useGlobalContext();
+  const { setUser, setIsLoggedIn, platform, setIsUserVerified } = useGlobalContext();
   const { setModalData, showModal } = useModalContext();
 
   const [loginForm, setLoginForm] = useState({
@@ -51,7 +51,8 @@ export default function SignInPage() {
         const result = await getCurrentUser();
 
         if (result) {
-          setUser(result);
+          setUser(result.user);
+          setIsUserVerified(result.isUserVerified);
           setIsLoggedIn(true);
 
           router.replace("/");

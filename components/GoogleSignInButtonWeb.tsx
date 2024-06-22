@@ -13,7 +13,7 @@ export default function GoogleSignInButtonWeb({
 }: {
   setIsSubmitting: (value: boolean) => void;
 }) {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { setUser, setIsLoggedIn, setIsUserVerified } = useGlobalContext();
   const { theme } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
   const { width } = useWindowDimensions();
@@ -30,7 +30,8 @@ export default function GoogleSignInButtonWeb({
         const result = await getCurrentUser();
 
         if (result) {
-          setUser(result);
+          setUser(result.user);
+          setIsUserVerified(result.isUserVerified);
           setIsLoggedIn(true);
 
           router.replace("/");
