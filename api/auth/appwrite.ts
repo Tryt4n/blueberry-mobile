@@ -142,7 +142,7 @@ export async function getCurrentUser() {
   try {
     const currentAccount = await account.get();
 
-    if (!currentAccount) throw Error("Failed to get current account");
+    if (!currentAccount) throw new Error("Failed to get current account");
 
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -150,9 +150,12 @@ export async function getCurrentUser() {
       [Query.equal("accountId", currentAccount.$id)]
     );
 
-    if (!currentUser) throw Error("Failed to get current user");
+    if (!currentUser) throw new Error("Failed to get current user");
 
-    return currentUser.documents[0] as User;
+    return {
+      user: currentUser.documents[0] as User,
+      isUserVerified: currentAccount.emailVerification,
+    };
   } catch (error: any) {
     if (error.message !== "User (role: guests) missing scope (account)") {
       console.error(error);
