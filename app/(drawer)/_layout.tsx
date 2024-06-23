@@ -9,7 +9,7 @@ import CustomDrawerIcon from "@/components/Drawer/CustomDrawerIcon";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function DrawerLayout() {
-  const { isLoading, isLoggedIn, isUserVerified } = useGlobalContext();
+  const { isLoading, isLoggedIn, isUserVerified, height } = useGlobalContext();
   const { colors } = useThemeContext();
 
   if (isLoading) return <LoadingSpinner />;
@@ -29,7 +29,11 @@ export default function DrawerLayout() {
           drawerPosition: "right", // Places the drawer on the right side of the screen
           headerLeft: () => null, // Removes hamburger button from the header on the left side
           headerRight: () => <DrawerToggleButton tintColor={colors.textAccent} />, // Adds hamburger button with the functionality of opening the menu
-          headerStyle: { backgroundColor: colors.bg, borderBottomColor: colors.border },
+          headerStyle: {
+            backgroundColor: colors.bg,
+            borderBottomColor: colors.border,
+            height: height > 680 ? 64 : 40,
+          },
           drawerStyle: { backgroundColor: colors.bg },
           sceneContainerStyle: { backgroundColor: colors.bgAccent },
         }}

@@ -1,4 +1,4 @@
-import { Alert, Platform } from "react-native";
+import { Alert, Dimensions, Platform } from "react-native";
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "@/api/auth/appwrite";
 import type { User } from "@/types/user";
@@ -14,6 +14,8 @@ type GlobalContextValues = {
   platform: typeof Platform.OS | undefined;
   showAlert: (title: string, message: string) => void;
   refetchUser: () => Promise<void>;
+  width: number;
+  height: number;
 };
 
 export const GlobalContext = createContext<GlobalContextValues | null>(null);
@@ -24,6 +26,7 @@ export default function GlobalContextProvider({ children }: { children: React.Re
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const platform = useMemo(() => Platform.OS, []);
+  const dimensions = Dimensions.get("window");
 
   function showAlert(title: string, message: string) {
     if (platform === "web") {
@@ -64,6 +67,8 @@ export default function GlobalContextProvider({ children }: { children: React.Re
     isLoading,
     platform,
     showAlert,
+    width: dimensions.width,
+    height: dimensions.height,
   };
 
   return <GlobalContext.Provider value={contextValues}>{children}</GlobalContext.Provider>;

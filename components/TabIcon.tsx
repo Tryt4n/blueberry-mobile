@@ -1,4 +1,5 @@
 import { View, Text } from "react-native";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,6 +23,7 @@ export default function TabIcon({
   iconsSize = 24,
   customIcon,
 }: TabIconProps) {
+  const { height } = useGlobalContext();
   const { colors } = useThemeContext();
 
   return (
@@ -39,7 +41,7 @@ export default function TabIcon({
 
       {name && (
         <Text
-          style={tw`text-sm text-center text-[${colors.text}] ${
+          style={tw`${height > 680 ? "text-sm" : "text-xs"} text-center text-[${colors.text}] ${
             focused ? "font-poppinsSemiBold" : "font-poppinsRegular"
           }`}
         >

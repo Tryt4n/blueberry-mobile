@@ -18,7 +18,7 @@ type OrderCardProps = {
 };
 
 function OrderCard({ order, price, additionalStyles }: OrderCardProps) {
-  const { user } = useGlobalContext();
+  const { user, height } = useGlobalContext();
   const { colors } = useThemeContext();
   const { ordersSearchParams } = useOrdersContext();
 
@@ -47,15 +47,27 @@ function OrderCard({ order, price, additionalStyles }: OrderCardProps) {
             }
           </View>
 
-          <Text style={tw`text-xl text-center font-poppinsRegular text-[${colors.text}]`}>
+          <Text
+            style={tw`${
+              height > 680 ? "text-xl" : "text-lg"
+            } text-center font-poppinsRegular text-[${colors.text}]`}
+          >
             Ilość: <Text style={tw`font-poppinsSemiBold`}>{order.quantity}kg</Text>
           </Text>
 
-          <Text style={tw`py-2 text-lg font-poppinsRegular text-[${colors.text}]`}>
+          <Text
+            style={tw`py-2 ${height > 680 ? "text-lg" : "text-base"} font-poppinsRegular text-[${
+              colors.text
+            }]`}
+          >
             Dla: <Text style={tw`font-poppinsSemiBold capitalize`}>{order.buyer.buyerName}</Text>
           </Text>
 
-          <Text style={tw`pb-2 text-lg font-poppinsRegular text-[${colors.text}]`}>
+          <Text
+            style={tw`pb-2 ${height > 680 ? "text-lg" : "text-base"} font-poppinsRegular text-[${
+              colors.text
+            }]`}
+          >
             Łącznie:&nbsp;
             {order.currentPrice.price === 0 ? (
               <Text style={tw`font-poppinsSemiBold`}>Gratis</Text>
@@ -85,7 +97,11 @@ function OrderCard({ order, price, additionalStyles }: OrderCardProps) {
               <Text style={tw`font-poppinsMedium text-sm text-[${colors.text}]`}>
                 Informacje dodatkowe:
               </Text>
-              <Text style={tw`font-poppinsRegular text-[16px] text-[${colors.text}]`}>
+              <Text
+                style={tw`font-poppinsRegular ${
+                  height > 680 ? "text-[16px]" : "text-[14px]"
+                } text-[${colors.text}]`}
+              >
                 {order.additionalInfo}
               </Text>
             </View>

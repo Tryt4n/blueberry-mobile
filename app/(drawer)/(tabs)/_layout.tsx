@@ -4,7 +4,7 @@ import { useThemeContext } from "@/hooks/useThemeContext";
 import TabIcon from "@/components/TabIcon";
 
 export default function TabsLayout() {
-  const { user, isLoading, isLoggedIn, isUserVerified } = useGlobalContext();
+  const { user, isLoading, isLoggedIn, isUserVerified, height } = useGlobalContext();
   const { colors } = useThemeContext();
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
@@ -16,7 +16,11 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: { height: 84, backgroundColor: colors.bg, borderTopColor: colors.border },
+        tabBarStyle: {
+          height: height > 680 ? 84 : 50,
+          backgroundColor: colors.bg,
+          borderTopColor: colors.border,
+        },
       }}
       sceneContainerStyle={{ backgroundColor: colors.bgAccent }}
     >
@@ -29,6 +33,8 @@ export default function TabsLayout() {
               icon="cart"
               color={color}
               name="Zamówienia"
+              iconsSize={height > 680 ? 24 : 20}
+              gap={height > 680 ? 2 : 0}
               focused={focused}
             />
           ),
@@ -44,6 +50,8 @@ export default function TabsLayout() {
               icon="leaf"
               color={color}
               name="Fertygacja"
+              iconsSize={height > 680 ? 24 : 20}
+              gap={height > 680 ? 2 : 0}
               focused={focused}
             />
           ),
@@ -60,6 +68,8 @@ export default function TabsLayout() {
               icon="sunny"
               color={color}
               name="Pogoda"
+              iconsSize={height > 680 ? 24 : 20}
+              gap={height > 680 ? 2 : 0}
               focused={focused}
             />
           ),
@@ -75,6 +85,8 @@ export default function TabsLayout() {
               icon="wallet"
               color={color}
               name="Zarządzanie"
+              iconsSize={height > 680 ? 24 : 20}
+              gap={height > 680 ? 2 : 0}
               focused={focused}
             />
           ),

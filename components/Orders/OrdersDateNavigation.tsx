@@ -5,8 +5,10 @@ import { useDayChange } from "@/hooks/OrderHooks/useDayChange";
 import { formatDate } from "@/helpers/dates";
 import tw from "@/lib/twrnc";
 import { Ionicons } from "@expo/vector-icons";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 
 export default function OrdersDateNavigation() {
+  const { height } = useGlobalContext();
   const { colors } = useThemeContext();
   const { ordersData, ordersSearchParams, setIsBannerVisible } = useOrdersContext();
   const handleDayChange = useDayChange();
@@ -18,7 +20,9 @@ export default function OrdersDateNavigation() {
 
   return (
     <View
-      style={tw`max-w-[700px] my-4 items-center px-4 w-full mx-auto flex flex-row justify-between`}
+      style={tw`max-w-[700px] ${
+        height > 680 ? "my-4" : "my-1"
+      } items-center w-full mx-auto flex flex-row justify-between`}
     >
       <TouchableOpacity
         style={tw`p-2 ${ordersData?.isLoading ? "opacity-50" : ""}`}
@@ -33,7 +37,11 @@ export default function OrdersDateNavigation() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => setIsBannerVisible(true)}>
-        <Text style={tw`font-poppinsBold text-lg text-[${colors.text}] capitalize`}>
+        <Text
+          style={tw`font-poppinsBold ${height > 680 ? "text-lg" : "text-base"} text-[${
+            colors.text
+          }] capitalize`}
+        >
           {formattedDate}
         </Text>
       </TouchableOpacity>
@@ -43,6 +51,7 @@ export default function OrdersDateNavigation() {
         onPress={() => handleDayChange("next")}
       >
         <Ionicons
+          style={tw`p-2 ${ordersData?.isLoading ? "opacity-50" : ""}`}
           name="chevron-forward"
           size={24}
           color={colors.primary}

@@ -11,15 +11,19 @@ import OrdersSearchBanner from "./OrdersSearchBanner";
 import OrdersDateNavigation from "./OrdersDateNavigation";
 
 export default function OrdersHeader() {
-  const { user } = useGlobalContext();
+  const { user, height } = useGlobalContext();
   const { colors } = useThemeContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
   const { ordersData, ordersSearchParams, isBannerVisible, today } = useOrdersContext();
 
   return (
     <>
-      <View style={tw`mt-8 flex flex-row justify-between mb-2`}>
-        <Text style={tw`font-poppinsBold text-3xl text-[${colors.text}]`}>
+      <View style={tw`${height > 680 ? "mt-8" : "mt-3"} flex flex-row justify-between mb-2`}>
+        <Text
+          style={tw`font-poppinsBold ${height > 680 ? "text-3xl" : "text-xl"} text-[${
+            colors.text
+          }]`}
+        >
           {user?.role === "admin" || user?.role === "moderator" ? "Zamówienia" : "Twoje zamówienia"}
         </Text>
 
@@ -40,7 +44,7 @@ export default function OrdersHeader() {
 
       <CurrentPrice />
 
-      <OpenSearchBannerBtn />
+      {height > 680 && <OpenSearchBannerBtn />}
 
       <OrdersSearchBanner />
 
