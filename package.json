@@ -12,6 +12,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
     "@react-native-google-signin/google-signin": "^11.0.1",
+    "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.0.2",
     "@react-oauth/google": "^0.12.1",
