@@ -10,7 +10,7 @@ type ChangeQuantityBtnProps = {
 } & ComponentProps<typeof TouchableOpacity>;
 
 function ChangeQuantityBtn({ type, borderlineValue, ...props }: ChangeQuantityBtnProps) {
-  const { colors } = useThemeContext();
+  const { theme, colors } = useThemeContext();
 
   const condition =
     type === "decrease"
@@ -29,7 +29,7 @@ function ChangeQuantityBtn({ type, borderlineValue, ...props }: ChangeQuantityBt
       <Entypo
         name={type === "decrease" ? "minus" : "plus"}
         size={32}
-        color={colors.text}
+        color={theme === "dark" ? colors.text : colors.bg}
       />
     </TouchableOpacity>
   );
