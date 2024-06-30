@@ -1,10 +1,9 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { router } from "expo-router";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useModalContext } from "@/hooks/useModalContext";
-import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { signOut as AppwriteAuthLogout } from "@/api/auth/appwrite";
 import tw from "@/lib/twrnc";
 import CustomButton from "@/components/CustomButton";
@@ -13,8 +12,6 @@ export default function LogOutPage() {
   const { isLoggedIn, setIsLoggedIn, setUser } = useGlobalContext();
   const { colors } = useThemeContext();
   const { setModalData, showModal } = useModalContext();
-  const { setEditedOrder, setIsBannerVisible, setOrdersData, setOrdersSearchParams, today } =
-    useOrdersContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function logOut() {
@@ -29,10 +26,6 @@ export default function LogOutPage() {
       setUser(null);
       setIsLoggedIn(false);
 
-      setOrdersData(null);
-      setEditedOrder(null);
-      setOrdersSearchParams({ startDate: today, endDate: today, userId: undefined });
-      setIsBannerVisible(false);
       setModalData({ title: "true" });
 
       router.replace("/signIn");
