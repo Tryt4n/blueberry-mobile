@@ -16,6 +16,7 @@ export type User = {
   readonly role: UserRole;
   readonly buyers: Buyer[];
   readonly theme?: Theme;
+  readonly simplifiedView: boolean;
 };
 
 type UserRole = "user" | "admin" | "seller" | "moderator";
