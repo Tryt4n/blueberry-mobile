@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import { useGlobalContext } from "../useGlobalContext";
 import { useModalContext } from "../useModalContext";
-import { useOrdersContext } from "../useOrdersContext";
 import { useThemeContext } from "../useThemeContext";
 import { editUserEmail, editUserPassword, editUserUsername } from "@/api/appwrite/users";
 import { decryptData } from "@/helpers/encryption";
@@ -17,7 +16,6 @@ export function useEditUser(
 ) {
   const { user, refetchUser } = useGlobalContext();
   const { theme } = useThemeContext();
-  const { ordersData } = useOrdersContext();
   const { showModal, setModalData } = useModalContext();
 
   const [modalInputValue, setModalInputValue] = useState("");
@@ -130,8 +128,6 @@ export function useEditUser(
         });
         resetStates();
         refetchUser();
-        // Refetch the orders data only if the type is "username" because the username is used in the orders data
-        type === "username" && ordersData?.refetchData();
       }
     } catch (error) {
       // If there was an error then show a modal with an error message
@@ -156,7 +152,6 @@ export function useEditUser(
     showModal,
     resetStates,
     refetchUser,
-    ordersData,
   ]);
 
   function resetStates() {

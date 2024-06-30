@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "../useGlobalContext";
 import { useThemeContext } from "../useThemeContext";
-import { useOrdersContext } from "../useOrdersContext";
 import { useModalContext } from "../useModalContext";
 import { editUserAvatar } from "@/api/appwrite/users";
 import { deleteCustomAvatar } from "@/api/appwrite/avatars";
@@ -11,7 +10,6 @@ import Toast from "react-native-toast-message";
 export function useChangeUserAvatar() {
   const { user, refetchUser, showAlert } = useGlobalContext();
   const { theme } = useThemeContext();
-  const { ordersData } = useOrdersContext();
   const { visible: modalVisible, setModalData, showModal, closeModal } = useModalContext();
 
   const [avatar, setAvatar] = useState(user?.avatar || "");
@@ -55,7 +53,6 @@ export function useChangeUserAvatar() {
         }
         customAvatarId && setCustomAvatarId(undefined); // Reset the custom avatar id
         await refetchUser(); // Refetch the user data
-        await ordersData?.refetchData(); // Refetch the orders data
         Toast.show({
           type: theme === "light" ? "success" : "successDark",
           text1: "Avatar został zmieniony.",
