@@ -1,11 +1,14 @@
 import { View, Text, TouchableOpacity } from "react-native";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useDayChange } from "@/hooks/OrderHooks/useDayChange";
 import { formatDate } from "@/helpers/dates";
 import tw from "@/lib/twrnc";
 import { Ionicons } from "@expo/vector-icons";
-import { useGlobalContext } from "@/hooks/useGlobalContext";
+import { isToday } from "date-fns/isToday";
+import { isTomorrow } from "date-fns/isTomorrow";
+import { isYesterday } from "date-fns/isYesterday";
 
 export default function OrdersDateNavigation() {
   const { height } = useGlobalContext();
@@ -13,9 +16,26 @@ export default function OrdersDateNavigation() {
   const { ordersData, ordersSearchParams, setIsBannerVisible } = useOrdersContext();
   const handleDayChange = useDayChange();
 
+  function getFormattedDateLabel(date: string | number | Date) {
+    const dateObj = new Date(date);
+    const formattedDate = formatDate(date, "dd.MM.yyyy"); // Formatuj datę do "dd.MM.yyyy"
+
+    if (isToday(dateObj)) {
+      return `${formattedDate} - Dzisiaj`;
+    } else if (isTomorrow(dateObj)) {
+      return `${formattedDate} - Jutro`;
+    } else if (isYesterday(dateObj)) {
+      return `${formattedDate} - Wczoraj`;
+    } else {
+      // Dla innych dat, zwróć datę i dzień tygodnia
+      const dayOfWeek = formatDate(date, "EEEE");
+      return `${formattedDate} - ${dayOfWeek}`;
+    }
+  }
+
   const formattedDate =
     ordersSearchParams.startDate === ordersSearchParams.endDate
-      ? formatDate(ordersSearchParams.startDate, "dd.MM.yyyy - EEEE")
+      ? getFormattedDateLabel(ordersSearchParams.startDate)
       : `${formatDate(ordersSearchParams.startDate)} - ${formatDate(ordersSearchParams.endDate)}`;
 
   return (
