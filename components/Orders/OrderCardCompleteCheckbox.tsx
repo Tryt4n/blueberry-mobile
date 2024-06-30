@@ -1,18 +1,22 @@
-import { memo } from "react";
+import { memo, type ComponentPropsWithoutRef } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useChangeCheckboxValue } from "@/hooks/OrderHooks/useChangeCheckboxValue";
 import Checkbox from "../Checkbox";
 import type { Order } from "@/types/orders";
 
-function OrderCardCompleteCheckbox({ order }: { order: Order }) {
-  const { user } = useGlobalContext();
+type OrderCardCompleteCheckboxProps = {
+  order: Order;
+} & Omit<ComponentPropsWithoutRef<typeof Checkbox>, "status">;
+
+function OrderCardCompleteCheckbox({ order, ...props }: OrderCardCompleteCheckboxProps) {
+  const { user, isSimplifiedView } = useGlobalContext();
   const changeCompletedStatus = useChangeCheckboxValue(order, "completed");
 
   const userHasAccess = user?.role === "admin" || user?.role === "moderator";
 
   return (
     <Checkbox
-      label="Ukończone:"
+      label={!isSimplifiedView ? "Ukończone:" : undefined}
       status={order.completed}
       disabled={order.user.$id !== user?.$id && !userHasAccess}
       onPress={() => {
@@ -21,6 +25,7 @@ function OrderCardCompleteCheckbox({ order }: { order: Order }) {
 
         changeCompletedStatus();
       }}
+      {...props}
     />
   );
 }

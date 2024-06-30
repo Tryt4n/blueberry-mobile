@@ -11,7 +11,7 @@ import OrdersSearchBanner from "./OrdersSearchBanner";
 import OrdersDateNavigation from "./OrdersDateNavigation";
 
 export default function OrdersHeader() {
-  const { user, height } = useGlobalContext();
+  const { user, height, isSimplifiedView } = useGlobalContext();
   const { colors } = useThemeContext();
   const { handleOpenBottomSheet } = useBottomSheetContext();
   const { ordersData, ordersSearchParams, isBannerVisible, today } = useOrdersContext();
@@ -28,17 +28,17 @@ export default function OrdersHeader() {
         </Text>
 
         {
-          // Display the AddButton component if the selected date is today or later, or if the user is an admin or moderator
-          // ordersSearchParams.startDate >= today && (
-          (ordersSearchParams.startDate >= today ||
-            user?.role === "admin" ||
-            user?.role === "moderator") && (
-            <AddButton
-              disabled={ordersData?.isLoading}
-              onPress={handleOpenBottomSheet}
-              aria-label="Dodaj nowe zamówienie"
-            />
-          )
+          // Display the AddButton component if it is not simplified view, or if the selected date is today or later, or if the user is an admin or moderator
+          !isSimplifiedView &&
+            (ordersSearchParams.startDate >= today ||
+              user?.role === "admin" ||
+              user?.role === "moderator") && (
+              <AddButton
+                disabled={ordersData?.isLoading}
+                onPress={handleOpenBottomSheet}
+                aria-label="Dodaj nowe zamówienie"
+              />
+            )
         }
       </View>
 
