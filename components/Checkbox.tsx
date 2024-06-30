@@ -1,9 +1,10 @@
 import { View, Text } from "react-native";
-import React, { type ComponentProps } from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import BouncyCheckbox from "react-native-bouncy-checkbox/build/dist/BouncyCheckbox";
 import { Entypo } from "@expo/vector-icons";
+import type { ComponentProps } from "react";
 
 type CheckboxProps = {
   status: boolean;
@@ -19,6 +20,7 @@ export default function Checkbox({
   containerStyles,
   ...props
 }: CheckboxProps) {
+  const { isSimplifiedView } = useGlobalContext();
   const { theme, colors } = useThemeContext();
 
   return (
@@ -33,7 +35,7 @@ export default function Checkbox({
       )}
 
       <BouncyCheckbox
-        size={50}
+        size={isSimplifiedView ? 35 : 50}
         fillColor={colors.primary}
         unFillColor="transparent"
         disableText={true}
@@ -41,7 +43,7 @@ export default function Checkbox({
         iconComponent={
           <Entypo
             name="check"
-            size={30}
+            size={isSimplifiedView ? 20 : 30}
             color={
               status
                 ? theme === "light"
