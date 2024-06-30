@@ -144,3 +144,18 @@ export async function editUserTheme(userId: User["$id"], theme: User["theme"]) {
     throw new Error(error);
   }
 }
+
+export async function editUserViewPreferences(userId: User["$id"], isSimplifiedView: boolean) {
+  try {
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId,
+      {
+        simplifiedView: isSimplifiedView,
+      }
+    );
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
