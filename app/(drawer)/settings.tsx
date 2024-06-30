@@ -1,17 +1,16 @@
 import { View, ScrollView } from "react-native";
 import { useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
-import { useThemeContext } from "@/hooks/useThemeContext";
 import tw from "@/lib/twrnc";
 import SettingsEditSection from "@/components/Settings/SettingsEditSection";
 import SettingsEditAvatar from "@/components/Settings/SettingsEditAvatar";
 import SettingsChangeTheme from "@/components/Settings/SettingsChangeTheme";
+import SettingsSimplifiedView from "@/components/Settings/SettingsSimplifiedView";
 import Divider from "@/components/Divider";
 import type { EditSettingsOptions } from "@/types/editSettingsOptions";
 
 export default function Settings() {
   const { user } = useGlobalContext();
-  const { colors } = useThemeContext();
 
   const [inputVisible, setInputVisible] = useState<EditSettingsOptions | false>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,6 +66,10 @@ export default function Settings() {
           <Divider />
 
           <SettingsChangeTheme />
+
+          <Divider />
+
+          <SettingsSimplifiedView />
         </View>
       )}
     </ScrollView>
