@@ -11,6 +11,8 @@ type GlobalContextValues = {
   user: User | null;
   setUser: (value: User | null) => void;
   isLoading: boolean;
+  isSimplifiedView: boolean | undefined;
+  setIsSimplifiedView: (value: boolean) => void;
   platform: typeof Platform.OS | undefined;
   showAlert: (title: string, message: string) => void;
   refetchUser: () => Promise<void>;
@@ -25,6 +27,7 @@ export default function GlobalContextProvider({ children }: { children: React.Re
   const [isVerified, setIsVerified] = useState<boolean | undefined>(undefined);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSimplifiedView, setIsSimplifiedView] = useState<boolean | undefined>(undefined);
   const platform = useMemo(() => Platform.OS, []);
   const dimensions = Dimensions.get("window");
 
@@ -42,6 +45,7 @@ export default function GlobalContextProvider({ children }: { children: React.Re
 
       if (result) {
         setUser(result.user);
+        setIsSimplifiedView(result.user.simplifiedView);
         setIsVerified(result.isUserVerified);
         setIsLoggedIn(true);
       }
@@ -65,6 +69,8 @@ export default function GlobalContextProvider({ children }: { children: React.Re
     setUser,
     refetchUser: getAndSetUser,
     isLoading,
+    isSimplifiedView,
+    setIsSimplifiedView,
     platform,
     showAlert,
     width: dimensions.width,
