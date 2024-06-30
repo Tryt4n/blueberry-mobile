@@ -11,7 +11,6 @@ import tw from "@/lib/twrnc";
 import GlobalContextProvider from "../context/GlobalContext";
 import ThemeContextProvider from "@/context/ThemeContext";
 import BottomSheetTabsContextProvider from "@/context/BottomSheetTabsContext";
-import OrderContextProvider from "@/context/OrdersContext";
 import ModalContextProvider from "@/context/ModalContext";
 import Modal from "@/components/Modal/Modal";
 import Toast from "react-native-toast-message";
@@ -57,37 +56,35 @@ export default function RootLayout() {
       <GestureHandlerRootView style={tw`flex-1 overflow-hidden`}>
         <GlobalContextProvider>
           <ThemeContextProvider>
-            <OrderContextProvider>
-              <BottomSheetTabsContextProvider>
-                <MenuProvider>
-                  <PaperProvider theme={{ dark: false }}>
-                    <ModalContextProvider>
-                      <StatusBar />
+            <BottomSheetTabsContextProvider>
+              <MenuProvider>
+                <PaperProvider theme={{ dark: false }}>
+                  <ModalContextProvider>
+                    <StatusBar />
 
-                      <Stack>
-                        <Stack.Screen
-                          name="index"
-                          options={{ headerShown: false }}
-                        />
+                    <Stack>
+                      <Stack.Screen
+                        name="index"
+                        options={{ headerShown: false }}
+                      />
 
-                        <Stack.Screen
-                          name="(auth)"
-                          options={{ headerShown: false }}
-                        />
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false }}
+                      />
 
-                        <Stack.Screen
-                          name="(drawer)"
-                          options={{ headerShown: false }}
-                        />
-                      </Stack>
+                      <Stack.Screen
+                        name="(drawer)"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
 
-                      <Toast config={toastConfig} />
-                      <Modal />
-                    </ModalContextProvider>
-                  </PaperProvider>
-                </MenuProvider>
-              </BottomSheetTabsContextProvider>
-            </OrderContextProvider>
+                    <Toast config={toastConfig} />
+                    <Modal />
+                  </ModalContextProvider>
+                </PaperProvider>
+              </MenuProvider>
+            </BottomSheetTabsContextProvider>
           </ThemeContextProvider>
         </GlobalContextProvider>
       </GestureHandlerRootView>
