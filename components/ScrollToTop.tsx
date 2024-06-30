@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 
 export default function ScrollToTop({ ...props }: ComponentProps<typeof TouchableOpacity>) {
-  const { colors } = useThemeContext();
+  const { theme, colors } = useThemeContext();
 
   return (
     <TouchableOpacity
@@ -15,7 +15,7 @@ export default function ScrollToTop({ ...props }: ComponentProps<typeof Touchabl
       <Ionicons
         name="arrow-up"
         size={24}
-        color={colors.text}
+        color={theme === "dark" ? colors.text : colors.bg}
       />
     </TouchableOpacity>
   );
