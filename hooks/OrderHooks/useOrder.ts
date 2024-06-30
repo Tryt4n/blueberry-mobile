@@ -2,10 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "../useGlobalContext";
 import { useThemeContext } from "../useThemeContext";
 import { useOrdersContext } from "../useOrdersContext";
-import { useDataFetch } from "../useDataFetch";
 import { useBottomSheetContext } from "../useBottomSheetContext";
 import { createOrder, editOrder } from "@/api/appwrite/orders";
-import { createNewBuyer, getBuyers } from "@/api/appwrite/buyers";
+import { createNewBuyer } from "@/api/appwrite/buyers";
 import { getBuyerName } from "@/helpers/users";
 import Toast from "react-native-toast-message";
 import type { Buyer } from "@/types/buyers";
@@ -14,8 +13,15 @@ export function useOrder() {
   const { user, platform, showAlert } = useGlobalContext();
   const { theme } = useThemeContext();
   const { handleCloseBottomSheet } = useBottomSheetContext();
-  const { currentPrice, ordersData, ordersSearchParams, editedOrder, setIsBannerVisible, today } =
-    useOrdersContext();
+  const {
+    currentPrice,
+    ordersData,
+    ordersSearchParams,
+    editedOrder,
+    setIsBannerVisible,
+    today,
+    fetchedBuyers,
+  } = useOrdersContext();
 
   const initialQuantity = 1;
   const orderDataInitialState = {
@@ -37,14 +43,7 @@ export function useOrder() {
     data: buyers,
     isLoading: isLoadingBuyers,
     refetchData: buyersRefetchData,
-  } = useDataFetch(
-    getBuyers,
-    user?.role === "admin" || user?.role === "moderator" ? [] : [user?.$id],
-    {
-      title: "Błąd",
-      message: "Nie udało się pobrać klientów. Spróbuj odświeżyć stronę.",
-    }
-  );
+  } = fetchedBuyers;
 
   const handleOrder = useCallback(async () => {
     // Check if quantity is provided
@@ -67,7 +66,7 @@ export function useOrder() {
       return handleCloseBottomSheet();
     }
 
-    if (user && buyers) {
+    if (user && buyers && !isLoadingBuyers) {
       setIsSubmitting(true);
 
       const trimmedBuyerName = orderData.buyerName.replace(/\s+/g, " ").trim().toLowerCase(); // trim and lowercase buyer name
