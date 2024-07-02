@@ -6,10 +6,15 @@ import tw from "@/lib/twrnc";
 
 type SimplifiedInputProps = {
   containerStyles?: StyleProp<ViewStyle>;
+  inputStyles?: string;
   disabled?: boolean;
-} & ComponentProps<typeof TextInput>;
+} & Omit<ComponentProps<typeof TextInput>, "style">;
 
-export default function SimplifiedInput({ containerStyles, ...props }: SimplifiedInputProps) {
+export default function SimplifiedInput({
+  containerStyles,
+  inputStyles,
+  ...props
+}: SimplifiedInputProps) {
   const { platform } = useGlobalContext();
   const { colors } = useThemeContext();
   const [isFocused, setIsFocused] = useState(false);
@@ -20,7 +25,9 @@ export default function SimplifiedInput({ containerStyles, ...props }: Simplifie
         style={[
           tw`min-w-[32px] border-b-2 text-center font-poppinsMedium capitalize text-base text-[${
             colors.text
-          }]${isFocused ? ` border-[${colors.primary}]` : ` border-[${colors.inputBorder}]`}`,
+          }]${isFocused ? ` border-[${colors.primary}]` : ` border-[${colors.inputBorder}]`}${
+            inputStyles ? ` ${inputStyles}` : ""
+          }`,
           platform === "web" ? { outline: "none", caretColor: colors.primary } : {},
         ]}
         cursorColor={colors.primary}
