@@ -44,7 +44,7 @@ export default function OrdersHeader() {
 
       <CurrentPrice />
 
-      {height > 680 && <OpenSearchBannerBtn />}
+      {!isSimplifiedView && height > 680 && <OpenSearchBannerBtn />}
 
       <OrdersSearchBanner />
 
