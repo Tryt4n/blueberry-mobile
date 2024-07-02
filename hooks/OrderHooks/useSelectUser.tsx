@@ -61,6 +61,13 @@ export function useSelectUser() {
     showModal();
   }, [fetchedListOfUsers, setModalData, showModal, user, userHasAccess]);
 
+  useEffect(() => {
+    // Update the modal data when the list of users is fetched
+    if (fetchedListOfUsers) {
+      openSelectUserModal();
+    }
+  }, [fetchedListOfUsers && fetchedListOfUsers.isLoading]);
+
   // Reset the searchedUserId in the modal
   const saveSearchedUser = useCallback(async () => {
     setOrdersSearchParams((prevState) => ({
