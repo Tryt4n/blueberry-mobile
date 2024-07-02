@@ -48,7 +48,7 @@ export default function ModalCalendar({ ...props }: ComponentProps<typeof Calend
       firstDay={1}
       monthFormat="MMMM yyyy"
       enableSwipeMonths={true}
-      renderArrow={(direction) => <Arrow direction={direction} />}
+      renderArrow={(direction: Direction) => <Arrow direction={direction} />}
       theme={{
         calendarBackground: colors.bg,
         textSectionTitleColor: theme === "dark" ? "#C1BCB4" : "#b6c1cd",
@@ -65,7 +65,9 @@ export default function ModalCalendar({ ...props }: ComponentProps<typeof Calend
   );
 }
 
-function Arrow({ direction }: { direction: "left" | "right" }) {
+type Direction = "left" | "right";
+
+function Arrow({ direction }: { direction: Direction }) {
   const { colors } = useThemeContext();
 
   return (
