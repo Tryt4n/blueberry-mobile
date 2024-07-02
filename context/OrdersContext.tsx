@@ -3,8 +3,7 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useDataFetch } from "@/hooks/useDataFetch";
 import { getOrders } from "@/api/appwrite/orders";
 import { getBuyers } from "@/api/appwrite/buyers";
-import { format } from "date-fns";
-import { pl } from "date-fns/locale/pl";
+import { formatDate } from "@/helpers/dates";
 import type { Order, OrdersDataType, OrdersSearchParams } from "@/types/orders";
 import type { CurrentPrice } from "@/types/currentPrice";
 import type { Buyer } from "@/types/buyers";
@@ -29,12 +28,13 @@ export const OrdersContext = createContext<OrderContextType | null>(null);
 export default function OrderContextProvider({ children }: { children: React.ReactNode }) {
   const { user } = useGlobalContext();
 
+  const [initialRender, setInitialRender] = useState(true);
   const [ordersData, setOrdersData] = useState<OrderContextType["ordersData"]>(null);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
   const [currentPrice, setCurrentPrice] = useState<CurrentPrice | null>(null);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const today = new Date();
-  const formattedTodayDate = format(today, "yyyy-MM-dd", { locale: pl });
+  const formattedTodayDate = formatDate(today, "yyyy-MM-dd");
   const [ordersSearchParams, setOrdersSearchParams] = useState<OrdersSearchParams>({
     startDate: formattedTodayDate,
     endDate: formattedTodayDate,
@@ -62,8 +62,13 @@ export default function OrderContextProvider({ children }: { children: React.Rea
 
   // Refetch orders data when search params change
   useEffect(() => {
-    appwriteOrdersData.refetchData();
-  }, [ordersSearchParams]);
+    // Prevent refetching data on initial render
+    if (initialRender) {
+      setInitialRender(false);
+    } else {
+      appwriteOrdersData.refetchData();
+    }
+  }, [initialRender, ordersSearchParams]);
 
   // Set orders data to the context state if the data is loaded successfully
   useEffect(() => {
