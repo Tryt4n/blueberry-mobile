@@ -136,7 +136,7 @@ export function useOrder() {
           setIsBannerVisible(false);
           handleCloseBottomSheet();
           await ordersData?.refetchData();
-          buyersRefetchData();
+          !existingBuyer && (await buyersRefetchData()); // Refetch buyers if new buyer was created
           Toast.show({
             type: theme === "light" ? "success" : "successDark",
             text1: `Zamówienie zostało ${editedOrder ? "edytowane" : "utworzone"}.`,
