@@ -110,7 +110,6 @@ export default function SimplifiedOrderCard({
               style={tw`w-30 font-poppinsRegular text-[${colors.textAccent}]${
                 quantity && quantity < 0.5 ? ` opacity-25` : ""
               } bg-transparent border-0`}
-              itemStyle={tw`text-blue-400`}
               dropdownIconColor={colors.primary}
             >
               {values.map((value) => (
