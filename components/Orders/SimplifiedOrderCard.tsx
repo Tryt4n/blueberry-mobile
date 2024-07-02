@@ -7,7 +7,7 @@ import { useOrder } from "@/hooks/OrderHooks/useOrder";
 import { useDeleteOrder } from "@/hooks/OrderHooks/useDeleteOrder";
 import tw from "@/lib/twrnc";
 import { Picker } from "@react-native-picker/picker";
-import SimplifiedInput from "./SimplifiedInput";
+import SimplifiedInput from "../SimplifiedInput";
 import OrderCardCompleteCheckbox from "./OrderCardCompleteCheckbox";
 import CustomButton from "../CustomButton";
 import Divider from "../Divider";
