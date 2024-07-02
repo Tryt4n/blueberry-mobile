@@ -40,7 +40,12 @@ function OrdersSearchBanner() {
       <View style={{ width: containerWidth }}>
         <OrdersSearchBannerDates />
 
-        {(user?.role === "admin" || user?.role === "moderator") && <OrdersSearchBannerUser />}
+        {
+          // isBannerVisible is here to prevent fetching the list of users if the banner is not visible
+          isBannerVisible && (user?.role === "admin" || user?.role === "moderator") && (
+            <OrdersSearchBannerUser />
+          )
+        }
       </View>
     </Banner>
   );
