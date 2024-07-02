@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
@@ -22,7 +24,10 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      ["expo-document-picker"]
+      [
+        "expo-document-picker"
+      ],
+      "expo-font"
     ],
     "android": {
       "package": "com.plantation.blueberry",
