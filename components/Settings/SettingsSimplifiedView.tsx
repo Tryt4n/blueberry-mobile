@@ -37,13 +37,14 @@ export default function SettingsSimplifiedView() {
   }
 
   return (
-    <View style={tw`flex-row gap-x-2 items-center justify-center`}>
+    <View style={tw`h-9 flex-row gap-x-2 items-center justify-center`}>
       <Text style={tw`font-poppinsSemiBold text-[${colors.text}]`}>Widok uproszczony</Text>
 
       {isLoading ? (
         <ActivityIndicator
           size={"small"}
           color={colors.primary}
+          style={tw`h-9 w-9`}
         />
       ) : (
         <Checkbox
