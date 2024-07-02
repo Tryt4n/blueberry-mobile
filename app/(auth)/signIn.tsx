@@ -1,9 +1,8 @@
-import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 import { useModalContext } from "@/hooks/useModalContext";
 import { useOnSubmitEditing } from "@/hooks/useOnSubmitEditing";
-import { getCurrentUser, signIn } from "@/api/auth/appwrite";
+import { signIn } from "@/api/auth/appwrite";
 import AuthLayout from "@/layout/AuthLayout";
 import GoogleSignInButtonNative from "@/components/GoogleSignInButtonNative";
 import GoogleSignInButtonWeb from "@/components/GoogleSignInButtonWeb";
@@ -12,7 +11,7 @@ import { FormField } from "@/components/FormField";
 import type { TextInput } from "react-native-gesture-handler";
 
 export default function SignInPage() {
-  const { setUser, setIsLoggedIn, platform, setIsUserVerified } = useGlobalContext();
+  const { platform, refetchUser } = useGlobalContext();
   const { setModalData, showModal } = useModalContext();
 
   const [loginForm, setLoginForm] = useState({
@@ -48,17 +47,7 @@ export default function SignInPage() {
       const { session, errors } = await signIn(loginForm.email, loginForm.password);
 
       if (session) {
-        const result = await getCurrentUser();
-
-        if (result) {
-          setUser(result.user);
-          setIsUserVerified(result.isUserVerified);
-          setIsLoggedIn(true);
-
-          router.replace("/");
-        } else {
-          throw new Error("User not found");
-        }
+        await refetchUser(); // Fetch user data after successful login
       } else {
         setErrors(errors);
       }
