@@ -7,12 +7,12 @@ import PageLayout from "@/layout/PageLayout";
 import OrdersList from "@/components/Orders/OrdersList";
 import OrdersHeader from "@/components/Orders/OrdersHeader";
 import OrderBottomSheet from "@/components/OrderBottomSheet/OrderBottomSheet";
-import SimplifiedOrderCard from "./SimplifiedOrderCard";
+import SimplifiedAddOrderSection from "./SimplifiedAddOrderSection";
 
 export default function Orders() {
   const { user, isSimplifiedView } = useGlobalContext();
   const { colors } = useThemeContext();
-  const { ordersData, currentPrice } = useOrdersContext();
+  const { ordersData } = useOrdersContext();
 
   return (
     <PageLayout>
@@ -33,13 +33,7 @@ export default function Orders() {
                   <OrdersList />
                 ) : (
                   <>
-                    {isSimplifiedView && (
-                      <SimplifiedOrderCard
-                        type="new"
-                        price={currentPrice?.price || null}
-                        containerStyles={`bg-[${colors.bg}]`}
-                      />
-                    )}
+                    {isSimplifiedView && <SimplifiedAddOrderSection />}
 
                     <Text style={tw`text-center font-poppinsRegular text-lg text-[${colors.text}]`}>
                       Brak zamówień
