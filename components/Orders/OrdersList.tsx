@@ -5,7 +5,7 @@ import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import OrderCard from "./OrderCard";
-import SimplifiedOrderCard from "./SimplifiedOrderCard";
+import SimplifiedAddOrderSection from "./SimplifiedAddOrderSection";
 import Toast from "react-native-toast-message";
 
 function OrdersList() {
@@ -53,13 +53,7 @@ function OrdersList() {
         numColumns={platform === "web" ? (width >= 1400 ? 3 : width >= 700 ? 2 : 1) : undefined}
         renderItem={({ item, index }) => {
           if ("isSimplifiedCard" in item) {
-            return (
-              <SimplifiedOrderCard
-                type="new"
-                price={item.price}
-                containerStyles={`bg-[${colors.bg}]`}
-              />
-            );
+            return <SimplifiedAddOrderSection />;
           }
 
           // Default OrderCard rendering
