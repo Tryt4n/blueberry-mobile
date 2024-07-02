@@ -75,7 +75,8 @@ export default function SimplifiedOrderCard({
           placeholder="Wprowadź nazwę"
           placeholderTextColor={`${colors.text}20`}
           value={buyerName}
-          disabled={order?.completed}
+          disabled={order?.completed} // for web only
+          editable={!order?.completed} // for mobile (disable only the input editing, not the focus)
           onFocus={() => {
             if (!order) return;
 
@@ -91,8 +92,9 @@ export default function SimplifiedOrderCard({
           <View style={tw`flex-row gap-x-4 h-9 items-center`}>
             <Picker
               selectedValue={boxSize}
-              // @ts-expect-error - Picker component doesn't have a typescript definition for disabled prop but it works
+              // @ts-expect-error - Picker component doesn't have a typescript definition for disabled prop but it works for web
               disabled={order?.completed}
+              enabled={order?.completed}
               onFocus={() => {
                 if (!order) return;
 
@@ -130,7 +132,8 @@ export default function SimplifiedOrderCard({
               keyboardType="numeric"
               maxLength={2}
               value={quantity === null ? "" : quantity.toString()}
-              disabled={order?.completed}
+              disabled={order?.completed} // for web only
+              editable={!order?.completed} // for mobile (disable only the input editing, not the focus)
               onFocus={() => {
                 if (!order) return;
 
