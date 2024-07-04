@@ -13,7 +13,6 @@ export type Colors =
   | "bgAccent"
   | "text"
   | "textAccent"
-  | "menuIcon"
   | "tabIcon"
   | "border"
   | "inputBorder"
@@ -56,7 +55,6 @@ export default function ThemeContextProvider({ children }: { children: React.Rea
     bgAccent: theme === "light" ? customColors.bgAccentLight : customColors.bgAccentDark,
     text: theme === "light" ? customColors.textLight : customColors.textDark,
     textAccent: theme === "light" ? customColors.textAccentLight : customColors.textAccentDark,
-    menuIcon: theme === "light" ? customColors.menuIconLight : customColors.menuIconDark,
     tabIcon: theme === "light" ? customColors.tabIconLight : customColors.tabIconDark,
     border: theme === "light" ? customColors.borderLight : customColors.borderDark,
     green: theme === "light" ? customColors.greenLight : customColors.greenDark,
