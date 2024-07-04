@@ -55,7 +55,8 @@ export default function TabsLayout() {
               focused={focused}
             />
           ),
-          tabBarItemStyle: userHasAccess ? { display: "flex" } : { display: "none" },
+          // tabBarItemStyle: userHasAccess ? { display: "flex" } : { display: "none" },
+          tabBarItemStyle: { display: "none" }, //! Remove this line after adding the content
         }}
       />
 
@@ -90,7 +91,8 @@ export default function TabsLayout() {
               focused={focused}
             />
           ),
-          tabBarItemStyle: userHasAccess ? { display: "flex" } : { display: "none" },
+          // tabBarItemStyle: userHasAccess ? { display: "flex" } : { display: "none" },
+          tabBarItemStyle: { display: "none" }, //! Remove this line after adding the content
         }}
       />
     </Tabs>
