@@ -13,7 +13,10 @@ export default function CustomDrawerLabel({ color, focused, text }: CustomDrawer
 
   return (
     <Text
-      style={[tw`font-poppinsMedium text-base -ml-4`, { color: focused ? color : colors.menuIcon }]}
+      style={[
+        tw`font-poppinsMedium text-base -ml-4`,
+        { color: focused ? color : colors.textAccent },
+      ]}
     >
       {text}
     </Text>

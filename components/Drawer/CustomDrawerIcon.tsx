@@ -16,7 +16,7 @@ export default function CustomDrawerIcon({ color, size, focused, name }: CustomD
     <Ionicons
       name={name}
       size={size}
-      color={focused ? color : colors.menuIcon}
+      color={focused ? color : colors.textAccent}
     />
   );
 }
