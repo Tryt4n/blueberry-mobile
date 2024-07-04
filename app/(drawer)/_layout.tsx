@@ -10,7 +10,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function DrawerLayout() {
   const { isLoading, isLoggedIn, isUserVerified, height } = useGlobalContext();
-  const { colors } = useThemeContext();
+  const { theme, colors } = useThemeContext();
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -32,7 +32,7 @@ export default function DrawerLayout() {
           headerStyle: {
             backgroundColor: colors.bg,
             borderBottomColor: colors.border,
-            height: height > 680 ? 64 : 40,
+            shadowColor: theme === "dark" ? "transparent" : undefined,
           },
           drawerStyle: { backgroundColor: colors.bg },
           sceneContainerStyle: { backgroundColor: colors.bgAccent },
