@@ -2,7 +2,7 @@
 
 This is an application created for private use, the purpose of which is to facilitate the management of our family blueberry orchard.
 
-It's an **_React Native_** app created in **_[Expo](https://docs.expo.dev/ "Go to expo docs.")_** with role base authentication. This uses a **private weather** station **_API_** to present current weather conditions and forecasts.
+It's an **_React Native_** app created in **_[Expo](https://docs.expo.dev/ "Go to expo docs.")_** with role base authentication. This uses a **_Private Weather Station API_** to present current weather conditions and forecasts.
 Application is published as mobile and web app.
 
 ## Technologies used
