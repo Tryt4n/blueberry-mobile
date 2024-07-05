@@ -1,13 +1,15 @@
-import { View, Text } from "react-native";
-import { useEffect, useState } from "react";
+import { View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useThemeContext } from "@/hooks/useThemeContext";
 import { useOrdersContext } from "@/hooks/useOrdersContext";
 import { useOrder } from "@/hooks/OrderHooks/useOrder";
 import { useDeleteOrder } from "@/hooks/OrderHooks/useDeleteOrder";
+import { boxSizeValues } from "@/constants/orders";
 import tw from "@/lib/twrnc";
-import { Picker } from "@react-native-picker/picker";
 import SimplifiedInput from "../SimplifiedInput";
+import SimplifiedPicker from "./SimplifiedPicker";
+import SimplifiedTotalPrice from "./SimplifiedTotalPrice";
 import OrderCardCompleteCheckbox from "./OrderCardCompleteCheckbox";
 import CustomButton from "../CustomButton";
 import Divider from "../Divider";
@@ -27,8 +29,6 @@ export default function SimplifiedOrderCard({
   price,
   containerStyles,
 }: SimplifiedOrderCardProps) {
-  const values = ["250g", "500g"] as const;
-
   const { width } = useGlobalContext();
   const { colors } = useThemeContext();
   const { user } = useGlobalContext();
@@ -37,7 +37,7 @@ export default function SimplifiedOrderCard({
   const deleteOrder =
     order && type === "edit" ? useDeleteOrder(order.$id, order.user.$id) : undefined;
 
-  const [boxSize, setBoxSize] = useState<(typeof values)[number]>(
+  const [boxSize, setBoxSize] = useState<(typeof boxSizeValues)[number]>(
     order?.additionalInfo === "Pojemniki 250g" ? "250g" : "500g"
   );
   const [buyerName, setBuyerName] = useState(order?.buyer.buyerName || "");
@@ -52,6 +52,64 @@ export default function SimplifiedOrderCard({
     const quantityMultiplier = boxSize === "500g" ? 0.5 : 0.25;
     return value / quantityMultiplier;
   }
+
+  function changeBuyerName(value: string) {
+    setBuyerName(value);
+    changeOrderData({ ...orderData, buyerName: value });
+  }
+
+  function changeBoxSize(value: (typeof boxSizeValues)[number]) {
+    setBoxSize(value);
+    changeOrderData({
+      ...orderData,
+      additionalInfo: value === "500g" ? "" : "Pojemniki 250g",
+      quantity: (quantity ? quantity / (value === "500g" ? 2 : 4) : order?.quantity) || 1,
+    });
+  }
+
+  function changeQuantity(value: string) {
+    const isIntegerOrEmpty = /^[0-9]*$/.test(value);
+    if (isIntegerOrEmpty) {
+      setQuantity(value === "" ? null : Number(value));
+      changeOrderData({
+        ...orderData,
+        quantity: Number(value) / (boxSize === "500g" ? 2 : 4),
+        additionalInfo: boxSize === "500g" ? "" : "Pojemniki 250g",
+      });
+    }
+  }
+
+  function resetQuantity() {
+    if (quantity === null || quantity < 1) {
+      // Reset the quantity to default order quantity or set it to 1
+      setQuantity((order && order.quantity * (boxSize === "500g" ? 2 : 4)) || 1);
+    }
+  }
+
+  const onInputFocus = useCallback(() => {
+    if (!order) return;
+    setEditedOrder(order);
+  }, [order]);
+
+  const resetEditedOrder = useCallback(() => {
+    setBuyerName(order?.buyer.buyerName || "");
+    // Check if boxSize was changed from "500g" to "250g" and adjust quantity accordingly
+    const originalBoxSize = order?.additionalInfo === "Pojemniki 250g" ? "250g" : "500g";
+    // If the boxSize was changed, adjust the quantity
+    if (boxSize !== originalBoxSize) {
+      if (!order) return;
+
+      const adjustedQuantity =
+        originalBoxSize === "250g"
+          ? calculateDisplayValue(order.quantity) * 2 // If the original box size was 250g, multiply the quantity by 2
+          : calculateDisplayValue(order.quantity) / 2; // If the original box size was 500g, divide the quantity by 2
+      setQuantity(adjustedQuantity);
+    } else {
+      setQuantity(order ? calculateDisplayValue(order.quantity) : null); // If the boxSize wasn't changed, set the quantity to the original value
+    }
+    setBoxSize(originalBoxSize);
+    setEditedOrder(null);
+  }, [order, boxSize]);
 
   useEffect(() => {
     if (quantity === null) return;
@@ -77,55 +135,22 @@ export default function SimplifiedOrderCard({
           value={buyerName}
           disabled={order?.completed} // for web only
           editable={!order?.completed} // for mobile (disable only the input editing, not the focus)
-          onFocus={() => {
-            if (!order) return;
-
-            setEditedOrder(order);
-          }}
-          onChangeText={(e) => {
-            setBuyerName(e);
-            changeOrderData({ ...orderData, buyerName: e });
-          }}
+          onFocus={onInputFocus}
+          onChangeText={changeBuyerName}
         />
 
         <View style={tw`flex-row gap-x-2 justify-evenly items-center`}>
           <View style={tw`flex-row gap-x-4 h-9 items-center`}>
-            <Picker
+            <SimplifiedPicker
+              boxSize={boxSize}
+              quantity={quantity}
               selectedValue={boxSize}
               // @ts-expect-error - Picker component doesn't have a typescript definition for disabled prop but it works for web
               disabled={order?.completed}
               enabled={order?.completed}
-              onFocus={() => {
-                if (!order) return;
-
-                setEditedOrder(order);
-              }}
-              onValueChange={(itemValue) => {
-                setBoxSize(itemValue);
-                changeOrderData({
-                  ...orderData,
-                  additionalInfo: itemValue === "500g" ? "" : "Pojemniki 250g",
-                  quantity:
-                    (quantity ? quantity / (itemValue === "500g" ? 2 : 4) : order?.quantity) || 1,
-                });
-              }}
-              style={tw`w-30 font-poppinsRegular text-[${colors.textAccent}]${
-                quantity && quantity < 0.5 ? ` opacity-25` : ""
-              } bg-transparent border-0`}
-              dropdownIconColor={colors.primary}
-            >
-              {values.map((value) => (
-                <Picker.Item
-                  key={value}
-                  label={value}
-                  value={value}
-                  enabled={(quantity && quantity >= 0.5) || undefined}
-                  style={tw`${
-                    value === boxSize ? `text-[${colors.primary}]` : `text-[${colors.textAccent}]`
-                  }`}
-                />
-              ))}
-            </Picker>
+              onFocus={onInputFocus}
+              onValueChange={changeBoxSize}
+            />
 
             <SimplifiedInput
               containerStyles={tw`w-8`}
@@ -134,29 +159,9 @@ export default function SimplifiedOrderCard({
               value={quantity === null ? "" : quantity.toString()}
               disabled={order?.completed} // for web only
               editable={!order?.completed} // for mobile (disable only the input editing, not the focus)
-              onFocus={() => {
-                if (!order) return;
-
-                setEditedOrder(order);
-              }}
-              onChangeText={(e) => {
-                // Search for a string that contains only digits or is empty
-                const isIntegerOrEmpty = /^[0-9]*$/.test(e);
-                if (isIntegerOrEmpty) {
-                  setQuantity(e === "" ? null : Number(e));
-                  changeOrderData({
-                    ...orderData,
-                    quantity: Number(e) / (boxSize === "500g" ? 2 : 4),
-                    additionalInfo: boxSize === "500g" ? "" : "Pojemniki 250g",
-                  });
-                }
-              }}
-              onBlur={() => {
-                if (quantity === null || quantity < 1) {
-                  // Reset the quantity to default order quantity or set it to 1
-                  setQuantity((order && order.quantity * (boxSize === "500g" ? 2 : 4)) || 1);
-                }
-              }}
+              onFocus={onInputFocus}
+              onChangeText={changeQuantity}
+              onBlur={resetQuantity}
             />
           </View>
 
@@ -183,26 +188,11 @@ export default function SimplifiedOrderCard({
           // Display the total price
           type === "edit" && (
             <View style={tw`h-9 flex-row items-center justify-between`}>
-              <View style={tw`flex-row items-baseline`}>
-                <Text style={tw`font-poppinsLight text-sm text-[${colors.text}]`}>
-                  Łącznie:&nbsp;
-                </Text>
-
-                {order?.currentPrice.price === 0 ? (
-                  <Text style={tw`text-[${colors.text}] font-poppinsSemiBold`}>Gratis</Text>
-                ) : (
-                  <>
-                    <Text style={tw`text-base text-[${colors.text}] font-poppinsSemiBold`}>
-                      {totalPrice} zł
-                    </Text>
-                    {order?.currentPrice.price !== price && (
-                      <Text style={tw`text-[${colors.text}] text-sm`}>
-                        &nbsp;(po {order?.currentPrice.price} zł)
-                      </Text>
-                    )}
-                  </>
-                )}
-              </View>
+              <SimplifiedTotalPrice
+                order={order}
+                price={price}
+                totalPrice={totalPrice}
+              />
 
               {
                 // Show the cancel and edit buttons
@@ -217,26 +207,7 @@ export default function SimplifiedOrderCard({
                       text="Anuluj"
                       containerStyles={`h-[36px] bg-[${colors.danger}]`}
                       textStyles="py-1.5 px-2.5 text-sm"
-                      onPress={() => {
-                        setBuyerName(order?.buyer.buyerName || "");
-                        // Check if boxSize was changed from "500g" to "250g" and adjust quantity accordingly
-                        const originalBoxSize =
-                          order?.additionalInfo === "Pojemniki 250g" ? "250g" : "500g";
-                        // If the boxSize was changed, adjust the quantity
-                        if (boxSize !== originalBoxSize) {
-                          if (!order) return;
-
-                          const adjustedQuantity =
-                            originalBoxSize === "250g"
-                              ? calculateDisplayValue(order.quantity) * 2 // If the original box size was 250g, multiply the quantity by 2
-                              : calculateDisplayValue(order.quantity) / 2; // If the original box size was 500g, divide the quantity by 2
-                          setQuantity(adjustedQuantity);
-                        } else {
-                          setQuantity(order ? calculateDisplayValue(order.quantity) : null); // If the boxSize wasn't changed, set the quantity to the original value
-                        }
-                        setBoxSize(originalBoxSize);
-                        setEditedOrder(null);
-                      }}
+                      onPress={resetEditedOrder}
                     />
 
                     <CustomButton
